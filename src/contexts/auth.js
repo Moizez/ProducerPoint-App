@@ -1,8 +1,8 @@
-import React, { useState, useEffect, createContext, Fragment } from 'react';
+import React, { useState, useEffect, createContext, Fragment } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Modal } from 'react-native'
 
 import WarningModal from '../components/Modals/WarningModal'
-
 import Api from '../services/api'
 
 export const AuthContext = createContext({})
@@ -13,14 +13,11 @@ const AuthProvider = ({ children }) => {
     const [loadingAuth, setLoadingAuth] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
-
     const [user, setUser] = useState(null)
-    const [time, setTime] = useState(false)
 
-    //Carregar usuário do AsyncStorage
     useEffect(() => {
         const loadStorage = async () => {
-            const storageUser = await AsyncStorage.getItem('@milkpoint:user')
+            const storageUser = await AsyncStorage.getItem('@producerpoint:user')
             if (storageUser) {
                 setUser(JSON.parse(storageUser))
                 setLoading(false)
@@ -33,7 +30,6 @@ const AuthProvider = ({ children }) => {
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
 
-    //Funcao para logar o usuário
     const signIn = async (email, password) => {
         setLoadingAuth(true)
         if (email.length == 0 || password.length == 0) {
@@ -43,11 +39,13 @@ const AuthProvider = ({ children }) => {
             return
         } else {
 
-            let response = await Api.onSignIn(email, password)
+            const response = await Api.onSignIn(email, password)
 
             try {
-                if (response.status == 200) {
+                if (response.status === 200) {
+
                     const data = await response.json()
+
                     setUser(data)
                     storageUser(data)
                     setLoadingAuth(false)
@@ -75,13 +73,12 @@ const AuthProvider = ({ children }) => {
 
     //Função para adicionar o usuário no Async Storage
     const storageUser = async (data) => {
-        await AsyncStorage.setItem('@milkpoint:user', JSON.stringify(data))
+        await AsyncStorage.setItem('@producerpoint:user', JSON.stringify(data))
     }
 
     return (
 
         <Fragment>
-
             <Modal
                 animationType='fade'
                 transparent={true}

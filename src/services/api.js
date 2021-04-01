@@ -5,7 +5,7 @@ export default {
 
     onSignIn: async (email, password) => {
         try {
-            const request = await fetch(`${BASE.API}/login`, {
+            const request = await fetch(`${BASE.API}/signin`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -18,6 +18,15 @@ export default {
         } catch (e) {
             console.log('Error: onSignIn ' + e)
         }
-    }
+    },
 
+    getAllProducers: async () => {
+        try {
+            const request = await fetch(`${BASE.API}/producers`)
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: getProducers ' + e)
+        }
+    }
 }

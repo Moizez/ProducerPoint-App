@@ -2,20 +2,50 @@ import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
-import TechnicianHome from '../pages/Technician/TechnicianHome'
-import ProducersPage from '../pages/Technician/ProducersPage'
-import DairiesPage from '../pages/Technician/DairiesPage'
-import ResponsiblesPage from '../pages/Technician/ResponsiblesPage'
-import Settings from '../pages/SingleStacks/Settings'
+import ManagerHome from '../pages/Manager/ManagerHome'
+import SearchProducers from '../pages/Manager/SearchProducers'
+import ProducerForm from '../pages/Manager/ProducerForm'
+import ManagerHistoric from '../pages/Manager/ManagerHistoric'
+import Settings from '../pages/Settings'
 
-const TechnicianTab = createBottomTabNavigator()
+import FormButton from '../components/FormButton'
 
-const Technician = () => {
+const ManagerTab = createBottomTabNavigator()
+
+const icons = {
+    ManagerHome: {
+        lib: MaterialCommunityIcons,
+        name: 'home'
+    },
+    SearchProducers: {
+        lib: MaterialCommunityIcons,
+        name: 'magnify'
+    },
+    ManagerHistoric: {
+        lib: MaterialCommunityIcons,
+        name: 'calendar-month'
+    },
+    Settings: {
+        lib: MaterialCommunityIcons,
+        name: 'dots-vertical'
+    },
+
+}
+
+const Manager = () => {
     return (
-        <TechnicianTab.Navigator
-            initialRouteName='TechnicianHome'
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color }) => {
+        <ManagerTab.Navigator
+            initialRouteName='ManagerHome'
+            screenOptions={({ route, navigation }) => ({
+                tabBarIcon: ({ color, focused }) => {
+                    if (route.name === 'ProducerForm') {
+                        return (
+                            <FormButton
+                                onPress={() => navigation.navigate('ProducerForm')}
+                                focused={focused}
+                            />
+                        )
+                    }
                     const { lib: Icon, name } = icons[route.name]
                     return <Icon name={name} color={color} size={28} />
                 }
@@ -26,57 +56,55 @@ const Technician = () => {
                     borderTopColor: 'rgba(0,0,0,0.5)',
                     height: 60,
                 },
-                activeTintColor: '#00b4d8',
+                activeTintColor: '#FFF',
                 labelStyle: {
                     fontSize: 11,
                     marginBottom: 5
                 }
             }}
-
         >
 
-            <TechnicianTab.Screen
-                name='TechnicianHome'
-                component={TechnicianHome}
+            <ManagerTab.Screen
+                name='ManagerHome'
+                component={ManagerHome}
                 options={{
                     title: 'Início'
                 }}
             />
 
-            <TechnicianTab.Screen
-                name='ProducersPage'
-                component={ProducersPage}
+            <ManagerTab.Screen
+                name='SearchProducers'
+                component={SearchProducers}
                 options={{
-                    title: 'Produtores'
+                    title: 'Pesquisar'
                 }}
             />
 
-            <TechnicianTab.Screen
-
-                name='DairiesPage'
-                component={DairiesPage}
+            <ManagerTab.Screen
+                name='ProducerForm'
+                component={ProducerForm}
                 options={{
-                    title: 'Laticínios'
+                    title: ''
                 }}
             />
 
-            <TechnicianTab.Screen
-                name='ResponsiblesPage'
-                component={ResponsiblesPage}
+            <ManagerTab.Screen
+                name='ManagerHistoric'
+                component={ManagerHistoric}
                 options={{
-                    title: 'Responsáveis'
+                    title: 'Agenda'
                 }}
             />
 
-            <TechnicianTab.Screen
+            <ManagerTab.Screen
                 name='Settings'
                 component={Settings}
                 options={{
                     title: 'Mais'
                 }}
             />
-        </TechnicianTab.Navigator>
+        </ManagerTab.Navigator>
     )
 }
 
-export default Technician
+export default Manager

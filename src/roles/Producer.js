@@ -4,8 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import ProducerHome from '../pages/Producer/ProducerHome'
 import ProducerHistoric from '../pages/Producer/ProducerHistoric'
-import ProducerDeposit from '../pages/Producer/ProducerDeposit'
-import Settings from '../pages/SingleStacks/Settings'
+import Settings from '../pages/Settings'
 
 const ProducerTab = createBottomTabNavigator()
 
@@ -13,10 +12,6 @@ const icons = {
     ProducerHome: {
         lib: MaterialCommunityIcons,
         name: 'home'
-    },
-    ProducerDeposit: {
-        lib: MaterialCommunityIcons,
-        name: 'basket-fill'
     },
     ProducerHistoric: {
         lib: MaterialCommunityIcons,
@@ -58,14 +53,6 @@ const Producer = () => {
                 component={ProducerHome}
                 options={{
                     title: 'Início'
-                }}
-            />
-
-            <ProducerTab.Screen
-                name='ProducerDeposit'
-                component={ProducerDeposit}
-                options={{
-                    title: 'Depósitos'
                 }}
             />
 

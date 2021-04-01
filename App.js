@@ -1,11 +1,13 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
-import { StatusBar } from 'react-native'
+import { StatusBar, LogBox } from 'react-native'
 import { ThemeProvider } from 'styled-components'
 
 import AuthProvider from './src/contexts/auth'
+import RequestProvider from './src/contexts/request'
+import Routes from './src/routes/'
 
-console.disableYellowBox = true
+//LogBox.ignoreAllLogs()
 
 const colors = {
 	producer: '#2a9d8f',
@@ -18,7 +20,10 @@ const App = () => {
 		<ThemeProvider theme={colors}>
 			<NavigationContainer>
 				<AuthProvider>
-					<StatusBar backgroundColor='#292b2c' barStyle='light-content' />
+					<RequestProvider>
+						<StatusBar backgroundColor='#292b2c' barStyle='light-content' />
+						<Routes />
+					</RequestProvider>
 				</AuthProvider>
 			</NavigationContainer>
 		</ThemeProvider>
