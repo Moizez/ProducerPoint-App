@@ -8,7 +8,17 @@ export const Container = styled.SafeAreaView`
 `;
 
 export const Logo = styled.Image`
-    
+    height: 180px;
+    width: 180px;
+`;
+
+export const Title = styled.Text`
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #292b2c;
+    text-align: center;
+    font-weight: bold;
+    font-variant:small-caps;
 `;
 
 export const InputBox = styled.View`

@@ -1,17 +1,20 @@
 import React, { useState, useContext } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Picker } from '@react-native-picker/picker'
-import RNPickerSelect from 'react-native-picker-select';
 import { Formik } from 'formik'
 import * as yup from 'yup'
 
 import { RequestContext } from '../../../contexts/request'
+import Api from '../../../services/api'
 import { activities, periods, products } from './enums'
+import Loader from '../../../components/Loader'
+import WarningModal from '../../../components/Modals/WarningModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
     HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox,
-    ButtonBox, ResetForm, SaveButton, TextButton, Divider
+    ButtonBox, ResetForm, SaveButton, TextButton, Modal, Divider
 } from './styles'
 
 const formSchema = yup.object({
@@ -22,16 +25,58 @@ const formSchema = yup.object({
 
 const ProducerForm = () => {
 
-    const { producers, loadProducers } = useContext(RequestContext)
+    const { loadProducers } = useContext(RequestContext)
+    const navigation = useNavigation()
+
+    let error = require('../../../assets/lottie/error-icon.json')
+    let success = require('../../../assets/lottie/success-icon.json')
 
     const [show, setShow] = useState(false)
     const [datePicker, setDatePicker] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [typeMessage, setTypeMessage] = useState('')
+    const [lottie, setLottie] = useState(error)
     const [selectedDate, setSelectedDate] = useState(new Date())
 
     const [activity, setActivity] = useState('Agricultor')
     const [period, setPeriod] = useState('Semanal')
     const [product, setProduct] = useState('Feijão')
+
+    //Endereço
+    const [zipCode, setZipCode] = useState('')
+    const [city, setCity] = useState('')
+    const [district, setDistrict] = useState('')
+    const [street, setStreet] = useState('')
+    const [uf, setUf] = useState('')
+
+    const getZipCode = async (cep) => {
+        setLoading(true)
+        try {
+            const response = await Api.getCep(cep)
+            const data = await response.json()
+            if (data.error) {
+                setLoading(false)
+                setTypeMessage('CEP não encontrado!')
+                openWarningModal()
+            } else {
+                setShow(true)
+                setZipCode(data.cep)
+                setStreet(data.logradouro)
+                setDistrict(data.bairro)
+                setCity(data.localidade)
+                setUf(data.uf)
+            }
+        } catch (error) {
+            setLoading(false)
+            setTypeMessage('CEP inválido!')
+            openWarningModal()
+        }
+        setLoading(false)
+    }
+
+    const openWarningModal = () => setWarningModal(true)
+    const closeWarningModal = () => setWarningModal(false)
 
     return (
         <Container>
@@ -49,24 +94,30 @@ const ProducerForm = () => {
                             cpf: '',
                             email: '',
                             address: {
-                                zipCode: '',
-                                city: '',
-                                uf: '',
-                                district: '',
-                                street: '',
                                 houseNumber: '',
                                 reference: '',
                             },
                             farmingActivity: {
-                                activityName: '',
-                                productName: '',
-                                period: '',
                                 averageCash: 0
                             }
                         }}
                         validationSchema={null}
-                        onSubmit={(values) => {
-                            console.log(values)
+                        onSubmit={async (values, actions) => {
+                            actions.resetForm()
+                            await Api.createProducer(
+                                values.name, values.nickname, values.phone,
+                                values.cpf, values.email, values.address.houseNumber,
+                                values.address.reference, values.farmingActivity.averageCash,
+                                zipCode, city, district, uf, street
+                            )
+                            setLottie(success)
+                            setTypeMessage('Tanque criado com sucesso!')
+                            openWarningModal()
+                            setTimeout(() => {
+                                closeWarningModal()
+                                loadProducers()
+                                navigation.navigate('ManagerHome')
+                            }, 2000);
                         }}
                     >
                         {(props) => (
@@ -134,6 +185,9 @@ const ProducerForm = () => {
                                     <Input
                                         placeholder='E-mail'
                                         onChangeText={props.handleChange('email')}
+                                        autoCorrect={false}
+                                        autoCapitalize='none'
+                                        keyboardType='email-address'
                                         value={props.values.email}
                                         onBlur={props.handleBlur('email')}
                                     />
@@ -144,14 +198,7 @@ const ProducerForm = () => {
 
                                 <InputsBox>
                                     <HalfInputBox>
-                                        <RNPickerSelect
-                                            onValueChange={(value) => console.log(value)}
-                                            items={[
-                                                { label: 'Football', value: 'football' },
-                                                { label: 'Baseball', value: 'baseball' },
-                                                { label: 'Hockey', value: 'hockey' },
-                                            ]}
-                                        />
+
                                     </HalfInputBox>
 
                                     <HalfInputBox>
@@ -177,44 +224,37 @@ const ProducerForm = () => {
                                             onBlur={props.handleBlur('zipCode')}
                                         />
                                     </InputBox>
-                                    <IconBox activeOpacity={0.7}>
+                                    <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
                                         <Icon name='magnify' size={28} color='#000' />
                                     </IconBox>
                                 </InputsBox>
 
                                 <InputsBox>
-                                    <InputBox style={{
-                                        width: '78%'
-                                    }}>
-                                        {props.values.address.city != '' && <Text>Cidade:</Text>}
+                                    <InputBox style={{ width: '78%' }}>
+                                        {city != '' && <Text>Cidade:</Text>}
                                         <Input
                                             placeholder='Cidade'
-                                            onChangeText={props.handleChange('address.city')}
-                                            value={props.values.address.city}
-                                            onBlur={props.handleBlur('city')}
+                                            onChangeText={setCity}
+                                            value={city}
                                         />
                                     </InputBox>
-                                    <InputBox style={{
-                                        width: '18%'
-                                    }}>
-                                        {props.values.address.uf != '' && <Text>UF:</Text>}
+                                    <InputBox style={{ width: '18%' }}>
+                                        {uf != '' && <Text>UF:</Text>}
                                         <Input
                                             placeholder='UF'
-                                            onChangeText={props.handleChange('address.uf')}
-                                            value={props.values.address.uf}
-                                            onBlur={props.handleBlur('uf')}
+                                            onChangeText={setUf}
+                                            value={uf}
                                         />
 
                                     </InputBox>
                                 </InputsBox>
 
                                 <InputBox>
-                                    {props.values.address.district != '' && <Text>Bairro:</Text>}
+                                    {district != '' && <Text>Bairro:</Text>}
                                     <Input
                                         placeholder='Bairro'
-                                        onChangeText={props.handleChange('address.district')}
-                                        value={props.values.address.district}
-                                        onBlur={props.handleBlur('district')}
+                                        onChangeText={setDistrict}
+                                        value={district}
                                     />
                                 </InputBox>
 
@@ -222,12 +262,11 @@ const ProducerForm = () => {
                                     <InputBox style={{
                                         width: '78%'
                                     }}>
-                                        {props.values.address.street != '' && <Text>Rua:</Text>}
+                                        {street != '' && <Text>Rua:</Text>}
                                         <Input
                                             placeholder='Rua'
-                                            onChangeText={props.handleChange('address.street')}
-                                            value={props.values.address.street}
-                                            onBlur={props.handleBlur('street')}
+                                            onChangeText={setStreet}
+                                            value={street}
                                         />
                                     </InputBox>
                                     <InputBox style={{
@@ -237,10 +276,9 @@ const ProducerForm = () => {
                                         <Input
                                             placeholder='Nº'
                                             onChangeText={props.handleChange('address.houseNumber')}
+                                            keyboardType='phone-pad'
                                             value={props.values.address.houseNumber}
-                                            onBlur={props.handleBlur('houseNumber')}
                                         />
-
                                     </InputBox>
                                 </InputsBox>
 
@@ -249,8 +287,7 @@ const ProducerForm = () => {
                                     <Input
                                         placeholder='Referência'
                                         onChangeText={props.handleChange('address.reference')}
-                                        value={props.values.reference}
-                                        onBlur={props.handleBlur('reference')}
+                                        value={props.values.address.reference}
                                     />
                                 </InputBox>
 
@@ -258,7 +295,7 @@ const ProducerForm = () => {
                                     <SaveButton onPress={props.handleSubmit}>
                                         <TextButton>Salvar</TextButton>
                                     </SaveButton>
-                                    <ResetForm>
+                                    <ResetForm onPress={props.resetForm}>
                                         <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
                                     </ResetForm>
                                 </ButtonBox>
@@ -269,7 +306,21 @@ const ProducerForm = () => {
                     </Formik>
                 </FormContainer>
             </PageBox>
+            {loading && <Loader />}
 
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={warningModal}
+            >
+
+                <WarningModal
+                    closeModal={closeWarningModal}
+                    message={typeMessage}
+                    lottie={lottie}
+                    bgColor={true}
+                />
+            </Modal>
         </Container>
     );
 }

@@ -26,7 +26,65 @@ export default {
             const response = await request.json()
             return response
         } catch (e) {
-            console.log('Erro: getProducers ' + e)
+            console.log('Erro: getAllProducers ' + e)
         }
-    }
+    },
+
+    getCep: async (cep) => {
+        try {
+            const request = await fetch(`${BASE.CEP_API}/${cep}/json`)
+            return request
+        } catch (e) {
+            console.log('Erro: getCep ' + e)
+        }
+    },
+
+    createProducer: async (
+        name, nickname, phone,
+        cpf, email, houseNumber,
+        reference, averageCash,
+        zipCode, city, district, uf, street
+    ) => {
+        try {
+            const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+            headers.append("Accept", 'application/json')
+
+            const data = {
+                name: name,
+                nickname: nickname,
+                phone: phone,
+                cpf: cpf,
+                email: email,
+                address: {
+                    zipCode: zipCode,
+                    city: city,
+                    uf: uf,
+                    district: district,
+                    street: street,
+                    houseNumber: houseNumber,
+                    reference: reference,
+                },
+                farmingActivity: {
+                    averageCash: averageCash,
+                    activityName: 'Agricultor',
+                    productName: 'Feijão',
+                    period: 'Mensal'
+                },
+                manager: {
+                    id: user.id,
+                }
+            }
+
+            await fetch(`${BASE.API}/producers`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+        } catch (e) {
+            console.log('Erro: createProducer ' + e)
+        }
+    },
 }

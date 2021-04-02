@@ -7,7 +7,7 @@ import { AuthContext } from '../../contexts/auth'
 import Input from '../../components/Input'
 
 import {
-	Container, Logo, InputBox, Button, TextButton, Link, TextLink, TextLinkBold
+	Container, Logo, Title, InputBox, Button, TextButton, Link, TextLink, TextLinkBold
 } from './styles'
 
 const SignIn = () => {
@@ -25,7 +25,8 @@ const SignIn = () => {
 
 	return (
 		<Container>
-			<Logo source={require('../../assets/images/mkLogo.png')} />
+			<Logo source={require('../../assets/images/logo.png')} />
+			<Title>producer point</Title>
 
 			<InputBox>
 				<Input
