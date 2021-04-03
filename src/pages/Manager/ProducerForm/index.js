@@ -18,7 +18,7 @@ import {
 } from './styles'
 
 const formSchema = yup.object({
-    name: yup.string().required('O nome do tanque é obrigatório!'),
+    name: yup.string().required('O nome é obrigatório!'),
     phone: yup.string().required('O telefone é obrigatório!'),
     cpf: yup.string().required('O cpf é obrigatório!'),
 })
@@ -126,7 +126,7 @@ const ProducerForm = () => {
                                 zipCode, city, district, uf, street, activity, product, period
                             )
                             setLottie(success)
-                            setTypeMessage('Tanque criado com sucesso!')
+                            setTypeMessage('Produtor criado com sucesso!')
                             openWarningModal()
                             setTimeout(() => {
                                 closeWarningModal()

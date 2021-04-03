@@ -2,6 +2,8 @@ import styled from 'styled-components/native'
 
 export const Container = styled.KeyboardAvoidingView`
     flex: 1;
+    padding-left: 40px;
+    padding-right: 40px;
 `;
 
 export const Titulo = styled.Text`
@@ -13,17 +15,11 @@ export const Titulo = styled.Text`
 
 export const InputContainer = styled.View`
     flex: 1;
-    padding: 45px;
     justify-content: center;
 `;
 
 export const InputBox = styled.View`
     width: 100%;
-    height: 48px;
-    border-radius: 5px;
-    background-color: #DDD;
-    margin-bottom: 10px;
-    justify-content: space-around;
 `;
 
 export const Input = styled.TextInput.attrs({
@@ -35,14 +31,12 @@ export const Input = styled.TextInput.attrs({
     padding-left: 15px;
 `;
 
-export const RecoverButton = styled.TouchableOpacity`
-    align-items: center;
+export const Button = styled.TouchableOpacity`
+    height: 60px;
+    background-color: #007200;
+    border-radius: 30px;
     justify-content: center;
-    background-color: #292b2c;
-    width: 100%;
-    height: 48px;
-    border-radius: 8px;
-    margin-top: 10px;
+    align-items: center;
 `;
 
 export const RecoverText = styled.Text`
@@ -54,7 +48,6 @@ export const CloseButton = styled.TouchableOpacity`
     width: 40px;
     height: 40px;
     margin-top: 20px;
-    margin-left: 20px;
 `;
 
 export const Text = styled.Text`

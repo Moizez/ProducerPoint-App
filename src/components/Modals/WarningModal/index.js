@@ -4,6 +4,8 @@ import LottieView from 'lottie-react-native'
 
 const WarningModal = ({ closeModal, message, lottie, bgColor }) => {
 
+    let error = require('../../../assets/lottie/error-icon.json')
+
     setTimeout(() => {
         closeModal()
     }, 2000);
@@ -14,7 +16,10 @@ const WarningModal = ({ closeModal, message, lottie, bgColor }) => {
             <ModalBox>
                 <ModalInfo>
                     <LottieBox>
-                        <LottieView source={lottie} autoPlay loop />
+                        <LottieView
+                            source={lottie ? lottie : error}
+                            autoPlay loop
+                        />
                     </LottieBox>
                     <Text>{message}</Text>
                 </ModalInfo>

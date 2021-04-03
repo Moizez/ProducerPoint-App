@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import ManagerHome from '../pages/Manager/ManagerHome'
 import SearchProducers from '../pages/Manager/SearchProducers'
 import ProducerForm from '../pages/Manager/ProducerForm'
-import ManagerHistoric from '../pages/Manager/ManagerHistoric'
+import ManagerSchedules from '../pages/Manager/ManagerSchedules'
 import Settings from '../pages/Settings'
 
 import FormButton from '../components/FormButton'
@@ -21,7 +21,7 @@ const icons = {
         lib: MaterialCommunityIcons,
         name: 'magnify'
     },
-    ManagerHistoric: {
+    ManagerSchedules: {
         lib: MaterialCommunityIcons,
         name: 'calendar-month'
     },
@@ -89,8 +89,8 @@ const Manager = () => {
             />
 
             <ManagerTab.Screen
-                name='ManagerHistoric'
-                component={ManagerHistoric}
+                name='ManagerSchedules'
+                component={ManagerSchedules}
                 options={{
                     title: 'Agenda'
                 }}

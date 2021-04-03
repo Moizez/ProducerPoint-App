@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native'
-import LottieView from 'lottie-react-native'
 
 import { AuthContext } from '../../contexts/auth'
 import ActionModal from '../../components/Modals/ActionModal'
+
+import { Container, Header, PageBox } from './styles'
 
 const Settings = () => {
     const { logOut } = useContext(AuthContext)
@@ -21,7 +22,7 @@ const Settings = () => {
     const closeActionModal = () => setActionModal(false)
 
     return (
-        <View style={styles.container}>
+        <Container>
 
             <Modal
                 animationType='fade'
@@ -35,11 +36,11 @@ const Settings = () => {
                 />
             </Modal>
 
-            <View style={styles.header}>
-                <Text style={styles.title}>Informações</Text>
-            </View>
+            <Header>
+                <Text style={styles.title}>Configurações</Text>
+            </Header>
 
-            <View style={styles.itemContainer}>
+            <PageBox>
                 <TouchableOpacity style={styles.item}>
                     <Icon name='bell' color={'#292b2c'} size={35} />
                     <Text style={styles.text}>Notificações</Text>
@@ -79,13 +80,13 @@ const Settings = () => {
                     <Icon name='exit-to-app' color={'#da1e37'} size={35} />
                     <Text style={styles.text}>Sair</Text>
                 </TouchableOpacity>
-            </View>
+            </PageBox>
 
             <View style={styles.versionContainer}>
-                <Text>Milk Point</Text>
-                <Text style={{ color: '#adb5bd' }}>Versão 2020.11.15</Text>
+                <Text>Producer Point</Text>
+                <Text style={{ color: '#adb5bd', marginBottom: 12 }}>Versão 2021.04.03</Text>
             </View>
-        </View >
+        </Container >
     )
 }
 
@@ -119,7 +120,8 @@ const styles = StyleSheet.create({
     },
     versionContainer: {
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#e3e3e3'
     },
 })
 

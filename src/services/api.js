@@ -30,6 +30,16 @@ export default {
         }
     },
 
+    findProducersByNameOrNickname: async (name) => {
+        try {
+            const request = await fetch(`${BASE.API}/producers/findByName0rNickname/${name}`)
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: findProducersByNameOrNickname ' + e)
+        }
+    },
+
     getCep: async (cep) => {
         try {
             const request = await fetch(`${BASE.CEP_API}/${cep}/json`)

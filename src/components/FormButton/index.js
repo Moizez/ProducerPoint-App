@@ -11,8 +11,8 @@ const FormButton = ({ onPress, focused }) => {
                 focused={focused}
                 colors={
                     focused
-                        ? ['#52b788', '#2d6a4f']
-                        : ['#0077b6', '#022c6f']
+                        ? ['#52b788', '#007200']
+                        : ['#495057', '#212529']
                 }
             >
                 <Icon

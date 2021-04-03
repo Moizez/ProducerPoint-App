@@ -7,7 +7,7 @@ import ProducersList from '../ProducersList'
 
 import {
     Container, Header, PageBox, ProfileBox, Avatar, ProfileNameBox, ProfileName,
-    ProfileRole, FlatList, ListTitle, Divider, ListTitleBox
+    ProfileRole, FlatList, ListTitle, Divider, ListTitleBox, EmptyListCard, Title
 } from './styles'
 
 const ManagerHome = () => {
@@ -18,7 +18,6 @@ const ManagerHome = () => {
 
     useEffect(() => {
         const interval = loadProducers()
-
         return () => clearInterval(interval)
     }, [])
 
@@ -46,6 +45,11 @@ const ManagerHome = () => {
                     data={producers}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => <ProducersList data={item} />}
+                    ListEmptyComponent={
+                        <EmptyListCard>
+                            <Title>Sem resultados</Title>
+                        </EmptyListCard>
+                    }
                     ListHeaderComponent={producers &&
                         <Fragment>
                             <ListTitleBox>

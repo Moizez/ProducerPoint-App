@@ -53,9 +53,8 @@ const SignIn = () => {
 
 			</InputBox>
 
-			<Link onPress={() => { }}>
-				<TextLink>Ainda não possui uma conta?</TextLink>
-				<TextLinkBold>Cadastre-se!</TextLinkBold>
+			<Link onPress={() => navigation.navigate('ForgotPassword')}>
+				<TextLink>Esqueceu sua senha? </TextLink>
 			</Link>
 
 		</Container >

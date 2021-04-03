@@ -6,7 +6,7 @@ export const Container = styled.View`
 `;
 
 export const CardBox = styled.TouchableOpacity`
-    background-color: #ced4da;
+    background-color: #d9d9d9;
     margin: 0 10px 0 10px;
     border-radius: 8px;
     padding: 10px;
