@@ -7,7 +7,7 @@ import AuthProvider from './src/contexts/auth'
 import RequestProvider from './src/contexts/request'
 import Routes from './src/routes/'
 
-//LogBox.ignoreAllLogs()
+LogBox.ignoreAllLogs()
 
 const colors = {
 	producer: '#2a9d8f',

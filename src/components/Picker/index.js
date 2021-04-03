@@ -1,69 +1,54 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import React, { useState } from 'react'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { Container , Title, PickerBox} from './styles'
+import {
+    Container, OpenButton, TitleButton, Modal, ModalBox, CloseBox, ModalTitle,
+    PickerBox, ItemText, ModalHeader, CloseButton, ItemButton
+} from './styles'
 
-const Picker = ({title}) => {
+const Picker = ({ title, list, showPicker, setShowPicker, setSelectedPicker }) => {
 
-    const [list, setList] = useState([])
-    const [selectedPicker, setSelectedPicker] = useState('')
-    const [show, setShow] = useState(false)
+    const [text, setText] = useState('')
 
-    const setPickerValue = (value) => {
+    const togglePicker = (value, label) => {
+        setShowPicker(false)
         setSelectedPicker(value)
+        setText(label)
     }
 
-    const openPicker = () => setShow(true)
-    const closePicker = () => setShow(false)
-
-    const pickerValues = [
-        {
-            title: 'Chicken',
-            value: 'chicken'
-        },
-        {
-            title: 'Eggs',
-            value: 'eggs'
-        },
-        {
-            title: 'Vegetables',
-            value: 'vegetables'
-        }
-    ]
-
     return (
-        <Container style={styles.container}>
-            <Title>The default value is {title}</Title>
+        <Container>
+            <OpenButton onPress={() => setShowPicker(true)}>
+                <TitleButton>{text ? text : title}</TitleButton>
+                <Icon name='chevron-down' color='#888' size={30} />
+            </OpenButton>
 
-            <PickerBox>
-                <View style={{
-                    margin: 20, padding: 20,
-                    backgroundColor: '#efefef',
-                    bottom: 20,
-                    left: 20,
-                    right: 20,
-                    alignItems: 'center',
-                    position: 'absolute'
-                }}>
-                    <Text>Please pick a value</Text>
-                    {pickerValues.map((value, index) => {
-                        <TouchableHighlight key={index} onPress={() => setPickerValue(value)} style={{ paddingTop: 4, paddingBottom: 4 }}>
-                            <Text>{value.title}</Text>
-                        </TouchableHighlight>
-                    })}
-                </View>
-            </PickerBox>
+            <Modal visible={showPicker} animationType={"slide"} transparent={true}>
+                <CloseBox onPress={() => setShowPicker(false)} activeOpacity={1} />
+                <ModalBox>
+                    <PickerBox>
+                        <ModalHeader>
+                            <CloseButton onPress={() => setShowPicker(false)}>
+                                <Icon name='chevron-down' color='#FFF' size={40} />
+                            </CloseButton>
+                            <ModalTitle>Qual a atividade do produtor?</ModalTitle>
+                        </ModalHeader>
+                        {list.map((value, index) => {
+                            return (
+                                <ItemButton
+                                    key={index}
+                                    onPress={() => togglePicker(value.value, value.label)}
+                                >
+                                    <ItemText>{value.label}</ItemText>
+                                </ItemButton>
+                            )
+                        })}
+                    </PickerBox>
+                </ModalBox>
+            </Modal>
         </Container>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-});
-
 export default Picker
+

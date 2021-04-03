@@ -22,7 +22,7 @@ export const Title = styled.Text`
 export const PageBox = styled.ScrollView`
     flex: 1;
     background-color: #e3e3e3;
-    border-top-left-radius: 50px;
+    border-top-left-radius: 20px;
     margin-top: -50px;
 `;
 
@@ -149,4 +149,6 @@ export const Divider = styled.View`
     background-color: #CCC;
     margin: 8px 0 15px 0;
 `;
+
+
 

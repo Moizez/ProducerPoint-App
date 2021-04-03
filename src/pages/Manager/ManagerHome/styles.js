@@ -68,7 +68,11 @@ export const FlatList = styled.FlatList`
 export const Divider = styled.View`
     height: 0.5px;
     background-color: #CCC;
-    margin: 8px;
+    margin: 0 20px 10px 20px;
+`;
+
+export const ListTitleBox = styled.View`
+    background-color: #e3e3e3;
 `;
 
 

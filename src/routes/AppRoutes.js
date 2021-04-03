@@ -7,6 +7,9 @@ import { AuthContext } from '../contexts/auth'
 import Producer from '../roles/Producer'
 import Manager from '../roles/Manager'
 
+// Stacks import
+import ProfileDetails from '../pages/ProfileDetails'
+
 
 const Stack = createStackNavigator()
 
@@ -18,6 +21,7 @@ const AppRoutes = () => {
         return (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name='Manager' component={Manager} />
+                <Stack.Screen name='ProfileDetails' component={ProfileDetails} />
             </Stack.Navigator>
         )
 
@@ -25,6 +29,7 @@ const AppRoutes = () => {
         return (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name='Producer' component={Producer} />
+                <Stack.Screen name='ProfileDetails' component={ProfileDetails} />
             </Stack.Navigator>
         )
     }
