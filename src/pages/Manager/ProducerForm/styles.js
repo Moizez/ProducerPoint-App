@@ -60,9 +60,7 @@ export const HalfInputBox = styled.View`
     justify-content: space-around;
 `;
 
-export const Input = styled.TextInput.attrs({
-    placeholderTextColor: '#495057',
-})`
+export const Input = styled.TextInput`
     width: 100%;
     font-size: 18px;
     color: #292b2c;

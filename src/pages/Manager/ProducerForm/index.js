@@ -1,5 +1,7 @@
-import React, { useState, useContext, Fragment } from 'react'
+import React, { useState, useContext, useRef, Fragment } from 'react'
+import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { TextInputMask } from 'react-native-masked-text'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -47,11 +49,13 @@ const ProducerForm = () => {
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
     //Endereço
-    const [zipCode, setZipCode] = useState('')
     const [city, setCity] = useState('')
     const [district, setDistrict] = useState('')
     const [street, setStreet] = useState('')
     const [uf, setUf] = useState('')
+
+    const cpfRef = useRef(null)
+    const moneyRef = useRef(null)
 
     const getZipCode = async (cep) => {
         setLoading(true)
@@ -64,7 +68,6 @@ const ProducerForm = () => {
                 openWarningModal()
             } else {
                 setShow(true)
-                setZipCode(data.cep)
                 setStreet(data.logradouro)
                 setDistrict(data.bairro)
                 setCity(data.localidade)
@@ -82,7 +85,6 @@ const ProducerForm = () => {
         setActivity('')
         setProduct('')
         setPeriod('')
-        setZipCode('')
         setCity('')
         setUf('')
         setDistrict('')
@@ -110,6 +112,7 @@ const ProducerForm = () => {
                             cpf: '',
                             email: '',
                             address: {
+                                zipCode: '',
                                 houseNumber: '',
                                 reference: '',
                             },
@@ -119,12 +122,16 @@ const ProducerForm = () => {
                         }}
                         validationSchema={null}
                         onSubmit={async (values, actions) => {
+                            const cpfValid = cpfRef?.current.isValid()
+                            const money = moneyRef?.current.getRawValue()
+
                             await Api.createProducer(
                                 values.name, values.nickname, values.phone,
-                                values.cpf, values.email, values.address.houseNumber,
-                                values.address.reference, values.farmingActivity.averageCash,
-                                zipCode, city, district, uf, street, activity, product, period
+                                values.cpf, values.email, values.zipCode,
+                                values.address.houseNumber, values.address.reference,
+                                city, district, uf, street, activity, product, period, money
                             )
+
                             setLottie(success)
                             setTypeMessage('Produtor criado com sucesso!')
                             openWarningModal()
@@ -168,7 +175,14 @@ const ProducerForm = () => {
                                 <InputsBox>
                                     <HalfInputBox>
                                         {props.values.phone != '' && <Text>Telefone:</Text>}
-                                        <Input
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'cel-phone'}
+                                            options={{
+                                                maskType: 'BRL',
+                                                withDDD: true,
+                                                dddMask: '(99) '
+                                            }}
                                             placeholder='Telefone'
                                             onChangeText={props.handleChange('phone')}
                                             keyboardType='phone-pad'
@@ -179,7 +193,10 @@ const ProducerForm = () => {
 
                                     <HalfInputBox>
                                         {props.values.cpf != '' && <Text>CPF:</Text>}
-                                        <Input
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'cpf'}
+                                            ref={cpfRef}
                                             placeholder='CPF'
                                             onChangeText={props.handleChange('cpf')}
                                             keyboardType='phone-pad'
@@ -238,7 +255,17 @@ const ProducerForm = () => {
                                 <InputsBox>
                                     <HalfInputBox>
                                         {props.values.farmingActivity.averageCash != '' && <Text>Renda média:</Text>}
-                                        <Input
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'money'}
+                                            options={{
+                                                precision: 2,
+                                                separator: ',',
+                                                delimiter: '.',
+                                                unit: 'R$',
+                                                suffixUnit: ''
+                                            }}
+                                            ref={moneyRef}
                                             placeholder='Renda média'
                                             keyboardType='phone-pad'
                                             onChangeText={props.handleChange('farmingActivity.averageCash')}
@@ -267,7 +294,8 @@ const ProducerForm = () => {
                                         width: '85%'
                                     }}>
                                         {props.values.address.zipCode != '' && <Text>CEP:</Text>}
-                                        <Input
+                                        <TextInputMask
+                                            type={'zip-code'}
                                             placeholder='Somente números'
                                             onChangeText={props.handleChange('address.zipCode')}
                                             keyboardType='phone-pad'
@@ -378,5 +406,14 @@ const ProducerForm = () => {
         </Container>
     );
 }
+
+const styles = StyleSheet.create({
+    input: {
+        width: '100%',
+        fontSize: 18,
+        color: '#292b2c',
+        paddingLeft: 15
+    }
+})
 
 export default ProducerForm
