@@ -2,6 +2,7 @@ import React, { useState, useContext, useRef, Fragment } from 'react'
 import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
+import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Formik } from 'formik'
 import * as yup from 'yup'
@@ -16,7 +17,9 @@ import WarningModal from '../../../components/Modals/WarningModal'
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
     HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox,
-    ButtonBox, ResetForm, SaveButton, TextButton, Modal, Divider, BoldDivider
+    ButtonBox, ResetForm, SaveButton, TextButton, Modal, Divider,
+
+    MultiButton, MultiItemsBox, MultiText, NumberBox, MultiItem, MultiInfo
 } from './styles'
 
 const formSchema = yup.object({
@@ -47,6 +50,9 @@ const ProducerForm = () => {
     const [showProductPicker, setShowProductPicker] = useState(false)
     const [period, setPeriod] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
+
+    const [selectectedItems, setSelectectedItems] = useState([])
+    const [showMultiPicker, setShowMultiPicker] = useState(false)
 
     //Endereço
     const [city, setCity] = useState('')
@@ -89,6 +95,7 @@ const ProducerForm = () => {
         setUf('')
         setDistrict('')
         setStreet('')
+        setSelectectedItems([])
         setShow(false)
     }
 
@@ -96,314 +103,356 @@ const ProducerForm = () => {
     const closeWarningModal = () => setWarningModal(false)
 
     return (
-        <Container>
-            <Header>
-                <Title>Cadastro de Produtor</Title>
-            </Header>
+        <Fragment>
+            <Container>
+                <Header>
+                    <Title>Cadastro de Produtor</Title>
+                </Header>
 
-            <PageBox>
+                <PageBox>
 
-                <FormContainer>
-                    <Formik
-                        initialValues={{
-                            name: '',
-                            nickname: '',
-                            phone: '',
-                            cpf: '',
-                            email: '',
-                            address: {
-                                zipCode: '',
-                                houseNumber: '',
-                                reference: '',
-                            },
-                            farmingActivity: {
-                                averageCash: ''
-                            }
-                        }}
-                        validationSchema={null}
-                        onSubmit={async (values, actions) => {
-                            const cpfValid = cpfRef?.current.isValid()
-                            const money = moneyRef?.current.getRawValue()
-
-                            await Api.createProducer(
-                                values.name, values.nickname, values.phone,
-                                values.cpf, values.email, values.zipCode,
-                                values.address.houseNumber, values.address.reference,
-                                city, district, uf, street, activity, product, period, money
-                            )
-
-                            setLottie(success)
-                            setTypeMessage('Produtor criado com sucesso!')
-                            openWarningModal()
-                            setTimeout(() => {
-                                closeWarningModal()
-                                loadProducers()
-                                navigation.navigate('ManagerHome')
-                            }, 2000);
-                            actions.resetForm()
-                            resetAllInputs()
-                        }}
-                    >
-                        {(props) => (
-                            <FormBox>
-                                <FormTitle style={{ marginTop: 10 }}>Dados Pessoais</FormTitle>
-                                <Divider />
-
-                                <InputBox>
-                                    {props.values.name != '' && <Text>Nome:</Text>}
-                                    <Input
-                                        placeholder='Nome do produtor'
-                                        onChangeText={props.handleChange('name')}
-                                        value={props.values.name}
-                                        onBlur={props.handleBlur('name')}
-                                    />
-                                </InputBox>
-                                {props.touched.name && props.errors.name &&
-                                    <ErrorText>{props.errors.name}</ErrorText>
+                    <FormContainer>
+                        <Formik
+                            initialValues={{
+                                name: '',
+                                nickname: '',
+                                phone: '',
+                                cpf: '',
+                                email: '',
+                                address: {
+                                    zipCode: '',
+                                    houseNumber: '',
+                                    reference: '',
+                                },
+                                farmingActivity: {
+                                    averageCash: ''
                                 }
+                            }}
+                            validationSchema={formSchema}
+                            onSubmit={async (values, actions) => {
+                                const cpfValid = cpfRef?.current.isValid()
+                                const money = moneyRef?.current.getRawValue()
 
-                                <InputBox>
-                                    {props.values.nickname != '' && <Text>Apelido:</Text>}
-                                    <Input
-                                        placeholder='Apelido do produtor'
-                                        onChangeText={props.handleChange('nickname')}
-                                        value={props.values.nickname}
-                                        onBlur={props.handleBlur('nickname')}
-                                    />
-                                </InputBox>
+                                await Api.createProducer(
+                                    values.name, values.nickname, values.phone,
+                                    values.cpf, values.email, values.zipCode,
+                                    values.address.houseNumber, values.address.reference,
+                                    city, district, uf, street, activity, product, period, money
+                                )
 
-                                <InputsBox>
-                                    <HalfInputBox>
-                                        {props.values.phone != '' && <Text>Telefone:</Text>}
-                                        <TextInputMask
-                                            style={styles.input}
-                                            type={'cel-phone'}
-                                            options={{
-                                                maskType: 'BRL',
-                                                withDDD: true,
-                                                dddMask: '(99) '
-                                            }}
-                                            placeholder='Telefone'
-                                            onChangeText={props.handleChange('phone')}
-                                            keyboardType='phone-pad'
-                                            value={props.values.phone}
-                                            onBlur={props.handleBlur('phone')}
-                                        />
-                                    </HalfInputBox>
+                                setLottie(success)
+                                setTypeMessage('Produtor criado com sucesso!')
+                                openWarningModal()
+                                setTimeout(() => {
+                                    closeWarningModal()
+                                    loadProducers()
+                                    navigation.navigate('ManagerHome')
+                                }, 2000);
+                                actions.resetForm()
+                                resetAllInputs()
+                            }}
+                        >
+                            {(props) => (
+                                <FormBox>
+                                    <FormTitle style={{ marginTop: 10 }}>Dados Pessoais</FormTitle>
+                                    <Divider />
 
-                                    <HalfInputBox>
-                                        {props.values.cpf != '' && <Text>CPF:</Text>}
-                                        <TextInputMask
-                                            style={styles.input}
-                                            type={'cpf'}
-                                            ref={cpfRef}
-                                            placeholder='CPF'
-                                            onChangeText={props.handleChange('cpf')}
-                                            keyboardType='phone-pad'
-                                            value={props.values.cpf}
-                                            onBlur={props.handleBlur('cpf')}
-                                        />
-                                    </HalfInputBox>
-                                </InputsBox>
-                                <ErrorBox>
-                                    {props.touched.phone && props.errors.phone &&
-                                        <ErrorText style={{ width: '48%' }}>{props.errors.phone}</ErrorText>
-                                    }
-                                    {props.touched.cpf && props.errors.cpf &&
-                                        <ErrorText style={{ width: '48%', marginLeft: 8 }}>{props.errors.cpf}</ErrorText>
-                                    }
-                                </ErrorBox>
-
-                                <InputBox>
-                                    {props.values.email != '' && <Text>E-mail:</Text>}
-                                    <Input
-                                        placeholder='E-mail'
-                                        onChangeText={props.handleChange('email')}
-                                        autoCorrect={false}
-                                        autoCapitalize='none'
-                                        keyboardType='email-address'
-                                        value={props.values.email}
-                                        onBlur={props.handleBlur('email')}
-                                    />
-                                </InputBox>
-
-                                <FormTitle>Atividade</FormTitle>
-                                <Divider />
-
-                                <InputsBox>
-                                    <HalfInputBox>
-                                        <Picker
-                                            title={'Atividade?'}
-                                            showPicker={showActivityPicker}
-                                            setShowPicker={setShowActivityPicker}
-                                            list={activities}
-                                            setSelectedPicker={setActivity}
-                                        />
-                                    </HalfInputBox>
-
-                                    <HalfInputBox>
-                                        <Picker
-                                            title={'Produto?'}
-                                            showPicker={showProductPicker}
-                                            setShowPicker={setShowProductPicker}
-                                            list={products}
-                                            setSelectedPicker={setProduct}
-                                        />
-                                    </HalfInputBox>
-                                </InputsBox>
-
-                                <InputsBox>
-                                    <HalfInputBox>
-                                        {props.values.farmingActivity.averageCash != '' && <Text>Renda média:</Text>}
-                                        <TextInputMask
-                                            style={styles.input}
-                                            type={'money'}
-                                            options={{
-                                                precision: 2,
-                                                separator: ',',
-                                                delimiter: '.',
-                                                unit: 'R$',
-                                                suffixUnit: ''
-                                            }}
-                                            ref={moneyRef}
-                                            placeholder='Renda média'
-                                            keyboardType='phone-pad'
-                                            onChangeText={props.handleChange('farmingActivity.averageCash')}
-                                            value={props.values.farmingActivity.averageCash}
-                                        />
-                                    </HalfInputBox>
-
-                                    <HalfInputBox>
-                                        <Picker
-                                            title={'Período?'}
-                                            showPicker={showPeriodPicker}
-                                            setShowPicker={setShowPeriodPicker}
-                                            list={periods}
-                                            setSelectedPicker={setPeriod}
-                                        />
-                                    </HalfInputBox>
-                                </InputsBox>
-
-                                <FormTitle>Endereço</FormTitle>
-                                <Divider />
-
-                                <InputsBox>
-                                    <InputBox style={{
-                                        borderTopEndRadius: 0,
-                                        borderBottomEndRadius: 0,
-                                        width: '85%'
-                                    }}>
-                                        {props.values.address.zipCode != '' && <Text>CEP:</Text>}
-                                        <TextInputMask
-                                            type={'zip-code'}
-                                            placeholder='Somente números'
-                                            onChangeText={props.handleChange('address.zipCode')}
-                                            keyboardType='phone-pad'
-                                            value={props.values.address.zipCode}
+                                    <InputBox>
+                                        {props.values.name != '' && <Text>Nome:</Text>}
+                                        <Input
+                                            placeholder='Nome do produtor'
+                                            onChangeText={props.handleChange('name')}
+                                            value={props.values.name}
+                                            onBlur={props.handleBlur('name')}
                                         />
                                     </InputBox>
-                                    <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
-                                        <Icon name='magnify' size={28} color='#000' />
-                                    </IconBox>
-                                </InputsBox>
+                                    {props.touched.name && props.errors.name &&
+                                        <ErrorText>{props.errors.name}</ErrorText>
+                                    }
 
-                                {show &&
-                                    <Fragment>
-                                        <InputsBox>
-                                            <InputBox style={{ width: '78%' }}>
-                                                {city != '' && <Text>Cidade:</Text>}
-                                                <Input
-                                                    placeholder='Cidade'
-                                                    onChangeText={setCity}
-                                                    value={city}
-                                                />
-                                            </InputBox>
-                                            <InputBox style={{ width: '18%' }}>
-                                                {uf != '' && <Text>UF:</Text>}
-                                                <Input
-                                                    placeholder='UF'
-                                                    onChangeText={setUf}
-                                                    value={uf}
-                                                />
+                                    <InputBox>
+                                        {props.values.nickname != '' && <Text>Apelido:</Text>}
+                                        <Input
+                                            placeholder='Apelido do produtor'
+                                            onChangeText={props.handleChange('nickname')}
+                                            value={props.values.nickname}
+                                            onBlur={props.handleBlur('nickname')}
+                                        />
+                                    </InputBox>
 
-                                            </InputBox>
-                                        </InputsBox>
+                                    <InputsBox>
+                                        <HalfInputBox>
+                                            {props.values.phone != '' && <Text>Telefone:</Text>}
+                                            <TextInputMask
+                                                style={styles.input}
+                                                type={'cel-phone'}
+                                                options={{
+                                                    maskType: 'BRL',
+                                                    withDDD: true,
+                                                    dddMask: '(99) '
+                                                }}
+                                                placeholder='Telefone'
+                                                onChangeText={props.handleChange('phone')}
+                                                keyboardType='phone-pad'
+                                                value={props.values.phone}
+                                                onBlur={props.handleBlur('phone')}
+                                            />
+                                        </HalfInputBox>
 
-                                        <InputBox>
-                                            {district != '' && <Text>Bairro:</Text>}
-                                            <Input
-                                                placeholder='Bairro'
-                                                onChangeText={setDistrict}
-                                                value={district}
+                                        <HalfInputBox>
+                                            {props.values.cpf != '' && <Text>CPF:</Text>}
+                                            <TextInputMask
+                                                style={styles.input}
+                                                type={'cpf'}
+                                                ref={cpfRef}
+                                                placeholder='CPF'
+                                                onChangeText={props.handleChange('cpf')}
+                                                keyboardType='phone-pad'
+                                                value={props.values.cpf}
+                                                onBlur={props.handleBlur('cpf')}
+                                            />
+                                        </HalfInputBox>
+                                    </InputsBox>
+                                    <ErrorBox>
+                                        {props.touched.phone && props.errors.phone &&
+                                            <ErrorText style={{ width: '48%' }}>{props.errors.phone}</ErrorText>
+                                        }
+                                        {props.touched.cpf && props.errors.cpf &&
+                                            <ErrorText style={{ width: '48%', marginLeft: 8 }}>{props.errors.cpf}</ErrorText>
+                                        }
+                                    </ErrorBox>
+
+                                    <InputBox>
+                                        {props.values.email != '' && <Text>E-mail:</Text>}
+                                        <Input
+                                            placeholder='E-mail'
+                                            onChangeText={props.handleChange('email')}
+                                            autoCorrect={false}
+                                            autoCapitalize='none'
+                                            keyboardType='email-address'
+                                            value={props.values.email}
+                                            onBlur={props.handleBlur('email')}
+                                        />
+                                    </InputBox>
+
+                                    <FormTitle>Atividade</FormTitle>
+                                    <Divider />
+
+                                    <InputsBox>
+                                        <HalfInputBox>
+                                            <Picker
+                                                title={'Atividade?'}
+                                                modalTitle={'Qual a atividade do produtor?'}
+                                                showPicker={showActivityPicker}
+                                                setShowPicker={setShowActivityPicker}
+                                                list={activities}
+                                                setSelectedPicker={setActivity}
+                                            />
+                                        </HalfInputBox>
+
+                                        <HalfInputBox>
+                                            <MultiButton
+                                                onPress={() => setShowMultiPicker(!showMultiPicker)}
+                                                onLongPress={() => setSelectectedItems([])}
+                                            >
+                                                <MultiText>Produtos?</MultiText>
+                                                {selectectedItems.length > 0 ?
+                                                    <NumberBox>
+                                                        <MultiText>
+                                                            {selectectedItems.length}
+                                                        </MultiText>
+                                                    </NumberBox> :
+                                                    <Icon name='chevron-down' color='#888' size={30} />
+                                                }
+                                            </MultiButton>
+                                        </HalfInputBox>
+                                    </InputsBox>
+
+                                    <InputsBox>
+                                        <HalfInputBox>
+                                            {props.values.farmingActivity.averageCash != '' && <Text>Renda média:</Text>}
+                                            <TextInputMask
+                                                style={styles.input}
+                                                type={'money'}
+                                                options={{
+                                                    precision: 2,
+                                                    separator: ',',
+                                                    delimiter: '.',
+                                                    unit: 'R$',
+                                                    suffixUnit: ''
+                                                }}
+                                                ref={moneyRef}
+                                                placeholder='Renda média'
+                                                keyboardType='phone-pad'
+                                                onChangeText={props.handleChange('farmingActivity.averageCash')}
+                                                value={props.values.farmingActivity.averageCash}
+                                            />
+                                        </HalfInputBox>
+
+                                        <HalfInputBox>
+                                            <Picker
+                                                title={'Período?'}
+                                                modalTitle={'Qual o período base da renda?'}
+                                                showPicker={showPeriodPicker}
+                                                setShowPicker={setShowPeriodPicker}
+                                                list={periods}
+                                                setSelectedPicker={setPeriod}
+                                            />
+                                        </HalfInputBox>
+                                    </InputsBox>
+
+                                    <FormTitle>Endereço</FormTitle>
+                                    <Divider />
+
+                                    <InputsBox>
+                                        <InputBox style={{
+                                            borderTopEndRadius: 0,
+                                            borderBottomEndRadius: 0,
+                                            width: '85%'
+                                        }}>
+                                            {props.values.address.zipCode != '' && <Text>CEP:</Text>}
+                                            <TextInputMask
+                                                type={'zip-code'}
+                                                style={styles.input}
+                                                placeholder='Somente números'
+                                                onChangeText={props.handleChange('address.zipCode')}
+                                                keyboardType='phone-pad'
+                                                value={props.values.address.zipCode}
                                             />
                                         </InputBox>
+                                        <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
+                                            <Icon name='magnify' size={28} color='#000' />
+                                        </IconBox>
+                                    </InputsBox>
 
-                                        <InputsBox>
-                                            <InputBox style={{
-                                                width: '78%'
-                                            }}>
-                                                {street != '' && <Text>Rua:</Text>}
+                                    {show &&
+                                        <Fragment>
+                                            <InputsBox>
+                                                <InputBox style={{ width: '78%' }}>
+                                                    {city != '' && <Text>Cidade:</Text>}
+                                                    <Input
+                                                        placeholder='Cidade'
+                                                        onChangeText={setCity}
+                                                        value={city}
+                                                    />
+                                                </InputBox>
+                                                <InputBox style={{ width: '18%' }}>
+                                                    {uf != '' && <Text>UF:</Text>}
+                                                    <Input
+                                                        placeholder='UF'
+                                                        onChangeText={setUf}
+                                                        value={uf}
+                                                    />
+
+                                                </InputBox>
+                                            </InputsBox>
+
+                                            <InputBox>
+                                                {district != '' && <Text>Bairro:</Text>}
                                                 <Input
-                                                    placeholder='Rua'
-                                                    onChangeText={setStreet}
-                                                    value={street}
+                                                    placeholder='Bairro'
+                                                    onChangeText={setDistrict}
+                                                    value={district}
                                                 />
                                             </InputBox>
-                                            <InputBox style={{
-                                                width: '18%'
-                                            }}>
-                                                {props.values.address.houseNumber != '' && <Text>Nº:</Text>}
+
+                                            <InputsBox>
+                                                <InputBox style={{
+                                                    width: '78%'
+                                                }}>
+                                                    {street != '' && <Text>Rua:</Text>}
+                                                    <Input
+                                                        placeholder='Rua'
+                                                        onChangeText={setStreet}
+                                                        value={street}
+                                                    />
+                                                </InputBox>
+                                                <InputBox style={{
+                                                    width: '18%'
+                                                }}>
+                                                    {props.values.address.houseNumber != '' && <Text>Nº:</Text>}
+                                                    <Input
+                                                        placeholder='Nº'
+                                                        onChangeText={props.handleChange('address.houseNumber')}
+                                                        keyboardType='phone-pad'
+                                                        value={props.values.address.houseNumber}
+                                                    />
+                                                </InputBox>
+                                            </InputsBox>
+
+                                            <InputBox>
+                                                {props.values.address.reference != '' && <Text>Referência:</Text>}
                                                 <Input
-                                                    placeholder='Nº'
-                                                    onChangeText={props.handleChange('address.houseNumber')}
-                                                    keyboardType='phone-pad'
-                                                    value={props.values.address.houseNumber}
+                                                    placeholder='Referência'
+                                                    onChangeText={props.handleChange('address.reference')}
+                                                    value={props.values.address.reference}
                                                 />
                                             </InputBox>
-                                        </InputsBox>
+                                        </Fragment>
+                                    }
 
-                                        <InputBox>
-                                            {props.values.address.reference != '' && <Text>Referência:</Text>}
-                                            <Input
-                                                placeholder='Referência'
-                                                onChangeText={props.handleChange('address.reference')}
-                                                value={props.values.address.reference}
-                                            />
-                                        </InputBox>
-                                    </Fragment>
-                                }
+                                    <ButtonBox>
+                                        <SaveButton onPress={props.handleSubmit}>
+                                            <TextButton>Salvar</TextButton>
+                                        </SaveButton>
+                                        <ResetForm onPress={props.resetForm}>
+                                            <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
+                                        </ResetForm>
+                                    </ButtonBox>
 
-                                <ButtonBox>
-                                    <SaveButton onPress={props.handleSubmit}>
-                                        <TextButton>Salvar</TextButton>
-                                    </SaveButton>
-                                    <ResetForm onPress={props.resetForm}>
-                                        <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
-                                    </ResetForm>
-                                </ButtonBox>
+                                </FormBox>
+                            )}
 
-                            </FormBox>
-                        )}
+                        </Formik>
+                    </FormContainer>
+                </PageBox>
+                {loading && <Loader />}
 
-                    </Formik>
-                </FormContainer>
-            </PageBox>
-            {loading && <Loader />}
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={warningModal}
+                >
 
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={warningModal}
-            >
+                    <WarningModal
+                        closeModal={closeWarningModal}
+                        message={typeMessage}
+                        lottie={lottie}
+                        bgColor={true}
+                    />
+                </Modal>
 
-                <WarningModal
-                    closeModal={closeWarningModal}
-                    message={typeMessage}
-                    lottie={lottie}
-                    bgColor={true}
-                />
-            </Modal>
-        </Container>
+            </Container>
+
+            {showMultiPicker &&
+                <Fragment>
+
+                    <MultipleSelectPicker
+                        items={products}
+                        onSelectionsChange={(item) => setSelectectedItems(item)}
+                        selectedItems={selectectedItems}
+                    />
+
+                    <MultiInfo>
+                        <MultiItemsBox>
+                            {(selectectedItems || []).map(i => {
+                                return (
+                                    <MultiItem>
+                                        <MultiText style={{ fontSize: 12 }}>{i.label}</MultiText>
+                                    </MultiItem>
+                                )
+                            })}
+                        </MultiItemsBox>
+                        <SaveButton
+                            onPress={() => setShowMultiPicker(!showMultiPicker)}
+                            style={{ marginTop: 5 }}
+                        >
+                            <MultiText style={{ color: '#FFF', fontWeight: 'bold' }}>OK</MultiText>
+                        </SaveButton>
+                    </MultiInfo>
+                </Fragment>
+            }
+        </Fragment>
     );
 }
 

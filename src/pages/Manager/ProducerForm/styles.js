@@ -141,6 +141,52 @@ export const TextButton = styled.Text`
 
 export const Modal = styled.Modal``;
 
+export const MultiButton = styled.TouchableOpacity`
+    flex: 1;
+    border-radius: 5px;
+    flex-direction: row;
+    background-color: #CCC;
+    align-items: center;
+    justify-content: space-around;
+`;
+
+export const MultiBox = styled.ScrollView`
+    height: 100%;
+`;
+
+export const MultiItemsBox = styled.View`
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+`;
+
+export const MultiItem = styled.View`
+    background-color: #e3e3e3;
+    margin: 10px 3px 0 3px;
+    padding: 5px;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const MultiInfo = styled.View`
+    background-color: ${props => props.theme.main};
+    padding: 10px;
+`;
+
+export const NumberBox = styled.View`
+    height: 30px;
+    width: 30px;
+    border-radius: 15px;
+    background-color: #2a9d8f;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const MultiText = styled.Text`
+    font-size: 16px;
+`;
+
 export const Divider = styled.View`
     width: 85%;    
     height: 0.5px;

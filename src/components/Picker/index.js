@@ -6,7 +6,7 @@ import {
     PickerBox, ItemText, ModalHeader, CloseButton, ItemButton
 } from './styles'
 
-const Picker = ({ title, list, showPicker, setShowPicker, setSelectedPicker }) => {
+const Picker = ({ title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker }) => {
 
     const [text, setText] = useState('')
 
@@ -31,7 +31,7 @@ const Picker = ({ title, list, showPicker, setShowPicker, setSelectedPicker }) =
                             <CloseButton onPress={() => setShowPicker(false)}>
                                 <Icon name='chevron-down' color='#FFF' size={40} />
                             </CloseButton>
-                            <ModalTitle>Qual a atividade do produtor?</ModalTitle>
+                            <ModalTitle>{modalTitle}</ModalTitle>
                         </ModalHeader>
                         {list.map((value, index) => {
                             return (
