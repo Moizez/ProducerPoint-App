@@ -12,6 +12,7 @@ const ProducersList = ({ data }) => {
             <CardBox
                 style={{ elevation: 5 }}
                 onPress={() => navigation.navigate('ProfileDetails', { data: data })}
+                onLongPress={() => navigation.navigate('ProducerUpdate', { data: data })}
             >
                 <BoldText>Nome: <Text>{data.name}</Text></BoldText>
                 <BoldText>Apelido: <Text>{data.nickname}</Text></BoldText>

@@ -29,7 +29,9 @@ const formSchema = yup.object({
     birthDate: yup.string().required('A data de nascimento é obrigatória!'),
 })
 
-const ProducerForm = () => {
+const ProducerUpdate = ({ route }) => {
+
+    const { data } = route.params
 
     const { loadProducers } = useContext(RequestContext)
     const navigation = useNavigation()
@@ -109,7 +111,7 @@ const ProducerForm = () => {
         <Fragment>
             <Container>
                 <Header>
-                    <Title>Cadastro de Produtor</Title>
+                    <Title>Edição de Produtor</Title>
                 </Header>
 
                 <PageBox>
@@ -117,12 +119,11 @@ const ProducerForm = () => {
                     <FormContainer>
                         <Formik
                             initialValues={{
-                                name: '',
-                                nickname: '',
-                                birthDate: '',
-                                phone: '',
-                                cpf: '',
-                                email: '',
+                                name: data.name,
+                                nickname: data.nickname,
+                                phone: data.phone,
+                                cpf: data.cpf,
+                                email: data.email,
                                 address: {
                                     zipCode: '',
                                     houseNumber: '',
@@ -143,7 +144,7 @@ const ProducerForm = () => {
                                     setLottie(error)
                                     setTypeMessage('Data inválida!')
                                     openWarningModal()
-                                }else if (values.phone.length < 14) {
+                                } else if (values.phone.length < 14) {
                                     setLottie(error)
                                     setTypeMessage('Número incompleto!')
                                     openWarningModal()
@@ -528,4 +529,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ProducerForm
+export default ProducerUpdate

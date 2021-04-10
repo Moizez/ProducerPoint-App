@@ -9,7 +9,7 @@ import Manager from '../roles/Manager'
 
 // Stacks import
 import ProfileDetails from '../pages/ProfileDetails'
-
+import ProducerUpdate from '../pages/Manager/ProducerUpdate'
 
 const Stack = createStackNavigator()
 
@@ -22,6 +22,7 @@ const AppRoutes = () => {
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name='Manager' component={Manager} />
                 <Stack.Screen name='ProfileDetails' component={ProfileDetails} />
+                <Stack.Screen name='ProducerUpdate' component={ProducerUpdate} />
             </Stack.Navigator>
         )
 
