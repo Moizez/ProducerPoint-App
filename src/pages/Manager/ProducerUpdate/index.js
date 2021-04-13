@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import { format } from 'date-fns'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 
@@ -35,23 +36,21 @@ const ProducerUpdate = ({ route }) => {
 
     const { loadProducers } = useContext(RequestContext)
     const navigation = useNavigation()
+    const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
 
     let error = require('../../../assets/lottie/error-icon.json')
     let success = require('../../../assets/lottie/success-icon.json')
 
     const [show, setShow] = useState(false)
-    const [datePicker, setDatePicker] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
-    const [selectedDate, setSelectedDate] = useState(new Date())
 
-    const [activity, setActivity] = useState('')
+    const [activity, setActivity] = useState(data.farmingActivity.activityName)
     const [showActivityPicker, setShowActivityPicker] = useState(false)
-    const [product, setProduct] = useState('')
-    const [showProductPicker, setShowProductPicker] = useState(false)
-    const [period, setPeriod] = useState('')
+    const [product, setProduct] = useState('Feijão')
+    const [period, setPeriod] = useState(data.farmingActivity.period)
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
     const [selectectedItems, setSelectectedItems] = useState([])
@@ -121,19 +120,20 @@ const ProducerUpdate = ({ route }) => {
                             initialValues={{
                                 name: data.name,
                                 nickname: data.nickname,
+                                birthDate: birthDate,
                                 phone: data.phone,
                                 cpf: data.cpf,
                                 email: data.email,
                                 address: {
-                                    zipCode: '',
+                                    zipCode: data.address.zipCode,
                                     houseNumber: '',
                                     reference: '',
                                 },
                                 farmingActivity: {
-                                    averageCash: ''
+                                    averageCash: '0'
                                 }
                             }}
-                            validationSchema={formSchema}
+                            validationSchema={null}
                             onSubmit={async (values, actions) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
@@ -156,11 +156,11 @@ const ProducerUpdate = ({ route }) => {
                                     setLottie(error)
                                     setTypeMessage('Informe a atividade!')
                                     openWarningModal()
-                                } else if (!selectectedItems || selectectedItems == 0) {
+                                } /*else if (!selectectedItems || selectectedItems == 0) {
                                     setLottie(error)
                                     setTypeMessage('Informe pelo menos um produto!')
                                     openWarningModal()
-                                } else if (!period) {
+                                } */else if (!period) {
                                     setLottie(error)
                                     setTypeMessage('Informe o período!')
                                     openWarningModal()
@@ -170,12 +170,12 @@ const ProducerUpdate = ({ route }) => {
                                     openWarningModal()
                                 } else {
 
-                                    await Api.createProducer(
-                                        values.name, values.nickname, values.phone,
-                                        values.cpf, values.email, values.zipCode,
+                                    await Api.updateProducer(
+                                        data.id, values.name, values.nickname, birthDate,
+                                        values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        city, district, uf, street, activity, product, period,
-                                        averageCash, birthDate
+                                        averageCash, values.address.zipCode, city, district,
+                                        uf, street, activity, product, period
                                     )
 
                                     setLottie(success)

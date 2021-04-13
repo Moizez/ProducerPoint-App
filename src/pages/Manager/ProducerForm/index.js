@@ -38,17 +38,14 @@ const ProducerForm = () => {
     let success = require('../../../assets/lottie/success-icon.json')
 
     const [show, setShow] = useState(false)
-    const [datePicker, setDatePicker] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
-    const [selectedDate, setSelectedDate] = useState(new Date())
 
     const [activity, setActivity] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
     const [product, setProduct] = useState('')
-    const [showProductPicker, setShowProductPicker] = useState(false)
     const [period, setPeriod] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
@@ -170,11 +167,11 @@ const ProducerForm = () => {
                                 } else {
 
                                     await Api.createProducer(
-                                        values.name, values.nickname, values.phone,
-                                        values.cpf, values.email, values.zipCode,
+                                        values.name, values.nickname, birthDate,
+                                        values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        city, district, uf, street, activity, product, period,
-                                        averageCash, birthDate
+                                        averageCash, values.address.zipCode, city, district,
+                                        uf, street, activity, product, period
                                     )
 
                                     setLottie(success)

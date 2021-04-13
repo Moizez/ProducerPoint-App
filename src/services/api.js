@@ -50,9 +50,8 @@ export default {
     },
 
     createProducer: async (
-        name, nickname, phone, cpf, email, houseNumber,
-        reference, averageCash, zipCode, city, district,
-        uf, street, activityName, productName, period
+        name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
+        zipCode, city, district, uf, street, activityName, productName, period
     ) => {
         try {
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
@@ -64,6 +63,7 @@ export default {
             const data = {
                 name: name,
                 nickname: nickname,
+                birthDate: birthDate,
                 phone: phone,
                 cpf: cpf,
                 email: email,
@@ -79,7 +79,7 @@ export default {
                 farmingActivity: {
                     averageCash: parseFloat(averageCash),
                     activityName: activityName,
-                    productName: productName,
+                    productName: 'Feijão',
                     period: period
                 },
                 manager: {
@@ -94,6 +94,58 @@ export default {
             })
         } catch (e) {
             console.log('Erro: createProducer ' + e)
+        }
+    },
+
+    updateProducer: async (
+        id, name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
+        zipCode, city, district, uf, street, activityName, productName, period
+    ) => {
+        try {
+
+            console.log(id, name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
+                zipCode, city, district, uf, street, activityName, productName, period)
+
+            const user = await JSON.parse(await AsyncStorage.getItem('@milkpoint:user')) || []
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+            headers.append("Accept", 'application/json')
+
+            const data = {
+                name: name,
+                nickname: nickname,
+                birthDate: birthDate,
+                phone: phone,
+                cpf: cpf,
+                email: email,
+                address: {
+                    zipCode: zipCode,
+                    city: city,
+                    uf: uf,
+                    district: district,
+                    street: street,
+                    houseNumber: houseNumber,
+                    reference: reference,
+                },
+                farmingActivity: {
+                    averageCash: parseFloat(averageCash),
+                    activityName: activityName,
+                    productName: 'Feijão',
+                    period: period
+                },
+                manager: {
+                    id: user.id,
+                }
+            }
+
+            await fetch(`${BASE.API}/producers${id}`, {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+        } catch (e) {
+            console.log('Erro: updateProducer ' + e)
         }
     },
 }

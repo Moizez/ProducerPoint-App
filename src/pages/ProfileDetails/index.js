@@ -1,6 +1,7 @@
 import React from 'react'
 import { useNavigation } from '@react-navigation/native'
-
+import { MaskService } from 'react-native-masked-text'
+import { format } from 'date-fns'
 
 import {
     Container, Header, PageBox, Title, ProfileBox, Avatar, ProfileNameBox, ProfileName,
@@ -11,6 +12,12 @@ const ProfileDetails = ({ route }) => {
 
     const { data } = route.params
     const navigation = useNavigation()
+    const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
+    const income = MaskService.toMask('money', data.farmingActivity.averageCash, {
+        unit: 'R$ ',
+        separator: ',',
+        delimiter: '.'
+    })
 
     return (
         <Container>
@@ -29,12 +36,12 @@ const ProfileDetails = ({ route }) => {
                     <Divider />
                     <InfoBox>
                         <BoldText>Apelido: <Text>{data.nickname}</Text></BoldText>
-                        <BoldText>Nascimento: <Text>15/12/1996</Text></BoldText>
+                        <BoldText>Nascimento: <Text>{birthDate}</Text></BoldText>
                         <BoldText>Telefone: <Text>{data.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data.email}</Text></BoldText>
                         <BoldText>Atividade: <Text>{data.farmingActivity.activityName}</Text></BoldText>
                         <BoldText>Principal produto: <Text>{data.farmingActivity.productName}</Text></BoldText>
-                        <BoldText>Renda média: <Text>{data.farmingActivity.averageCash}</Text></BoldText>
+                        <BoldText>Renda média: <Text>{income}</Text></BoldText>
                         <BoldText>Período: <Text>{data.farmingActivity.period}</Text></BoldText>
                     </InfoBox>
 
