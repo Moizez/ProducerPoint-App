@@ -88,7 +88,7 @@ export const IconBox = styled.TouchableOpacity`
     align-items: center;
     justify-content: center;
     margin-right: 25px;
-    background-color: #BBB;
+    background-color: #5c5c5c;
     border-bottom-right-radius: 5px;
     border-top-right-radius: 5px;
 `;

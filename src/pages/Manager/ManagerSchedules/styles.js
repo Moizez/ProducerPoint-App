@@ -13,7 +13,7 @@ export const Header = styled.SafeAreaView`
 `;
 
 export const Title = styled.Text`
-    color: #5c5c5c;
+    color: #FFF;
     font-size: 20px;
 `;
 

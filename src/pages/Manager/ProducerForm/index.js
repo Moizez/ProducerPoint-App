@@ -402,7 +402,7 @@ const ProducerForm = () => {
                                             />
                                         </InputBox>
                                         <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
-                                            <Icon name='magnify' size={28} color='#000' />
+                                            <Icon name='magnify' size={28} color='#FFF' />
                                         </IconBox>
                                     </InputsBox>
 
