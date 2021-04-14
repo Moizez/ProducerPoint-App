@@ -19,6 +19,10 @@ const ProfileDetails = ({ route }) => {
         delimiter: '.'
     })
 
+    const products = data.products.map(i => i.label)
+
+    console.log(products)
+
     return (
         <Container>
             <Header />
@@ -40,7 +44,7 @@ const ProfileDetails = ({ route }) => {
                         <BoldText>Telefone: <Text>{data.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data.email}</Text></BoldText>
                         <BoldText>Atividade: <Text>{data.farmingActivity.activityName}</Text></BoldText>
-                        <BoldText>Principal produto: <Text>{data.farmingActivity.productName}</Text></BoldText>
+                        <BoldText>Produto{products.length > 1 && 's'}: <Text>{products.join(', ')}</Text></BoldText>
                         <BoldText>Renda média: <Text>{income}</Text></BoldText>
                         <BoldText>Período: <Text>{data.farmingActivity.period}</Text></BoldText>
                     </InfoBox>

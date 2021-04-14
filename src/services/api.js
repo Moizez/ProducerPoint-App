@@ -51,7 +51,7 @@ export default {
 
     createProducer: async (
         name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
-        zipCode, city, district, uf, street, activityName, productName, period
+        zipCode, city, district, uf, street, activityName, resultList, period
     ) => {
         try {
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
@@ -79,12 +79,12 @@ export default {
                 farmingActivity: {
                     averageCash: parseFloat(averageCash),
                     activityName: activityName,
-                    productName: 'Feijão',
                     period: period
                 },
+                products: resultList,
                 manager: {
                     id: user.id,
-                }
+                },
             }
 
             await fetch(`${BASE.API}/producers`, {

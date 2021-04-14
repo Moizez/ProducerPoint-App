@@ -102,6 +102,23 @@ const ProducerForm = () => {
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
 
+    const productsList = () => {
+        const newArray = []
+        for (let i of selectectedItems) {
+            const keys = Object.keys(i)
+            for (let key of keys) {
+                if (key === 'label') {
+                    const obj = { label: i[key] }
+                    newArray.push(obj)
+                }
+            }
+
+        }
+        return newArray
+    }
+
+    const resultList = productsList()
+
     return (
         <Fragment>
             <Container>
@@ -140,7 +157,7 @@ const ProducerForm = () => {
                                     setLottie(error)
                                     setTypeMessage('Data inválida!')
                                     openWarningModal()
-                                }else if (values.phone.length < 14) {
+                                } else if (values.phone.length < 14) {
                                     setLottie(error)
                                     setTypeMessage('Número incompleto!')
                                     openWarningModal()
@@ -152,9 +169,13 @@ const ProducerForm = () => {
                                     setLottie(error)
                                     setTypeMessage('Informe a atividade!')
                                     openWarningModal()
-                                } else if (!selectectedItems || selectectedItems == 0) {
+                                } else if (!resultList || resultList.length == 0) {
                                     setLottie(error)
                                     setTypeMessage('Informe pelo menos um produto!')
+                                    openWarningModal()
+                                } else if (!values.farmingActivity.averageCash) {
+                                    setLottie(error)
+                                    setTypeMessage('Informe a renda!')
                                     openWarningModal()
                                 } else if (!period) {
                                     setLottie(error)
@@ -171,19 +192,19 @@ const ProducerForm = () => {
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
                                         averageCash, values.address.zipCode, city, district,
-                                        uf, street, activity, product, period
+                                        uf, street, activity, resultList, period
                                     )
 
                                     setLottie(success)
                                     setTypeMessage('Produtor criado com sucesso!')
                                     openWarningModal()
+                                    actions.resetForm()
+                                    resetAllInputs()
                                     setTimeout(() => {
                                         closeWarningModal()
                                         loadProducers()
                                         navigation.navigate('ManagerHome')
                                     }, 2000);
-                                    actions.resetForm()
-                                    resetAllInputs()
                                 }
                             }}
                         >
@@ -497,7 +518,7 @@ const ProducerForm = () => {
                         <MultiItemsBox>
                             {(selectectedItems || []).map(i => {
                                 return (
-                                    <MultiItem>
+                                    <MultiItem key={i.value}>
                                         <MultiText style={{ fontSize: 12 }}>{i.label}</MultiText>
                                     </MultiItem>
                                 )
@@ -505,9 +526,14 @@ const ProducerForm = () => {
                         </MultiItemsBox>
                         <SaveButton
                             onPress={() => setShowMultiPicker(!showMultiPicker)}
-                            style={{ marginTop: 5 }}
+                            style={{
+                                marginTop: 5,
+                                backgroundColor: selectectedItems == 0 ? '#da1e37' : '#2a9d8f'
+                            }}
                         >
-                            <MultiText style={{ color: '#FFF', fontWeight: 'bold' }}>OK</MultiText>
+                            <MultiText
+                                style={{ color: '#FFF', fontWeight: 'bold' }}
+                            >{selectectedItems == 0 ? 'Fechar' : 'Ok'}</MultiText>
                         </SaveButton>
                     </MultiInfo>
                 </Fragment>

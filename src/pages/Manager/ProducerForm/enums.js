@@ -18,11 +18,14 @@ export const products = [
     { value: 'Feijão', label: 'Feijão' },
     { value: 'Milho', label: 'Milho' },
     { value: 'Batata', label: 'Batata' },
-    { value: 'LeiteDeVaca', label: 'Leite de Vaca' },
-    { value: 'LeiteDeCabra', label: 'Leite de Cabra' },
+    { value: 'LeiteDeVaca', label: 'Leite de vaca' },
+    { value: 'LeiteDeCabra', label: 'Leite de cabra' },
     { value: 'Peixe', label: 'Peixe' },
-    { value: 'FileDePeixe', label: 'Filé de Peixe' },
+    { value: 'FileDePeixe', label: 'Filé de peixe' },
     { value: 'Camarao', label: 'Camarão' },
     { value: 'Mel', label: 'Mel' },
+    { value: 'Caju', label: 'Caju' },
+    { value: 'Melão', label: 'Melão' },
+    { value: 'Laranja', label: 'Laranja' },
     { value: 'Outro', label: 'Outro' }
 ]
