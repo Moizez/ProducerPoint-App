@@ -109,12 +109,13 @@ export const ButtonBox = styled.View`
     width: 90%;
     height: 48px;
     border-radius: 5px;
-    margin-bottom: 70px;
+    margin-bottom: 20px;
     justify-content: space-between;
+    flex-direction: row;
 `;
 
 export const SaveButton = styled.TouchableOpacity`
-    width: 100%;
+    width: 48%;
     height: 48px;
     flex-direction: row;
     background-color: #2a9d8f;
@@ -123,13 +124,26 @@ export const SaveButton = styled.TouchableOpacity`
     border-radius: 5px;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-top: 10px;
+`;
+
+export const CloseButton = styled.TouchableOpacity`
+    width: 48%;
+    height: 48px;
+    flex-direction: row;
+    background-color: #da1e37;
+    height: 45px;
+    padding: 5px;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
     margin-top: 10px;
 `;
 
 export const ResetForm = styled.TouchableOpacity`
     align-items: center;
     justify-content: center;
+    margin-bottom: 20px;
 `;
 
 export const TextButton = styled.Text`

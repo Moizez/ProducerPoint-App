@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 
 import Api from '../services/api'
 
@@ -8,8 +8,8 @@ const RequestProvider = ({ children }) => {
 
     const [loading, setLoading] = useState(false)
     const [producers, setProducers] = useState([])
+    const [products, setProducts] = useState([])
 
-    // Request Técnico
     const loadProducers = async () => {
         setLoading(true)
         const response = await Api.getAllProducers()
@@ -17,10 +17,23 @@ const RequestProvider = ({ children }) => {
         setLoading(false)
     }
 
+    const loadProducts = async () => {
+        setLoading(true)
+        const response = await Api.getAllProducts()
+        setProducts(response)
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        loadProducers()
+        loadProducts()
+    }, [])
+
     return (
         <RequestContext.Provider value={{
             loading, setLoading,
             producers, loadProducers,
+            products, loadProducts
         }}>
             {children}
         </RequestContext.Provider>

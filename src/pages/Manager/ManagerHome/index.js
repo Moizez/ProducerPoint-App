@@ -39,27 +39,24 @@ const ManagerHome = () => {
                         <ProfileName>{user.name}</ProfileName>
                     </ProfileNameBox>
                 </ProfileBox>
+                <ListTitleBox>
+                    <ListTitle>produtores cadastrados</ListTitle>
+                </ListTitleBox>
+                <Divider style={{ elevation: 1 }} />
 
                 <FlatList
                     showsVerticalScrollIndicator={false}
                     data={producers}
                     keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => <ProducersList data={item} />}
+                    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
+                    renderItem={({ item }) => (
+                        <ProducersList data={item} />
+                    )}
                     ListEmptyComponent={
                         <EmptyListCard>
                             <Title>Sem resultados</Title>
                         </EmptyListCard>
                     }
-                    ListHeaderComponent={producers &&
-                        <Fragment>
-                            <ListTitleBox>
-                                <ListTitle>produtores cadastrados</ListTitle>
-                            </ListTitleBox>
-                            <Divider style={{ elevation: 1}} />
-                        </Fragment>
-                    }
-                    stickyHeaderIndices={[0]}
-                    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
                 />
 
             </PageBox>

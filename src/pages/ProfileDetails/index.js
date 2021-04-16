@@ -11,6 +11,7 @@ import {
 const ProfileDetails = ({ route }) => {
 
     const { data } = route.params
+
     const navigation = useNavigation()
     const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
     const income = MaskService.toMask('money', data.farmingActivity.averageCash, {
@@ -20,8 +21,6 @@ const ProfileDetails = ({ route }) => {
     })
 
     const products = data.products.map(i => i.label)
-
-    console.log(products)
 
     return (
         <Container>

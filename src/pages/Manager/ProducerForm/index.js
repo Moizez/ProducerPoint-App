@@ -9,7 +9,7 @@ import * as yup from 'yup'
 
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
-import { activities, periods, products } from './enums'
+import { activities, periods } from '../../../enums'
 import Loader from '../../../components/Loader'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
@@ -31,7 +31,7 @@ const formSchema = yup.object({
 
 const ProducerForm = () => {
 
-    const { loadProducers } = useContext(RequestContext)
+    const { loadProducers, products } = useContext(RequestContext)
     const navigation = useNavigation()
 
     let error = require('../../../assets/lottie/error-icon.json')
@@ -45,7 +45,6 @@ const ProducerForm = () => {
 
     const [activity, setActivity] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
-    const [product, setProduct] = useState('')
     const [period, setPeriod] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
@@ -89,7 +88,6 @@ const ProducerForm = () => {
 
     const resetAllInputs = () => {
         setActivity('')
-        setProduct('')
         setPeriod('')
         setCity('')
         setUf('')
@@ -528,6 +526,7 @@ const ProducerForm = () => {
                             onPress={() => setShowMultiPicker(!showMultiPicker)}
                             style={{
                                 marginTop: 5,
+                                width: '100%',
                                 backgroundColor: selectectedItems == 0 ? '#da1e37' : '#2a9d8f'
                             }}
                         >

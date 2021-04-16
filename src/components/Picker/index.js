@@ -6,7 +6,9 @@ import {
     PickerBox, ItemText, ModalHeader, CloseButton, ItemButton
 } from './styles'
 
-const Picker = ({ title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker }) => {
+const Picker = ({
+    title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker, defaultValue
+}) => {
 
     const [text, setText] = useState('')
 

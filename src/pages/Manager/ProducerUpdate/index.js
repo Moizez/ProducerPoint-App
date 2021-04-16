@@ -10,7 +10,7 @@ import * as yup from 'yup'
 
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
-import { activities, periods, products } from './enums'
+import { activities, periods } from '../../../enums'
 import Loader from '../../../components/Loader'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
@@ -18,8 +18,7 @@ import WarningModal from '../../../components/Modals/WarningModal'
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
     HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox,
-    ButtonBox, ResetForm, SaveButton, TextButton, Modal, Divider,
-
+    ButtonBox, ResetForm, SaveButton, CloseButton, TextButton, Modal, Divider,
     MultiButton, MultiItemsBox, MultiText, NumberBox, MultiItem, MultiInfo
 } from './styles'
 
@@ -34,26 +33,30 @@ const ProducerUpdate = ({ route }) => {
 
     const { data } = route.params
 
-    const { loadProducers } = useContext(RequestContext)
+    const { loadProducers, products } = useContext(RequestContext)
     const navigation = useNavigation()
     const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
+
+    const activityValue = activities.filter(i => i.value === data.farmingActivity.activityName)
+    const [{ value: activityName }] = activityValue
+
+    const periodValue = periods.filter(i => i.value === data.farmingActivity.period)
+    const [{ value: periodName }] = periodValue
 
     let error = require('../../../assets/lottie/error-icon.json')
     let success = require('../../../assets/lottie/success-icon.json')
 
-    const [show, setShow] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
 
-    const [activity, setActivity] = useState(data.farmingActivity.activityName)
+    const [activity, setActivity] = useState(activityName)
     const [showActivityPicker, setShowActivityPicker] = useState(false)
-    const [product, setProduct] = useState('Feijão')
-    const [period, setPeriod] = useState(data.farmingActivity.period)
+    const [period, setPeriod] = useState(periodName)
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
-    const [selectectedItems, setSelectectedItems] = useState([])
+    const [selectectedItems, setSelectectedItems] = useState([...data.products])
     const [showMultiPicker, setShowMultiPicker] = useState(false)
 
     //Endereço
@@ -77,7 +80,6 @@ const ProducerUpdate = ({ route }) => {
                 setTypeMessage('CEP não encontrado!')
                 openWarningModal()
             } else {
-                setShow(true)
                 setStreet(data.logradouro)
                 setDistrict(data.bairro)
                 setCity(data.localidade)
@@ -93,18 +95,33 @@ const ProducerUpdate = ({ route }) => {
 
     const resetAllInputs = () => {
         setActivity('')
-        setProduct('')
         setPeriod('')
         setCity('')
         setUf('')
         setDistrict('')
         setStreet('')
         setSelectectedItems([])
-        setShow(false)
     }
 
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
+
+    const productsList = () => {
+        const newArray = []
+        for (let i of selectectedItems) {
+            const keys = Object.keys(i)
+            for (let key of keys) {
+                if (key === 'label') {
+                    const obj = { label: i[key] }
+                    newArray.push(obj)
+                }
+            }
+
+        }
+        return newArray
+    }
+
+    const resultList = productsList()
 
     return (
         <Fragment>
@@ -126,19 +143,23 @@ const ProducerUpdate = ({ route }) => {
                                 email: data.email,
                                 address: {
                                     zipCode: data.address.zipCode,
-                                    houseNumber: '',
-                                    reference: '',
+                                    city: data.address.city,
+                                    district: data.address.district,
+                                    uf: data.address.uf,
+                                    street: data.address.street,
+                                    houseNumber: data.address.houseNumber,
+                                    reference: data.address.reference,
                                 },
                                 farmingActivity: {
-                                    averageCash: '0'
-                                }
+                                    averageCash: data.farmingActivity.averageCash
+                                },
                             }}
                             validationSchema={null}
                             onSubmit={async (values, actions) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
-                                const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = dateRef?.current.getRawValue()
+                                //const averageCash = moneyRef?.current.getRawValue()
+                                //const birthDate = dateRef?.current.getRawValue()
 
                                 if (!dateValid) {
                                     setLottie(error)
@@ -156,11 +177,11 @@ const ProducerUpdate = ({ route }) => {
                                     setLottie(error)
                                     setTypeMessage('Informe a atividade!')
                                     openWarningModal()
-                                } /*else if (!selectectedItems || selectectedItems == 0) {
+                                } else if (!resultList || resultList.length == 0) {
                                     setLottie(error)
                                     setTypeMessage('Informe pelo menos um produto!')
                                     openWarningModal()
-                                } */else if (!period) {
+                                } else if (!period) {
                                     setLottie(error)
                                     setTypeMessage('Informe o período!')
                                     openWarningModal()
@@ -171,11 +192,13 @@ const ProducerUpdate = ({ route }) => {
                                 } else {
 
                                     await Api.updateProducer(
-                                        data.id, values.name, values.nickname, birthDate,
+                                        data.id, values.name, values.nickname, data.birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        averageCash, values.address.zipCode, city, district,
-                                        uf, street, activity, product, period
+                                        values.farmingActivity.averageCash, 
+                                        values.address.zipCode, values.address.city, 
+                                        values.address.district, values.address.uf,
+                                        values.address.street, activity, resultList, period
                                     )
 
                                     setLottie(success)
@@ -295,7 +318,6 @@ const ProducerUpdate = ({ route }) => {
                                             autoCapitalize='none'
                                             keyboardType='email-address'
                                             value={props.values.email}
-                                            onBlur={props.handleBlur('email')}
                                         />
                                     </InputBox>
 
@@ -305,12 +327,13 @@ const ProducerUpdate = ({ route }) => {
                                     <InputsBox>
                                         <HalfInputBox>
                                             <Picker
-                                                title={'Atividade?'}
+                                                title={activityName ? activityName : 'Atividade?'}
                                                 modalTitle={'Qual a atividade do produtor?'}
                                                 showPicker={showActivityPicker}
                                                 setShowPicker={setShowActivityPicker}
                                                 list={activities}
                                                 setSelectedPicker={setActivity}
+                                                defaultValue={data.farmingActivity.activityName}
                                             />
                                         </HalfInputBox>
 
@@ -355,7 +378,7 @@ const ProducerUpdate = ({ route }) => {
 
                                         <HalfInputBox>
                                             <Picker
-                                                title={'Período?'}
+                                                title={periodName ? periodName : 'Período?'}
                                                 modalTitle={'Qual o período base da renda?'}
                                                 showPicker={showPeriodPicker}
                                                 setShowPicker={setShowPeriodPicker}
@@ -389,80 +412,77 @@ const ProducerUpdate = ({ route }) => {
                                         </IconBox>
                                     </InputsBox>
 
-                                    {show &&
-                                        <Fragment>
-                                            <InputsBox>
-                                                <InputBox style={{ width: '78%' }}>
-                                                    {city != '' && <Text>Cidade:</Text>}
-                                                    <Input
-                                                        placeholder='Cidade'
-                                                        onChangeText={setCity}
-                                                        value={city}
-                                                    />
-                                                </InputBox>
-                                                <InputBox style={{ width: '18%' }}>
-                                                    {uf != '' && <Text>UF:</Text>}
-                                                    <Input
-                                                        placeholder='UF'
-                                                        onChangeText={setUf}
-                                                        value={uf}
-                                                    />
+                                    <InputsBox>
+                                        <InputBox style={{ width: '78%' }}>
+                                            {props.values.address.city != '' && <Text>Cidade:</Text>}
+                                            <Input
+                                                placeholder='Cidade'
+                                                onChangeText={props.handleChange('city')}
+                                                value={props.values.address.city}
+                                            />
+                                        </InputBox>
+                                        <InputBox style={{ width: '18%' }}>
+                                            {props.values.address.uf != '' && <Text>UF:</Text>}
+                                            <Input
+                                                placeholder='UF'
+                                                onChangeText={props.handleChange('uf')}
+                                                value={props.values.address.uf}
+                                            />
+                                        </InputBox>
+                                    </InputsBox>
 
-                                                </InputBox>
-                                            </InputsBox>
+                                    <InputBox>
+                                        {props.values.address.district != '' && <Text>Bairro:</Text>}
+                                        <Input
+                                            placeholder='Bairro'
+                                            onChangeText={props.handleChange('district')}
+                                            value={props.values.address.district}
+                                        />
+                                    </InputBox>
 
-                                            <InputBox>
-                                                {district != '' && <Text>Bairro:</Text>}
-                                                <Input
-                                                    placeholder='Bairro'
-                                                    onChangeText={setDistrict}
-                                                    value={district}
-                                                />
-                                            </InputBox>
+                                    <InputsBox>
+                                        <InputBox style={{
+                                            width: '78%'
+                                        }}>
+                                            {props.values.address.street != '' && <Text>Rua:</Text>}
+                                            <Input
+                                                placeholder='Rua'
+                                                onChangeText={props.handleChange('street')}
+                                                value={props.values.address.street}
+                                            />
+                                        </InputBox>
+                                        <InputBox style={{
+                                            width: '18%'
+                                        }}>
+                                            {props.values.address.houseNumber != '' && <Text>Nº:</Text>}
+                                            <Input
+                                                placeholder='Nº'
+                                                onChangeText={props.handleChange('address.houseNumber')}
+                                                keyboardType='phone-pad'
+                                                value={props.values.address.houseNumber}
+                                            />
+                                        </InputBox>
+                                    </InputsBox>
 
-                                            <InputsBox>
-                                                <InputBox style={{
-                                                    width: '78%'
-                                                }}>
-                                                    {street != '' && <Text>Rua:</Text>}
-                                                    <Input
-                                                        placeholder='Rua'
-                                                        onChangeText={setStreet}
-                                                        value={street}
-                                                    />
-                                                </InputBox>
-                                                <InputBox style={{
-                                                    width: '18%'
-                                                }}>
-                                                    {props.values.address.houseNumber != '' && <Text>Nº:</Text>}
-                                                    <Input
-                                                        placeholder='Nº'
-                                                        onChangeText={props.handleChange('address.houseNumber')}
-                                                        keyboardType='phone-pad'
-                                                        value={props.values.address.houseNumber}
-                                                    />
-                                                </InputBox>
-                                            </InputsBox>
-
-                                            <InputBox>
-                                                {props.values.address.reference != '' && <Text>Referência:</Text>}
-                                                <Input
-                                                    placeholder='Referência'
-                                                    onChangeText={props.handleChange('address.reference')}
-                                                    value={props.values.address.reference}
-                                                />
-                                            </InputBox>
-                                        </Fragment>
-                                    }
-
+                                    <InputBox>
+                                        {props.values.address.reference != '' && <Text>Referência:</Text>}
+                                        <Input
+                                            placeholder='Referência'
+                                            onChangeText={props.handleChange('address.reference')}
+                                            value={props.values.address.reference}
+                                        />
+                                    </InputBox>
                                     <ButtonBox>
+                                        <CloseButton onPress={() => navigation.goBack()}>
+                                            <TextButton>Fechar</TextButton>
+                                        </CloseButton>
                                         <SaveButton onPress={props.handleSubmit}>
                                             <TextButton>Salvar</TextButton>
                                         </SaveButton>
-                                        <ResetForm onPress={props.resetForm}>
-                                            <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
-                                        </ResetForm>
                                     </ButtonBox>
+                                    <ResetForm onPress={props.resetForm}>
+                                        <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
+                                    </ResetForm>
 
                                 </FormBox>
                             )}
@@ -477,7 +497,6 @@ const ProducerUpdate = ({ route }) => {
                     transparent={true}
                     visible={warningModal}
                 >
-
                     <WarningModal
                         closeModal={closeWarningModal}
                         message={typeMessage}
@@ -501,7 +520,7 @@ const ProducerUpdate = ({ route }) => {
                         <MultiItemsBox>
                             {(selectectedItems || []).map(i => {
                                 return (
-                                    <MultiItem>
+                                    <MultiItem key={i.value}>
                                         <MultiText style={{ fontSize: 12 }}>{i.label}</MultiText>
                                     </MultiItem>
                                 )
@@ -509,9 +528,15 @@ const ProducerUpdate = ({ route }) => {
                         </MultiItemsBox>
                         <SaveButton
                             onPress={() => setShowMultiPicker(!showMultiPicker)}
-                            style={{ marginTop: 5 }}
+                            style={{
+                                marginTop: 5,
+                                width: '100%',
+                                backgroundColor: selectectedItems == 0 ? '#da1e37' : '#2a9d8f'
+                            }}
                         >
-                            <MultiText style={{ color: '#FFF', fontWeight: 'bold' }}>OK</MultiText>
+                            <MultiText
+                                style={{ color: '#FFF', fontWeight: 'bold' }}
+                            >{selectectedItems == 0 ? 'Fechar' : 'Ok'}</MultiText>
                         </SaveButton>
                     </MultiInfo>
                 </Fragment>

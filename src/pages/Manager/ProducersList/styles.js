@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-    padding: 10px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 `;
 
 export const CardBox = styled.TouchableOpacity`
@@ -17,7 +17,25 @@ export const BoldText = styled.Text`
     font-weight: bold;
 `;
 
-export const Text = styled.Text`
-    font-size: 15px;
-    font-weight: normal;
+export const LeftBox = styled.View`
+    flex: 1;
+    background-color: #da1e37;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-left: 5px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    padding: 5px;
+`;
+
+export const RightBox = styled.TouchableOpacity`
+    background-color: #59a5d8;
+    justify-content: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: 5px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 5px;
 `;
