@@ -105,7 +105,7 @@ export default {
 
             console.log(resultList)
 
-            const user = await JSON.parse(await AsyncStorage.getItem('@milkpoint:user')) || []
+            const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
 
             const headers = new Headers();
             headers.append("Content-Type", "application/json")
@@ -150,7 +150,7 @@ export default {
 
     getAllProducts: async () => {
         try {
-            const request = await fetch(`${BASE.API}/products`)
+            const request = await fetch(`${BASE.API}/products`) || []
             const response = await request.json()
             return response
         } catch (e) {
@@ -189,6 +189,84 @@ export default {
         }
     },
 
+    createTask: async (description, date) => {
+        try {
+            const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+            headers.append("Accept", 'application/json')
+
+            const data = {
+                description: description,
+                status: false,
+                date: date,
+                manager: {
+                    id: user.id,
+                },
+            }
+
+            await fetch(`${BASE.API}/tasks`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+        } catch (e) {
+            console.log('Erro: createTask ' + e)
+        }
+    },
+
+    getAllTasks: async () => {
+        try {
+            const request = await fetch(`${BASE.API}/tasks`) || []
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: getAllTasks ' + e)
+        }
+    },
+
+    getAllTasksToday: async () => {
+        try {
+            const request = await fetch(`${BASE.API}/tasks/taskstoday`) || []
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: getAllTasks ' + e)
+        }
+    },
+
+    setStateTasks: async (id, status) => {
+        try {
+
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+            headers.append("Accept", 'application/json')
+
+            const data = { status: status }
+
+            const request = await fetch(`${BASE.API}/tasks/${id}`,
+                {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify(data)
+                }
+            )
+            return request
+        } catch (e) {
+            console.log('Erro: setStateTasks ' + e)
+        }
+    },   
+
+    deleteTask: async (id) => {
+        try {
+            const request = await fetch(`${BASE.API}/tasks/${id}`, { method: 'DELETE' })
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: deleteTask ' + e)
+        }
+    },
 
 
 }

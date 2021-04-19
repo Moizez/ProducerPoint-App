@@ -10,15 +10,16 @@ const DatePicker = ({ chosenDate, onSet, display }) => {
             locale='pt-BR'
             value={date}
             mode="date"
-            maximumDate={new Date()}
+            minimumDate={new Date()}
             display={display}
+            timeZoneOffsetInMinutes={-180}
             onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || date
                 if (event.type == "set") {
                     setDate(currentDate)
                     onSet(currentDate)
-                }else {
-                    onSet(null)
+                } else {
+                    onSet(date)
                 }
             }}
             style={{ backgroundColor: '#FFF' }}

@@ -8,8 +8,12 @@ export const Container = styled.SafeAreaView`
 export const Header = styled.SafeAreaView`
     width: 100%;
     height: 100px;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
     background-color: ${props => props.theme.main};
     padding: 10px;
+    margin-top: 10px;
 `;
 
 export const Title = styled.Text`
@@ -52,4 +56,7 @@ export const EmptyListCard = styled.View`
     margin-top: 50px;
     align-items: center;
     justify-content: center;
+`;
+
+export const EyeButton = styled.TouchableOpacity`
 `;

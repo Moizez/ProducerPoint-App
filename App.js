@@ -7,7 +7,9 @@ import AuthProvider from './src/contexts/auth'
 import RequestProvider from './src/contexts/request'
 import Routes from './src/routes/'
 
-//LogBox.ignoreAllLogs()
+LogBox.ignoreLogs([
+	'Non-serializable values were found in the navigation state',
+])
 
 const colors = {
 	producer: '#2a9d8f',

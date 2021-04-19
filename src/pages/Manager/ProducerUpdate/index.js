@@ -31,7 +31,7 @@ const formSchema = yup.object({
 
 const ProducerUpdate = ({ route }) => {
 
-    const { data } = route.params
+    const { data, closeSwipeable } = route.params
 
     const { loadProducers, products } = useContext(RequestContext)
     const navigation = useNavigation()
@@ -111,12 +111,11 @@ const ProducerUpdate = ({ route }) => {
         for (let i of selectectedItems) {
             const keys = Object.keys(i)
             for (let key of keys) {
-                if (key === 'label') {
-                    const obj = { label: i[key] }
+                if (key === 'value') {
+                    const obj = { value: i[key] }
                     newArray.push(obj)
                 }
             }
-
         }
         return newArray
     }
@@ -195,14 +194,14 @@ const ProducerUpdate = ({ route }) => {
                                         data.id, values.name, values.nickname, data.birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        values.farmingActivity.averageCash, 
-                                        values.address.zipCode, values.address.city, 
+                                        values.farmingActivity.averageCash,
+                                        values.address.zipCode, values.address.city,
                                         values.address.district, values.address.uf,
                                         values.address.street, activity, resultList, period
                                     )
 
                                     setLottie(success)
-                                    setTypeMessage('Produtor criado com sucesso!')
+                                    setTypeMessage('Produtor atualizado com sucesso!')
                                     openWarningModal()
                                     setTimeout(() => {
                                         closeWarningModal()
@@ -473,10 +472,17 @@ const ProducerUpdate = ({ route }) => {
                                         />
                                     </InputBox>
                                     <ButtonBox>
-                                        <CloseButton onPress={() => navigation.goBack()}>
+                                        <CloseButton onPress={() => (
+                                            navigation.goBack(),
+                                            closeSwipeable()
+                                        )}>
                                             <TextButton>Fechar</TextButton>
                                         </CloseButton>
-                                        <SaveButton onPress={props.handleSubmit}>
+                                        <SaveButton
+                                            onPress={() => (
+                                                props.handleSubmit(),
+                                                closeSwipeable()
+                                            )}>
                                             <TextButton>Salvar</TextButton>
                                         </SaveButton>
                                     </ButtonBox>

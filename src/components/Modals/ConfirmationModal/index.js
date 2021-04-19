@@ -4,44 +4,50 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import {
     Container, CloseContainer, ModalBox, CloseButton, ModalHeader, Title, ModalInfo,
-    InfoBox, ItemBox, InfoTitle, InfoText, ConfirmButton, DividerV
+    InfoBox, ItemBox, InfoTitle, InfoText, ConfirmButton, Avatar, DividerH
 } from './styles'
 
-const ConfirmationModal = ({ closeModal, data, confirmModal, quantidade }) => {
+const ConfirmationModal = ({
+    name, activityName, closeModal, confirmModal, closeSwipeable, bgColor
+}) => {
 
     return (
-        <Container>
-            <CloseContainer onPress={closeModal} activeOpacity={1} />
+        <Container bgColor={bgColor}>
+            <CloseContainer
+                onPress={() => (
+                    closeModal(),
+                    closeSwipeable()
+                )}
+                activeOpacity={1} />
             <ModalBox>
                 <ModalHeader>
-                    <CloseButton onPress={closeModal}>
+                    <CloseButton onPress={() => (
+                        closeModal(),
+                        closeSwipeable()
+                    )}>
                         <Icon name='chevron-down' color='#FFF' size={40} />
                     </CloseButton>
-                    <Title>Confirmar esta solicitação?</Title>
+                    <Title>Remover este produtor?</Title>
                 </ModalHeader>
 
                 <ModalInfo>
-
                     <InfoBox>
                         <ItemBox>
-                            <InfoTitle>Tanque</InfoTitle>
-                            <InfoText>{data.nome}</InfoText>
+                            <InfoTitle>Nome</InfoTitle>
+                            <InfoText>{name}</InfoText>
                         </ItemBox>
-                        <DividerV />
+                        <DividerH />
                         <ItemBox>
-                            <InfoTitle>Tipo do leite</InfoTitle>
-                            <InfoText>{data.tipo === 'CAPRINO' ? 'Caprino' : 'Bovino'}</InfoText>
-                        </ItemBox>
-                        <DividerV />
-                        <ItemBox>
-                            <InfoTitle>Quantidade</InfoTitle>
-                            <InfoText>{quantidade} litros</InfoText>
+                            <InfoTitle>Atividade</InfoTitle>
+                            <InfoText>{activityName}</InfoText>
                         </ItemBox>
                     </InfoBox>
+                    <Avatar source={require('../../../assets/images/avatar.jpg')} />
                 </ModalInfo>
 
                 <ConfirmButton onPress={confirmModal}>
-                    <Icon name='check-circle' color='#FFF' size={35} />
+                    <Title style={{ marginRight: 15 }}>Remover</Title>
+                    <Icon name='delete-circle' color='#FFF' size={35} />
                 </ConfirmButton>
 
             </ModalBox>

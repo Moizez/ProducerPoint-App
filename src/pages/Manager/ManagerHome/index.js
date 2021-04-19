@@ -1,9 +1,10 @@
-import React, { useEffect, useContext, useState, Fragment } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { RefreshControl } from 'react-native'
 
 import { AuthContext } from '../../../contexts/auth'
 import { RequestContext } from '../../../contexts/request'
 import ProducersList from '../ProducersList'
+import Loader from '../../../components/Loader'
 
 import {
     Container, Header, PageBox, ProfileBox, Avatar, ProfileNameBox, ProfileName,
@@ -13,7 +14,7 @@ import {
 const ManagerHome = () => {
 
     const { user } = useContext(AuthContext)
-    const { producers, loadProducers } = useContext(RequestContext)
+    const { producers, loadProducers, loading } = useContext(RequestContext)
     const [isRefreshing, setIsRefreshing] = useState(false)
 
     useEffect(() => {
@@ -54,13 +55,13 @@ const ManagerHome = () => {
                     )}
                     ListEmptyComponent={
                         <EmptyListCard>
-                            <Title>Sem resultados</Title>
+                            <Title>Nenhum produtor cadastrado</Title>
                         </EmptyListCard>
                     }
                 />
 
             </PageBox>
-
+            {loading && !isRefreshing && <Loader />}
         </Container>
     );
 }

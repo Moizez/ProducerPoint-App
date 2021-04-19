@@ -105,12 +105,11 @@ const ProducerForm = () => {
         for (let i of selectectedItems) {
             const keys = Object.keys(i)
             for (let key of keys) {
-                if (key === 'label') {
-                    const obj = { label: i[key] }
+                if (key === 'value') {
+                    const obj = { value: i[key] }
                     newArray.push(obj)
                 }
             }
-
         }
         return newArray
     }
@@ -246,6 +245,7 @@ const ProducerForm = () => {
                                                 }}
                                                 ref={dateRef}
                                                 style={styles.input}
+                                                keyboardType='phone-pad'
                                                 placeholder='Nascimento'
                                                 onChangeText={props.handleChange('birthDate')}
                                                 value={props.values.birthDate}
