@@ -7,7 +7,7 @@ import {
 } from './styles'
 
 const Picker = ({
-    title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker, defaultValue
+    title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker
 }) => {
 
     const [text, setText] = useState('')

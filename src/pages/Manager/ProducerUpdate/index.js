@@ -11,7 +11,6 @@ import * as yup from 'yup'
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
 import { activities, periods } from '../../../enums'
-import Loader from '../../../components/Loader'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
 
@@ -47,7 +46,6 @@ const ProducerUpdate = ({ route }) => {
     let success = require('../../../assets/lottie/success-icon.json')
 
     const [warningModal, setWarningModal] = useState(false)
-    const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
 
@@ -59,47 +57,15 @@ const ProducerUpdate = ({ route }) => {
     const [selectectedItems, setSelectectedItems] = useState([...data.products])
     const [showMultiPicker, setShowMultiPicker] = useState(false)
 
-    //Endereço
-    const [city, setCity] = useState('')
-    const [district, setDistrict] = useState('')
-    const [street, setStreet] = useState('')
-    const [uf, setUf] = useState('')
-
     const cpfRef = useRef(null)
     const moneyRef = useRef(null)
-    const dateRef = useRef(null)
+    const dateRef = useRef(data.birthDate)
 
-    const getZipCode = async (cep) => {
-        setLoading(true)
-        try {
-            const response = await Api.getCep(cep)
-            const data = await response.json()
-
-            if (data.erro) {
-                setLoading(false)
-                setTypeMessage('CEP não encontrado!')
-                openWarningModal()
-            } else {
-                setStreet(data.logradouro)
-                setDistrict(data.bairro)
-                setCity(data.localidade)
-                setUf(data.uf)
-            }
-        } catch (erro) {
-            setLoading(false)
-            setTypeMessage('CEP inválido!')
-            openWarningModal()
-        }
-        setLoading(false)
-    }
+    console.log(dateRef)
 
     const resetAllInputs = () => {
         setActivity('')
         setPeriod('')
-        setCity('')
-        setUf('')
-        setDistrict('')
-        setStreet('')
         setSelectectedItems([])
     }
 
@@ -158,7 +124,7 @@ const ProducerUpdate = ({ route }) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
                                 //const averageCash = moneyRef?.current.getRawValue()
-                                //const birthDate = dateRef?.current.getRawValue()
+                                const birthDate = dateRef?.current.getRawValue()
 
                                 if (!dateValid) {
                                     setLottie(error)
@@ -191,7 +157,7 @@ const ProducerUpdate = ({ route }) => {
                                 } else {
 
                                     await Api.updateProducer(
-                                        data.id, values.name, values.nickname, data.birthDate,
+                                        data.id, values.name, values.nickname, birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
                                         values.farmingActivity.averageCash,
@@ -253,6 +219,7 @@ const ProducerUpdate = ({ route }) => {
                                                 }}
                                                 ref={dateRef}
                                                 style={styles.input}
+                                                keyboardType='phone-pad'
                                                 placeholder='Nascimento'
                                                 onChangeText={props.handleChange('birthDate')}
                                                 value={props.values.birthDate}
@@ -332,7 +299,6 @@ const ProducerUpdate = ({ route }) => {
                                                 setShowPicker={setShowActivityPicker}
                                                 list={activities}
                                                 setSelectedPicker={setActivity}
-                                                defaultValue={data.farmingActivity.activityName}
                                             />
                                         </HalfInputBox>
 
@@ -390,33 +356,24 @@ const ProducerUpdate = ({ route }) => {
                                     <FormTitle>Endereço</FormTitle>
                                     <Divider />
 
-                                    <InputsBox>
-                                        <InputBox style={{
-                                            borderTopEndRadius: 0,
-                                            borderBottomEndRadius: 0,
-                                            width: '85%'
-                                        }}>
-                                            {props.values.address.zipCode != '' && <Text>CEP:</Text>}
-                                            <TextInputMask
-                                                type={'zip-code'}
-                                                style={styles.input}
-                                                placeholder='Somente números'
-                                                onChangeText={props.handleChange('address.zipCode')}
-                                                keyboardType='phone-pad'
-                                                value={props.values.address.zipCode}
-                                            />
-                                        </InputBox>
-                                        <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
-                                            <Icon name='magnify' size={28} color='#000' />
-                                        </IconBox>
-                                    </InputsBox>
+                                    <InputBox>
+                                        {props.values.address.zipCode != '' && <Text>CEP:</Text>}
+                                        <TextInputMask
+                                            type={'zip-code'}
+                                            style={styles.input}
+                                            placeholder='Somente números'
+                                            onChangeText={props.handleChange('address.zipCode')}
+                                            keyboardType='phone-pad'
+                                            value={props.values.address.zipCode}
+                                        />
+                                    </InputBox>
 
                                     <InputsBox>
                                         <InputBox style={{ width: '78%' }}>
                                             {props.values.address.city != '' && <Text>Cidade:</Text>}
                                             <Input
                                                 placeholder='Cidade'
-                                                onChangeText={props.handleChange('city')}
+                                                onChangeText={props.handleChange('address.city')}
                                                 value={props.values.address.city}
                                             />
                                         </InputBox>
@@ -424,7 +381,7 @@ const ProducerUpdate = ({ route }) => {
                                             {props.values.address.uf != '' && <Text>UF:</Text>}
                                             <Input
                                                 placeholder='UF'
-                                                onChangeText={props.handleChange('uf')}
+                                                onChangeText={props.handleChange('address.uf')}
                                                 value={props.values.address.uf}
                                             />
                                         </InputBox>
@@ -434,7 +391,7 @@ const ProducerUpdate = ({ route }) => {
                                         {props.values.address.district != '' && <Text>Bairro:</Text>}
                                         <Input
                                             placeholder='Bairro'
-                                            onChangeText={props.handleChange('district')}
+                                            onChangeText={props.handleChange('address.district')}
                                             value={props.values.address.district}
                                         />
                                     </InputBox>
@@ -446,7 +403,7 @@ const ProducerUpdate = ({ route }) => {
                                             {props.values.address.street != '' && <Text>Rua:</Text>}
                                             <Input
                                                 placeholder='Rua'
-                                                onChangeText={props.handleChange('street')}
+                                                onChangeText={props.handleChange('address.street')}
                                                 value={props.values.address.street}
                                             />
                                         </InputBox>
@@ -496,7 +453,6 @@ const ProducerUpdate = ({ route }) => {
                         </Formik>
                     </FormContainer>
                 </PageBox>
-                {loading && <Loader />}
 
                 <Modal
                     animationType='fade'

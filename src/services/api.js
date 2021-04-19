@@ -103,8 +103,6 @@ export default {
     ) => {
         try {
 
-            console.log(resultList)
-
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
 
             const headers = new Headers();
@@ -114,7 +112,7 @@ export default {
             const data = {
                 name: name,
                 nickname: nickname,
-                birthDate: new Date(),
+                birthDate: birthDate,
                 phone: phone,
                 cpf: cpf,
                 email: email,

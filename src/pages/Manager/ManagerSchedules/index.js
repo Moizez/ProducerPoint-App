@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, Fragment } from 'react'
-import { RefreshControl, StyleSheet, Modal } from 'react-native'
+import { RefreshControl, StyleSheet, Modal, Text, Dimensions } from 'react-native'
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import { FAB } from 'react-native-paper'
 import { format } from 'date-fns'
 
@@ -12,6 +13,8 @@ import DatePicker from '../../../components/DatePicker'
 import Loader from '../../../components/Loader'
 import WarningModal from '../../../components/Modals/WarningModal'
 
+const initialLayout = { width: Dimensions.get('window').width };
+
 import {
     Container, Header, PageBox, FlatList, Title, ListTitle, Divider,
     ListTitleBox, EmptyListCard
@@ -19,7 +22,7 @@ import {
 
 const ManagerSchedules = () => {
 
-    const { tasks, loadTasks, loading } = useContext(RequestContext)
+    const { tasks, loadTasks, tasksToday, loadTasksToday, loading } = useContext(RequestContext)
     const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
     const today = format(Date.parse(newDate), 'PPP', { locale: locale_br })
 
@@ -32,16 +35,34 @@ const ManagerSchedules = () => {
     const [text, setText] = useState('')
     const [selectedDate, setSelectedDate] = useState(newDate)
 
+    const [index, setIndex] = useState(0)
+    const [routes] = useState([
+        { key: 'first', title: 'Tanques Ativos' },
+        { key: 'second', title: 'Tanques Inativos' },
+    ])
+
     const date = format(Date.parse(selectedDate), 'PPPP', { locale: locale_br })
 
     useEffect(() => {
-        const interval = loadTasks()
+        const interval = loadTasksToday()
         return () => clearInterval(interval)
     }, [])
 
+    const renderTabBar = props => (
+        <TabBar {...props}
+            renderLabel={({ route, color }) => (
+                <Text style={{ color, fontSize: 15, height: 30 }}>
+                    {route.title}
+                </Text>
+            )}
+            indicatorStyle={{ backgroundColor: '#FFF' }}
+            style={{ backgroundColor: '#292b2c', height: 35 }}
+        />
+    );
+
     const onRefreshList = () => {
         setIsRefreshing(true)
-        loadTasks()
+        loadTasksToday()
         setIsRefreshing(false)
     }
 
@@ -59,7 +80,6 @@ const ManagerSchedules = () => {
     }
 
     const onChange = async (currentDate) => {
-        console.log(currentDate)
         setDatePicker(Platform.OS === 'ios')
         setSelectedDate(currentDate)
     }
@@ -77,12 +97,12 @@ const ManagerSchedules = () => {
             <PageBox>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={tasks}
+                    data={tasksToday}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) =>
                         <TasksList
                             data={item}
-                            loadTasks={loadTasks}
+                            loadTasks={loadTasksToday}
                         />
                     }
                     refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
