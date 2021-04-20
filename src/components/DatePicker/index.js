@@ -12,7 +12,6 @@ const DatePicker = ({ chosenDate, onSet, display }) => {
             mode="date"
             minimumDate={new Date()}
             display={display}
-            timeZoneOffsetInMinutes={-180}
             onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || date
                 if (event.type == "set") {

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, Fragment } from 'react'
-import { RefreshControl, Modal } from 'react-native'
+import React, { useState, Fragment } from 'react'
+import { Modal } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Api from '../../../services/api'
@@ -15,7 +15,6 @@ import {
 const SearchProducers = () => {
 
     const [text, setText] = useState('')
-    const [isRefreshing, setIsRefreshing] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
@@ -32,12 +31,6 @@ const SearchProducers = () => {
             setText('')
             setLoading(false)
         }
-    }
-
-    const onRefreshList = () => {
-        setIsRefreshing(true)
-        findProducer()
-        setIsRefreshing(false)
     }
 
     const openWarningModal = () => setWarningModal(true)
@@ -64,7 +57,6 @@ const SearchProducers = () => {
                     data={producer}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => <ProducersList data={item} />}
-                    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
                     ListHeaderComponent={
                         <Fragment>
                             <ListTitleBox>

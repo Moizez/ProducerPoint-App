@@ -1,32 +1,35 @@
-import React, { useState, useEffect, useContext, Fragment } from 'react'
-import { RefreshControl, StyleSheet, Modal, Text, Dimensions } from 'react-native'
+import React, { useState, useEffect, useContext } from 'react'
+import { StyleSheet, Modal, Text, Dimensions } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import { FAB } from 'react-native-paper'
 import { format } from 'date-fns'
 
 const locale_br = require('date-fns/locale/pt-BR')
 import { RequestContext } from '../../../contexts/request'
+import { AuthContext } from '../../../contexts/auth'
 import Api from '../../../services/api'
-import TasksList from '../TasksList'
 import TaskModal from '../../../components/Modals/TaskModal'
 import DatePicker from '../../../components/DatePicker'
-import Loader from '../../../components/Loader'
 import WarningModal from '../../../components/Modals/WarningModal'
+
+import TodayTasks from './TodayTasks'
+import FutureTasks from './FutureTasks'
 
 const initialLayout = { width: Dimensions.get('window').width };
 
-import {
-    Container, Header, PageBox, FlatList, Title, ListTitle, Divider,
-    ListTitleBox, EmptyListCard
-} from './styles'
+import { Container, Header, Title } from './styles'
 
 const ManagerSchedules = () => {
 
-    const { tasks, loadTasks, tasksToday, loadTasksToday, loading } = useContext(RequestContext)
-    const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-    const today = format(Date.parse(newDate), 'PPP', { locale: locale_br })
+    const {
+        todayTasks, loadTodayTasks,
+        futureTasks, loadFutureTasks,
+        loading
+    } = useContext(RequestContext)
+    const { user } = useContext(AuthContext)
 
-    const [isRefreshing, setIsRefreshing] = useState(false)
+    const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+
     const [taskModal, setTaskModal] = useState(false)
 
     const [datePicker, setDatePicker] = useState(false)
@@ -37,14 +40,19 @@ const ManagerSchedules = () => {
 
     const [index, setIndex] = useState(0)
     const [routes] = useState([
-        { key: 'first', title: 'Tanques Ativos' },
-        { key: 'second', title: 'Tanques Inativos' },
+        { key: 'first', title: 'Hoje' },
+        { key: 'second', title: 'Futuras' },
     ])
 
     const date = format(Date.parse(selectedDate), 'PPPP', { locale: locale_br })
 
     useEffect(() => {
-        const interval = loadTasksToday()
+        const interval = loadTodayTasks()
+        return () => clearInterval(interval)
+    }, [])
+
+    useEffect(() => {
+        const interval = loadFutureTasks()
         return () => clearInterval(interval)
     }, [])
 
@@ -60,16 +68,28 @@ const ManagerSchedules = () => {
         />
     );
 
-    const onRefreshList = () => {
-        setIsRefreshing(true)
-        loadTasksToday()
-        setIsRefreshing(false)
-    }
+    const renderScene = SceneMap({
+        first: () => (
+            <TodayTasks
+                data={todayTasks}
+                loadPage={loadTodayTasks}
+                loading={loading}
+            />
+        ),
+        second: () => (
+            <FutureTasks
+                data={futureTasks}
+                loadPage={loadFutureTasks}
+                loading={loading}
+            />
+        )
+    });
 
     const handleCreateTask = async () => {
         if (text) {
             await Api.createTask(text, selectedDate)
-            loadTasks()
+            loadTodayTasks()
+            loadFutureTasks()
             setText('')
             setSelectedDate(new Date())
             closeTaskModal()
@@ -80,8 +100,9 @@ const ManagerSchedules = () => {
     }
 
     const onChange = async (currentDate) => {
+        const dateNow = currentDate ? currentDate : new Date()
         setDatePicker(Platform.OS === 'ios')
-        setSelectedDate(currentDate)
+        setSelectedDate(dateNow)
     }
 
     const openTaskModal = () => setTaskModal(true)
@@ -92,36 +113,17 @@ const ManagerSchedules = () => {
     return (
         <Container>
             <Header>
-                <Title style={{ color: '#FFF' }}>Atividades</Title>
+                <Title style={{ color: '#FFF' }}>Tarefas de {user.name}</Title>
             </Header>
-            <PageBox>
-                <FlatList
-                    showsVerticalScrollIndicator={false}
-                    data={tasksToday}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) =>
-                        <TasksList
-                            data={item}
-                            loadTasks={loadTasksToday}
-                        />
-                    }
-                    refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
-                    ListHeaderComponent={
-                        <Fragment>
-                            <ListTitleBox>
-                                <ListTitle>lista de tarefas - {today}</ListTitle>
-                            </ListTitleBox>
-                            <Divider style={{ elevation: 1 }} />
-                        </Fragment>
-                    }
-                    ListEmptyComponent={
-                        <EmptyListCard>
-                            <Title>Sem tarefas hoje</Title>
-                        </EmptyListCard>
-                    }
-                    stickyHeaderIndices={[0]}
-                />
-            </PageBox>
+
+            <TabView
+                navigationState={{ index, routes }}
+                renderScene={renderScene}
+                onIndexChange={setIndex}
+                initialLayout={initialLayout}
+                renderTabBar={renderTabBar}
+            />
+
             <FAB
                 label='Tarefa'
                 style={styles.fab}
@@ -134,7 +136,6 @@ const ManagerSchedules = () => {
                     onSet={onChange}
                 />
             }
-            {loading && !isRefreshing && <Loader />}
 
             <Modal
                 animationType='slide'

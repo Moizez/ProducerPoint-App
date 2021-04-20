@@ -191,6 +191,7 @@ export default {
         try {
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
 
+            console.log('FNS: ' + date)
             const headers = new Headers();
             headers.append("Content-Type", "application/json")
             headers.append("Accept", 'application/json')
@@ -224,13 +225,23 @@ export default {
         }
     },
 
-    getAllTasksToday: async () => {
+    getAllTodayTasks: async () => {
         try {
-            const request = await fetch(`${BASE.API}/tasks/taskstoday`) || []
+            const request = await fetch(`${BASE.API}/tasks/todaytasks`) || []
             const response = await request.json()
             return response
         } catch (e) {
-            console.log('Erro: getAllTasks ' + e)
+            console.log('Erro: getAllTodayTasks ' + e)
+        }
+    },
+
+    getAllFutureTasks: async () => {
+        try {
+            const request = await fetch(`${BASE.API}/tasks/futuretasks`) || []
+            const response = await request.json()
+            return response
+        } catch (e) {
+            console.log('Erro: getAllFutureTasks ' + e)
         }
     },
 

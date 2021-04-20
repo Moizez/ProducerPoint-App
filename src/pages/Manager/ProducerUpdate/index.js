@@ -61,8 +61,6 @@ const ProducerUpdate = ({ route }) => {
     const moneyRef = useRef(null)
     const dateRef = useRef(data.birthDate)
 
-    console.log(dateRef)
-
     const resetAllInputs = () => {
         setActivity('')
         setPeriod('')

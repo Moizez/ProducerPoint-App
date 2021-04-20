@@ -10,8 +10,8 @@ const RequestProvider = ({ children }) => {
     const [producers, setProducers] = useState([])
     const [products, setProducts] = useState([])
     const [tasks, setTasks] = useState([])
-    const [tasksToday, setTasksToday] = useState([])
-
+    const [todayTasks, setTodayTasks] = useState([])
+    const [futureTasks, setFutureTasks] = useState([])
 
     const loadProducers = async () => {
         setLoading(true)
@@ -34,19 +34,27 @@ const RequestProvider = ({ children }) => {
         setLoading(false)
     }
 
-    const loadTasksToday = async () => {
+    const loadTodayTasks = async () => {
         setLoading(true)
-        const response = await Api.getAllTasksToday()
-        setTasksToday(response)
+        const response = await Api.getAllTodayTasks()
+        setTodayTasks(response)
         setLoading(false)
     }
-    
+
+    const loadFutureTasks = async () => {
+        setLoading(true)
+        const response = await Api.getAllFutureTasks()
+        setFutureTasks(response)
+        setLoading(false)
+    }
+
 
     useEffect(() => {
         loadProducers()
         loadProducts()
         loadTasks()
-        loadTasksToday()
+        loadTodayTasks()
+        loadFutureTasks()
     }, [])
 
     return (
@@ -55,7 +63,8 @@ const RequestProvider = ({ children }) => {
             producers, loadProducers,
             products, loadProducts,
             tasks, loadTasks,
-            tasksToday, loadTasksToday
+            todayTasks, loadTodayTasks,
+            futureTasks, loadFutureTasks
         }}>
             {children}
         </RequestContext.Provider>
