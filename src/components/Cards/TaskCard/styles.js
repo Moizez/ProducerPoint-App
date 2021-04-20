@@ -49,3 +49,9 @@ export const Divider = styled.View`
 `;
 
 export const Modal = styled.Modal``;
+
+export const StatusBox = styled.View`
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+`;

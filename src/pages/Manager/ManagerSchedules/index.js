@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react'
 import { StyleSheet, Modal, Text, Dimensions } from 'react-native'
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import { FAB } from 'react-native-paper'
+import moment from 'moment'
+import 'moment/locale/pt-br'
 import { format } from 'date-fns'
 
 const locale_br = require('date-fns/locale/pt-BR')
@@ -28,7 +30,7 @@ const ManagerSchedules = () => {
     } = useContext(RequestContext)
     const { user } = useContext(AuthContext)
 
-    const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+    //const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
 
     const [taskModal, setTaskModal] = useState(false)
 
@@ -36,7 +38,7 @@ const ManagerSchedules = () => {
     const [warningModal, setWarningModal] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [text, setText] = useState('')
-    const [selectedDate, setSelectedDate] = useState(newDate)
+    const [selectedDate, setSelectedDate] = useState(moment().format())
 
     const [index, setIndex] = useState(0)
     const [routes] = useState([
@@ -100,7 +102,8 @@ const ManagerSchedules = () => {
     }
 
     const onChange = async (currentDate) => {
-        const dateNow = currentDate ? currentDate : new Date()
+        //Subtraio 3 horas pra compensar a diferença no banco
+        const dateNow = moment(currentDate).subtract(3, 'hours').format()
         setDatePicker(Platform.OS === 'ios')
         setSelectedDate(dateNow)
     }

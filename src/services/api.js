@@ -191,7 +191,6 @@ export default {
         try {
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
 
-            console.log('FNS: ' + date)
             const headers = new Headers();
             headers.append("Content-Type", "application/json")
             headers.append("Accept", 'application/json')
@@ -251,6 +250,8 @@ export default {
             const headers = new Headers();
             headers.append("Content-Type", "application/json")
             headers.append("Accept", 'application/json')
+
+            console.log(status)
 
             const data = { status: status }
 

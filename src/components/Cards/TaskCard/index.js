@@ -17,7 +17,7 @@ const TaskCard = ({ data, loadTasks }) => {
     const date = format(Date.parse(data.date), 'PPPP', { locale: locale_br })
 
     const handleStatusTask = async () => {
-        setCheck((prevState) => setCheck(!prevState))
+        setCheck(!check)
         await Api.setStateTasks(data.id, check)
     }
 

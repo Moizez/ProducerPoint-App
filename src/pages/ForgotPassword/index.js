@@ -2,11 +2,9 @@ import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import Input from '../../components/Input'
-
 import {
-    Container, InputContainer, Titulo, InputBox, CloseButton,
-    Button, RecoverText, Text
+    Container, InputContainer, InputTitle, InputBox, Input, CloseButton,
+    RecoverButton, RecoverText, Text
 } from './styles';
 
 const ForgotPassword = () => {
@@ -23,8 +21,9 @@ const ForgotPassword = () => {
                 <Icon name='chevron-down' color='#000' size={40} />
             </CloseButton>
             <InputContainer>
-                <Titulo>Recuperar senha</Titulo>
+                <InputTitle>Recuperar senha</InputTitle>
                 <InputBox>
+                    {email != 0 && <Text>E-mail:</Text>}
                     <Input
                         placeholder="E-mail"
                         autoCorrect={false}
@@ -35,6 +34,7 @@ const ForgotPassword = () => {
                 </InputBox>
 
                 <InputBox>
+                    {phone != 0 && <Text>Telefone:</Text>}
                     <Input
                         placeholder="Celular"
                         autoCorrect={false}
@@ -46,8 +46,9 @@ const ForgotPassword = () => {
                 </InputBox>
 
                 <InputBox>
+                    {doc != 0 && <Text>CPF:</Text>}
                     <Input
-                        placeholder="CPF/CNPJ"
+                        placeholder="CPF"
                         autoCorrect={false}
                         autoCapitalize="none"
                         keyboardType="phone-pad"
@@ -56,9 +57,9 @@ const ForgotPassword = () => {
                     />
                 </InputBox>
 
-                <Button>
+                <RecoverButton>
                     <RecoverText>Recuperar</RecoverText>
-                </Button>
+                </RecoverButton>
 
             </InputContainer>
         </Container>

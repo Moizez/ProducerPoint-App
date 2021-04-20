@@ -134,8 +134,8 @@ android {
         applicationId "com.producerpoint"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "beta-2021.04.03"
+        versionCode 2
+        versionName "beta-2021.20.04"
     }
     signingConfigs {
         release {
