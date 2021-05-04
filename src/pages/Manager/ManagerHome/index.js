@@ -50,9 +50,7 @@ const ManagerHome = () => {
                     data={producers}
                     keyExtractor={(item) => item.id}
                     refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefreshList} />}
-                    renderItem={({ item }) => (
-                        <ProducersList data={item} />
-                    )}
+                    renderItem={({ item }) => (<ProducersList data={item} />)}
                     ListEmptyComponent={
                         <EmptyListCard>
                             <Title>Nenhum produtor cadastrado</Title>

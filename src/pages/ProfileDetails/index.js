@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { MaskService } from 'react-native-masked-text'
 import { format } from 'date-fns'
+import moment from 'moment'
 
 import {
     Container, Header, PageBox, Title, ProfileBox, Avatar, ProfileNameBox, ProfileName,
@@ -13,7 +14,8 @@ const ProfileDetails = ({ route }) => {
     const { data } = route.params
 
     const navigation = useNavigation()
-    const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
+    //const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
+    let birth = moment(data.birthDate).locale('pt-br').format('L')
     const income = MaskService.toMask('money', data.farmingActivity.averageCash, {
         unit: 'R$ ',
         separator: ',',
@@ -39,7 +41,7 @@ const ProfileDetails = ({ route }) => {
                     <Divider />
                     <InfoBox>
                         <BoldText>Apelido: <Text>{data.nickname}</Text></BoldText>
-                        <BoldText>Nascimento: <Text>{birthDate}</Text></BoldText>
+                        <BoldText>Nascimento: <Text>{birth}</Text></BoldText>
                         <BoldText>Telefone: <Text>{data.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data.email}</Text></BoldText>
                         <BoldText>Atividade: <Text>{data.farmingActivity.activityName}</Text></BoldText>

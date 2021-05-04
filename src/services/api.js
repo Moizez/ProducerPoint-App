@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BASE from './base'
+import moment from 'moment'
 
 export default {
 
@@ -54,6 +55,7 @@ export default {
         zipCode, city, district, uf, street, activityName, resultList, period
     ) => {
         try {
+
             const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
 
             const headers = new Headers();
@@ -195,10 +197,12 @@ export default {
             headers.append("Content-Type", "application/json")
             headers.append("Accept", 'application/json')
 
+            const formatDate = moment(date).format('yyyy/MM/DD')
+
             const data = {
                 description: description,
                 status: false,
-                date: date,
+                date: formatDate,
                 manager: {
                     id: user.id,
                 },
@@ -250,8 +254,6 @@ export default {
             const headers = new Headers();
             headers.append("Content-Type", "application/json")
             headers.append("Accept", 'application/json')
-
-            console.log(status)
 
             const data = { status: status }
 

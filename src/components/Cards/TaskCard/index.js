@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Animated, Text, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { format } from 'date-fns'
+import moment from 'moment'
+import 'moment/locale/pt-br'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 
-const locale_br = require('date-fns/locale/pt-BR')
 import Api from '../../../services/api'
 
 import {
@@ -14,7 +14,7 @@ import {
 const TaskCard = ({ data, loadTasks }) => {
 
     const [check, setCheck] = useState(data.status)
-    const date = format(Date.parse(data.date), 'PPPP', { locale: locale_br })
+    const date = moment(data.date).locale('pt-br').format('ddd, D [de] MMMM [de] YYYY')
 
     const handleStatusTask = async () => {
         setCheck(!check)

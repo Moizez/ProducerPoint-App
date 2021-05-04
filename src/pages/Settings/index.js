@@ -84,7 +84,7 @@ const Settings = () => {
 
             <View style={styles.versionContainer}>
                 <Text>Producer Point</Text>
-                <Text style={{ color: '#adb5bd', marginBottom: 12 }}>Versão 2021.04.03</Text>
+                <Text style={{ color: '#adb5bd', marginBottom: 12 }}>Versão 2021.04.20</Text>
             </View>
         </Container >
     )

@@ -7,21 +7,19 @@ import {
 } from './styles'
 
 const Picker = ({
-    title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker
+    title, modalTitle, list, showPicker, setShowPicker, setSelectedPicker, labelName, getLabelName
 }) => {
-
-    const [text, setText] = useState('')
 
     const togglePicker = (value, label) => {
         setShowPicker(false)
         setSelectedPicker(value)
-        setText(label)
+        getLabelName(label)
     }
 
     return (
         <Container>
             <OpenButton onPress={() => setShowPicker(true)}>
-                <TitleButton>{text ? text : title}</TitleButton>
+                <TitleButton>{labelName ? labelName : title}</TitleButton>
                 <Icon name='chevron-down' color='#888' size={30} />
             </OpenButton>
 

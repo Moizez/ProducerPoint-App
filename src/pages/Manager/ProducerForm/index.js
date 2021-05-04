@@ -6,6 +6,7 @@ import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Formik } from 'formik'
 import * as yup from 'yup'
+import { format } from 'date-fns'
 
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
@@ -16,10 +17,9 @@ import WarningModal from '../../../components/Modals/WarningModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
-    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox,
-    ButtonBox, ResetForm, SaveButton, TextButton, Modal, Divider,
-
-    MultiButton, MultiItemsBox, MultiText, NumberBox, MultiItem, MultiInfo
+    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox, ButtonBox,
+    SaveButton, TextButton, Modal, Divider, MultiButton, MultiItemsBox, MultiText,
+    NumberBox, MultiItem, MultiInfo
 } from './styles'
 
 const formSchema = yup.object({
@@ -44,8 +44,10 @@ const ProducerForm = () => {
     const [lottie, setLottie] = useState(error)
 
     const [activity, setActivity] = useState('')
+    const [activityLabel, setActivityLabel] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
     const [period, setPeriod] = useState('')
+    const [periodLabel, setPeriodLabel] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
     const [selectectedItems, setSelectectedItems] = useState([])
@@ -87,8 +89,8 @@ const ProducerForm = () => {
     }
 
     const resetAllInputs = () => {
-        setActivity('')
-        setPeriod('')
+        setActivityLabel('')
+        setPeriodLabel('')
         setCity('')
         setUf('')
         setDistrict('')
@@ -148,7 +150,7 @@ const ProducerForm = () => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
                                 const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = dateRef?.current.getRawValue()
+                                const birthDate = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy/MM/dd')
 
                                 if (!dateValid) {
                                     setLottie(error)
@@ -326,6 +328,8 @@ const ProducerForm = () => {
                                                 setShowPicker={setShowActivityPicker}
                                                 list={activities}
                                                 setSelectedPicker={setActivity}
+                                                labelName={activityLabel}
+                                                getLabelName={setActivityLabel}
                                             />
                                         </HalfInputBox>
 
@@ -376,6 +380,8 @@ const ProducerForm = () => {
                                                 setShowPicker={setShowPeriodPicker}
                                                 list={periods}
                                                 setSelectedPicker={setPeriod}
+                                                labelName={periodLabel}
+                                                getLabelName={setPeriodLabel}
                                             />
                                         </HalfInputBox>
                                     </InputsBox>
@@ -474,9 +480,6 @@ const ProducerForm = () => {
                                         <SaveButton onPress={props.handleSubmit}>
                                             <TextButton>Salvar</TextButton>
                                         </SaveButton>
-                                        <ResetForm onPress={props.resetForm}>
-                                            <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
-                                        </ResetForm>
                                     </ButtonBox>
 
                                 </FormBox>

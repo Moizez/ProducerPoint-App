@@ -38,14 +38,10 @@ const AuthProvider = ({ children }) => {
             setLoadingAuth(false)
             return
         } else {
-
             const response = await Api.onSignIn(email, password)
-
             try {
                 if (response.status === 200) {
-
                     const data = await response.json()
-
                     setUser(data)
                     storageUser(data)
                     setLoadingAuth(false)

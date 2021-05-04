@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { format } from 'date-fns'
+import moment from 'moment'
 import { Formik } from 'formik'
 import * as yup from 'yup'
 
@@ -16,8 +16,8 @@ import WarningModal from '../../../components/Modals/WarningModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
-    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox,
-    ButtonBox, ResetForm, SaveButton, CloseButton, TextButton, Modal, Divider,
+    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, 
+    ButtonBox, SaveButton, CloseButton, TextButton, Modal, Divider,
     MultiButton, MultiItemsBox, MultiText, NumberBox, MultiItem, MultiInfo
 } from './styles'
 
@@ -34,7 +34,7 @@ const ProducerUpdate = ({ route }) => {
 
     const { loadProducers, products } = useContext(RequestContext)
     const navigation = useNavigation()
-    const birthDate = format(Date.parse(data.birthDate), 'dd/MM/yyyy')
+    let birthDate = moment(data.birthDate).locale('pt-br').format('L')
 
     const activityValue = activities.filter(i => i.value === data.farmingActivity.activityName)
     const [{ value: activityName }] = activityValue
@@ -117,12 +117,12 @@ const ProducerUpdate = ({ route }) => {
                                     averageCash: data.farmingActivity.averageCash
                                 },
                             }}
-                            validationSchema={null}
+                            validationSchema={formSchema}
                             onSubmit={async (values, actions) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
                                 //const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = dateRef?.current.getRawValue()
+                                const birthDate = moment(dateRef?.current.getRawValue()).format('yyyy/MM/DD')
 
                                 if (!dateValid) {
                                     setLottie(error)
@@ -441,10 +441,7 @@ const ProducerUpdate = ({ route }) => {
                                             <TextButton>Salvar</TextButton>
                                         </SaveButton>
                                     </ButtonBox>
-                                    <ResetForm onPress={props.resetForm}>
-                                        <Text style={{ fontSize: 13 }}>Clique aqui para resetar o formulário.</Text>
-                                    </ResetForm>
-
+                                   
                                 </FormBox>
                             )}
 

@@ -103,9 +103,9 @@ const ManagerSchedules = () => {
 
     const onChange = async (currentDate) => {
         //Subtraio 3 horas pra compensar a diferença no banco
-        const dateNow = moment(currentDate).subtract(3, 'hours').format()
+        //const dateNow = moment(currentDate).subtract(3, 'hours').format()
         setDatePicker(Platform.OS === 'ios')
-        setSelectedDate(dateNow)
+        setSelectedDate(currentDate)
     }
 
     const openTaskModal = () => setTaskModal(true)

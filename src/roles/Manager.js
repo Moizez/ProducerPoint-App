@@ -92,7 +92,7 @@ const Manager = () => {
                 name='ManagerSchedules'
                 component={ManagerSchedules}
                 options={{
-                    title: 'Agenda'
+                    title: 'Tarefas'
                 }}
             />
 

@@ -109,7 +109,7 @@ export const ButtonBox = styled.View`
     width: 90%;
     height: 48px;
     border-radius: 5px;
-    margin-bottom: 70px;
+    margin-bottom: 35px;
     justify-content: space-between;
 `;
 
