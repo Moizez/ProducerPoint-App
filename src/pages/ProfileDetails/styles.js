@@ -42,14 +42,14 @@ export const Avatar = styled.Image`
 `;
 
 export const ProfileNameBox = styled.View`
-    flex: 1;
+    width: 200px;
     justify-content: center;
     margin-top: 15px;
 `;
 
 export const ProfileName = styled.Text`
     color: #000;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
 `;
 

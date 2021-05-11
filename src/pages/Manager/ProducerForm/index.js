@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, Fragment } from 'react'
+import React, { useState, useContext, useRef, Fragment, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
@@ -10,7 +10,7 @@ import { format } from 'date-fns'
 
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
-import { activities, periods } from '../../../enums'
+import { periods } from '../../../enums'
 import Loader from '../../../components/Loader'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
@@ -31,7 +31,7 @@ const formSchema = yup.object({
 
 const ProducerForm = () => {
 
-    const { loadProducers, products } = useContext(RequestContext)
+    const { loadProducers, products, activities } = useContext(RequestContext)
     const navigation = useNavigation()
 
     let error = require('../../../assets/lottie/error-icon.json')
@@ -118,6 +118,7 @@ const ProducerForm = () => {
 
     const resultList = productsList()
 
+
     return (
         <Fragment>
             <Container>
@@ -150,7 +151,7 @@ const ProducerForm = () => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
                                 const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy/MM/dd')
+                                const birthDate = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy-MM-dd')
 
                                 if (!dateValid) {
                                     setLottie(error)
@@ -186,7 +187,7 @@ const ProducerForm = () => {
                                     openWarningModal()
                                 } else {
 
-                                    await Api.createProducer(
+                                    const response = await Api.createProducer(
                                         values.name, values.nickname, birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
@@ -194,16 +195,22 @@ const ProducerForm = () => {
                                         uf, street, activity, resultList, period
                                     )
 
-                                    setLottie(success)
-                                    setTypeMessage('Produtor criado com sucesso!')
-                                    openWarningModal()
-                                    actions.resetForm()
-                                    resetAllInputs()
-                                    setTimeout(() => {
-                                        closeWarningModal()
-                                        loadProducers()
-                                        navigation.navigate('ManagerHome')
-                                    }, 2000);
+                                    if (response && response.status >= 200 && response.status <= 205) {
+                                        setLottie(success)
+                                        setTypeMessage('Produtor criado com sucesso!')
+                                        openWarningModal()
+                                        actions.resetForm()
+                                        resetAllInputs()
+                                        setTimeout(() => {
+                                            closeWarningModal()
+                                            loadProducers()
+                                            navigation.navigate('ManagerHome')
+                                        }, 2000);
+                                    } else {
+                                        setLottie(error)
+                                        setTypeMessage('Erro inesperado.z\nTente novamente!')
+                                        openWarningModal()
+                                    }
                                 }
                             }}
                         >

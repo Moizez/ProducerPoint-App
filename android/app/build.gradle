@@ -134,8 +134,8 @@ android {
         applicationId "com.producerpoint"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "beta-2021.04.20"
+        versionCode 3
+        versionName "beta-2021.05.11"
     }
     signingConfigs {
         release {
@@ -173,6 +173,7 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
 

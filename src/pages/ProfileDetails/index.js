@@ -44,7 +44,7 @@ const ProfileDetails = ({ route }) => {
                         <BoldText>Nascimento: <Text>{birth}</Text></BoldText>
                         <BoldText>Telefone: <Text>{data.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data.email}</Text></BoldText>
-                        <BoldText>Atividade: <Text>{data.farmingActivity.activityName}</Text></BoldText>
+                        <BoldText>Atividade: <Text>{data.farmingActivity?.activityName?.label}</Text></BoldText>
                         <BoldText>Produto{products.length > 1 && 's'}: <Text>{products.join(', ')}</Text></BoldText>
                         <BoldText>Renda média: <Text>{income}</Text></BoldText>
                         <BoldText>Período: <Text>{data.farmingActivity.period}</Text></BoldText>

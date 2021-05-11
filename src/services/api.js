@@ -52,7 +52,7 @@ export default {
 
     createProducer: async (
         name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
-        zipCode, city, district, uf, street, activityName, resultList, period
+        zipCode, city, district, uf, street, activityId, resultList, period
     ) => {
         try {
 
@@ -80,7 +80,9 @@ export default {
                 },
                 farmingActivity: {
                     averageCash: parseFloat(averageCash),
-                    activityName: activityName,
+                    activityName: {
+                        value: activityId
+                    },
                     period: period
                 },
                 products: resultList,
@@ -89,11 +91,12 @@ export default {
                 },
             }
 
-            await fetch(`${BASE.API}/producers`, {
+            const request = await fetch(`${BASE.API}/producers`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(data)
             })
+            return request
         } catch (e) {
             console.log('Erro: createProducer ' + e)
         }
@@ -101,7 +104,7 @@ export default {
 
     updateProducer: async (
         id, name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
-        zipCode, city, district, uf, street, activityName, resultList, period
+        zipCode, city, district, uf, street, activityId, resultList, period
     ) => {
         try {
 
@@ -129,7 +132,9 @@ export default {
                 },
                 farmingActivity: {
                     averageCash: parseFloat(averageCash),
-                    activityName: activityName,
+                    activityName: {
+                        value: activityId
+                    },
                     period: period
                 },
                 products: resultList,
@@ -138,11 +143,12 @@ export default {
                 }
             }
 
-            await fetch(`${BASE.API}/producers/${id}`, {
+            const request = await fetch(`${BASE.API}/producers/${id}`, {
                 method: 'PUT',
                 headers: headers,
                 body: JSON.stringify(data)
             })
+            return request
         } catch (e) {
             console.log('Erro: updateProducer ' + e)
         }
@@ -161,10 +167,19 @@ export default {
     deleteProducer: async (id) => {
         try {
             const request = await fetch(`${BASE.API}/producers/${id}`, { method: 'DELETE' })
+            return request
+        } catch (e) {
+            console.log('Erro: deleteProducer ' + e)
+        }
+    },
+
+    getAllActivities: async () => {
+        try {
+            const request = await fetch(`${BASE.API}/activities`)
             const response = await request.json()
             return response
         } catch (e) {
-            console.log('Erro: deleteProducer ' + e)
+            console.log('Erro: getAllActivities ' + e)
         }
     },
 
@@ -208,11 +223,12 @@ export default {
                 },
             }
 
-            await fetch(`${BASE.API}/tasks`, {
+            const request = await fetch(`${BASE.API}/tasks`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(data)
             })
+            return request
         } catch (e) {
             console.log('Erro: createTask ' + e)
         }
@@ -268,13 +284,12 @@ export default {
         } catch (e) {
             console.log('Erro: setStateTasks ' + e)
         }
-    },   
+    },
 
     deleteTask: async (id) => {
         try {
             const request = await fetch(`${BASE.API}/tasks/${id}`, { method: 'DELETE' })
-            const response = await request.json()
-            return response
+            return request
         } catch (e) {
             console.log('Erro: deleteTask ' + e)
         }

@@ -6,6 +6,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable'
 import Api from '../../../services/api'
 import { RequestContext } from '../../../contexts/request'
 import ConfirmationModal from '../../../components/Modals/ConfirmationModal'
+import WarningModal from '../../../components/Modals/WarningModal'
 
 import {
     Container, BoldText, LeftBox, RightBox
@@ -13,17 +14,23 @@ import {
 
 const ProducersList = ({ data }) => {
 
-    const { name, farmingActivity: { activityName } } = data
+    const { name, farmingActivity: { activityName: { label } } } = data
 
     const navigation = useNavigation()
     const { loadProducers } = useContext(RequestContext)
+    const [warningModal, setWarningModal] = useState(false)
 
     const [confirmation, setConfirmation] = useState(false)
     const swipeableRef = useRef(null);
 
     const handleDelete = async () => {
-        await Api.deleteProducer(data.id)
-        loadProducers()
+        const response = await Api.deleteProducer(data.id)
+
+        if (response.status != 200) {
+            openWarningModal()
+        } else {
+            loadProducers()
+        }
     }
 
     const LeftActions = (progress, dragX) => {
@@ -54,6 +61,8 @@ const ProducersList = ({ data }) => {
 
     const openConfirmatioModal = () => setConfirmation(true)
     const closeConfirmatioModal = () => setConfirmation(false)
+    const openWarningModal = () => setWarningModal(true)
+    const closeWarningModal = () => setWarningModal(false)
 
     return (
         <Fragment>
@@ -71,7 +80,7 @@ const ProducersList = ({ data }) => {
                 >
                     <BoldText>Nome: <Text style={styles.text}>{data.name}</Text></BoldText>
                     <BoldText>Apelido: <Text style={styles.text}>{data.nickname}</Text></BoldText>
-                    <BoldText>Atividade: <Text style={styles.text}>{data.farmingActivity.activityName}(a)</Text></BoldText>
+                    <BoldText>Atividade: <Text style={styles.text}>{data.farmingActivity?.activityName?.label}(a)</Text></BoldText>
                 </Container>
             </Swipeable>
 
@@ -84,9 +93,22 @@ const ProducersList = ({ data }) => {
                     closeModal={closeConfirmatioModal}
                     confirmModal={handleDelete}
                     name={name}
-                    activityName={activityName}
+                    activityName={label}
                     bgColor={true}
                     closeSwipeable={closeSwipeable}
+                />
+            </Modal>
+
+            <Modal
+                animationType='fade'
+                transparent={true}
+                visible={warningModal}
+            >
+
+                <WarningModal
+                    closeModal={closeWarningModal}
+                    message='Erro ao excluir!'
+                    bgColor={true}
                 />
             </Modal>
 

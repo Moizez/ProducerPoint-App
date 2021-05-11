@@ -9,6 +9,7 @@ const RequestProvider = ({ children }) => {
     const [loading, setLoading] = useState(false)
     const [producers, setProducers] = useState([])
     const [products, setProducts] = useState([])
+    const [activities, setActivities] = useState([])
     const [tasks, setTasks] = useState([])
     const [todayTasks, setTodayTasks] = useState([])
     const [futureTasks, setFutureTasks] = useState([])
@@ -24,6 +25,13 @@ const RequestProvider = ({ children }) => {
         setLoading(true)
         const response = await Api.getAllProducts()
         setProducts(response)
+        setLoading(false)
+    }
+
+    const loadActivities = async () => {
+        setLoading(true)
+        const response = await Api.getAllActivities()
+        setActivities(response)
         setLoading(false)
     }
 
@@ -48,10 +56,10 @@ const RequestProvider = ({ children }) => {
         setLoading(false)
     }
 
-
     useEffect(() => {
         loadProducers()
         loadProducts()
+        loadActivities()
         loadTasks()
         loadTodayTasks()
         loadFutureTasks()
@@ -62,9 +70,10 @@ const RequestProvider = ({ children }) => {
             loading, setLoading,
             producers, loadProducers,
             products, loadProducts,
+            activities, loadActivities,
             tasks, loadTasks,
             todayTasks, loadTodayTasks,
-            futureTasks, loadFutureTasks
+            futureTasks, loadFutureTasks,
         }}>
             {children}
         </RequestContext.Provider>

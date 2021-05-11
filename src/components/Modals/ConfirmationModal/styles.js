@@ -51,6 +51,7 @@ export const InfoBox = styled.View`
 `;
 
 export const ItemBox = styled.View`
+    width: 200px;
     align-items: center;
     justify-content: center;
 `;
@@ -60,6 +61,7 @@ export const InfoTitle = styled.Text`
 `;
 
 export const InfoText = styled.Text`
+    text-align: center;
     font-size: 15px;
     color: #000;
 `;

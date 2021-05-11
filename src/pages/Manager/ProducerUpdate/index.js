@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef, Fragment } from 'react'
+import React, { useState, useContext, useRef, Fragment, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
@@ -10,13 +10,13 @@ import * as yup from 'yup'
 
 import { RequestContext } from '../../../contexts/request'
 import Api from '../../../services/api'
-import { activities, periods } from '../../../enums'
+import { periods } from '../../../enums'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
-    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, 
+    HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText,
     ButtonBox, SaveButton, CloseButton, TextButton, Modal, Divider,
     MultiButton, MultiItemsBox, MultiText, NumberBox, MultiItem, MultiInfo
 } from './styles'
@@ -32,15 +32,13 @@ const ProducerUpdate = ({ route }) => {
 
     const { data, closeSwipeable } = route.params
 
-    const { loadProducers, products } = useContext(RequestContext)
+    const { loadProducers, products, activities } = useContext(RequestContext)
     const navigation = useNavigation()
     let birthDate = moment(data.birthDate).locale('pt-br').format('L')
 
-    const activityValue = activities.filter(i => i.value === data.farmingActivity.activityName)
-    const [{ value: activityName }] = activityValue
-
     const periodValue = periods.filter(i => i.value === data.farmingActivity.period)
     const [{ value: periodName }] = periodValue
+    const activityName = data.farmingActivity?.activityName?.label
 
     let error = require('../../../assets/lottie/error-icon.json')
     let success = require('../../../assets/lottie/success-icon.json')
@@ -49,9 +47,11 @@ const ProducerUpdate = ({ route }) => {
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
 
-    const [activity, setActivity] = useState(activityName)
+    const [activity, setActivity] = useState(data.farmingActivity?.activityName?.value)
+    const [activityLabel, setActivityLabel] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
     const [period, setPeriod] = useState(periodName)
+    const [periodLabel, setPeriodLabel] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
 
     const [selectectedItems, setSelectectedItems] = useState([...data.products])
@@ -121,14 +121,14 @@ const ProducerUpdate = ({ route }) => {
                             onSubmit={async (values, actions) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
-                                //const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = moment(dateRef?.current.getRawValue()).format('yyyy/MM/DD')
+                                const averageCash = moneyRef?.current.getRawValue()
+                                const birthDate = moment(dateRef?.current.getRawValue()).format('yyyy-MM-DD')
 
                                 if (!dateValid) {
                                     setLottie(error)
                                     setTypeMessage('Data inválida!')
                                     openWarningModal()
-                                } else if (values.phone.length < 14) {
+                                } else if (!values.phone.length) {
                                     setLottie(error)
                                     setTypeMessage('Número incompleto!')
                                     openWarningModal()
@@ -148,32 +148,39 @@ const ProducerUpdate = ({ route }) => {
                                     setLottie(error)
                                     setTypeMessage('Informe o período!')
                                     openWarningModal()
-                                } else if (!values.address.zipCode || values.address.zipCode.length != 9) {
+                                } else if (!values.address.zipCode) {
                                     setLottie(error)
                                     setTypeMessage('Informe um cep válido!')
                                     openWarningModal()
                                 } else {
 
-                                    await Api.updateProducer(
+                                    const response = await Api.updateProducer(
                                         data.id, values.name, values.nickname, birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        values.farmingActivity.averageCash,
+                                        averageCash,
                                         values.address.zipCode, values.address.city,
                                         values.address.district, values.address.uf,
                                         values.address.street, activity, resultList, period
                                     )
 
-                                    setLottie(success)
-                                    setTypeMessage('Produtor atualizado com sucesso!')
-                                    openWarningModal()
-                                    setTimeout(() => {
-                                        closeWarningModal()
-                                        loadProducers()
-                                        navigation.navigate('ManagerHome')
-                                    }, 2000);
-                                    actions.resetForm()
-                                    resetAllInputs()
+                                    if (response && response.status >= 200 && response.status <= 205) {
+
+                                        setLottie(success)
+                                        setTypeMessage('Produtor atualizado com sucesso!')
+                                        openWarningModal()
+                                        setTimeout(() => {
+                                            closeWarningModal()
+                                            loadProducers()
+                                            navigation.navigate('ManagerHome')
+                                        }, 2000);
+                                        actions.resetForm()
+                                        resetAllInputs()
+                                    } else {
+                                        setLottie(error)
+                                        setTypeMessage('Erro inesperado.\nTente novamente!')
+                                        openWarningModal()
+                                    }
                                 }
                             }}
                         >
@@ -247,6 +254,7 @@ const ProducerUpdate = ({ route }) => {
                                                 onChangeText={props.handleChange('phone')}
                                                 keyboardType='phone-pad'
                                                 value={props.values.phone}
+                                                onBlur={props.handleBlur('phone')}
                                             />
                                         </HalfInputBox>
 
@@ -297,6 +305,8 @@ const ProducerUpdate = ({ route }) => {
                                                 setShowPicker={setShowActivityPicker}
                                                 list={activities}
                                                 setSelectedPicker={setActivity}
+                                                labelName={activityLabel}
+                                                getLabelName={setActivityLabel}
                                             />
                                         </HalfInputBox>
 
@@ -347,6 +357,8 @@ const ProducerUpdate = ({ route }) => {
                                                 setShowPicker={setShowPeriodPicker}
                                                 list={periods}
                                                 setSelectedPicker={setPeriod}
+                                                labelName={periodLabel}
+                                                getLabelName={setPeriodLabel}
                                             />
                                         </HalfInputBox>
                                     </InputsBox>
@@ -363,6 +375,7 @@ const ProducerUpdate = ({ route }) => {
                                             onChangeText={props.handleChange('address.zipCode')}
                                             keyboardType='phone-pad'
                                             value={props.values.address.zipCode}
+                                            onBlur={props.handleBlur('address.zipCode')}
                                         />
                                     </InputBox>
 
@@ -441,7 +454,7 @@ const ProducerUpdate = ({ route }) => {
                                             <TextButton>Salvar</TextButton>
                                         </SaveButton>
                                     </ButtonBox>
-                                   
+
                                 </FormBox>
                             )}
 

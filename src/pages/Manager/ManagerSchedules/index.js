@@ -30,8 +30,6 @@ const ManagerSchedules = () => {
     } = useContext(RequestContext)
     const { user } = useContext(AuthContext)
 
-    //const newDate = new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-
     const [taskModal, setTaskModal] = useState(false)
 
     const [datePicker, setDatePicker] = useState(false)
@@ -89,12 +87,21 @@ const ManagerSchedules = () => {
 
     const handleCreateTask = async () => {
         if (text) {
-            await Api.createTask(text, selectedDate)
-            loadTodayTasks()
-            loadFutureTasks()
-            setText('')
-            setSelectedDate(new Date())
-            closeTaskModal()
+
+            const responde = await Api.createTask(text, selectedDate)
+
+            if (responde && responde.status >= 200 && responde.status <= 205) {
+
+                loadTodayTasks()
+                loadFutureTasks()
+                setText('')
+                setSelectedDate(new Date())
+                closeTaskModal()
+            } else {
+                setTypeMessage('Algo deu errado!' + responde.status)
+                openWarningModal()
+            }
+
         } else {
             setTypeMessage('Informe uma descrição!')
             openWarningModal()
@@ -102,8 +109,6 @@ const ManagerSchedules = () => {
     }
 
     const onChange = async (currentDate) => {
-        //Subtraio 3 horas pra compensar a diferença no banco
-        //const dateNow = moment(currentDate).subtract(3, 'hours').format()
         setDatePicker(Platform.OS === 'ios')
         setSelectedDate(currentDate)
     }
