@@ -42,13 +42,26 @@ export const FormTitle = styled.Text`
     color: #000;
 `;
 
-export const InputBox = styled.View`
+export const InputContainer = styled.View`
     width: 90%;
+`;
+
+export const InputBox = styled.View`
+    width: 100%;
     height: 48px;
     border-radius: 5px;
     background-color: #CCC;
     margin-bottom: 10px;
     justify-content: space-around;
+`;
+
+export const InputsBox = styled.View`
+    width: 100%;
+    height: 48px;
+    flex-direction: row;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    justify-content: space-between;
 `;
 
 export const HalfInputBox = styled.View`
@@ -73,15 +86,6 @@ export const Text = styled.Text`
     color: #495057;
 `;
 
-export const InputsBox = styled.View`
-    width: 90%;
-    height: 48px;
-    flex-direction: row;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    justify-content: space-between;
-`;
-
 export const IconBox = styled.TouchableOpacity`
     height: 48px;
     width: 15%;
@@ -95,7 +99,6 @@ export const IconBox = styled.TouchableOpacity`
 
 export const ErrorBox = styled.View`
     align-self: flex-start;
-    margin-left: 20px;
 `;
 
 export const ErrorText = styled.Text`

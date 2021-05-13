@@ -121,7 +121,6 @@ const ProducerUpdate = ({ route }) => {
                             onSubmit={async (values, actions) => {
                                 const cpfValid = cpfRef?.current.isValid()
                                 const dateValid = dateRef?.current.isValid()
-                                const averageCash = moneyRef?.current.getRawValue()
                                 const birthDate = moment(dateRef?.current.getRawValue()).format('yyyy-MM-DD')
 
                                 if (!dateValid) {
@@ -158,7 +157,7 @@ const ProducerUpdate = ({ route }) => {
                                         data.id, values.name, values.nickname, birthDate,
                                         values.phone, values.cpf, values.email,
                                         values.address.houseNumber, values.address.reference,
-                                        averageCash,
+                                        values.farmingActivity.averageCash,
                                         values.address.zipCode, values.address.city,
                                         values.address.district, values.address.uf,
                                         values.address.street, activity, resultList, period
@@ -178,7 +177,7 @@ const ProducerUpdate = ({ route }) => {
                                         resetAllInputs()
                                     } else {
                                         setLottie(error)
-                                        setTypeMessage('Erro inesperado.\nTente novamente!')
+                                        setTypeMessage('Erro inesperado.\n' + response.status)
                                         openWarningModal()
                                     }
                                 }

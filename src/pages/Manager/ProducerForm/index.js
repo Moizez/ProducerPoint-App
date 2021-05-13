@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
-import { Formik } from 'formik'
+import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { format } from 'date-fns'
 
@@ -19,15 +19,8 @@ import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
     HalfInputBox, Input, Text, InputsBox, ErrorBox, ErrorText, IconBox, ButtonBox,
     SaveButton, TextButton, Modal, Divider, MultiButton, MultiItemsBox, MultiText,
-    NumberBox, MultiItem, MultiInfo
+    NumberBox, MultiItem, MultiInfo, InputContainer
 } from './styles'
-
-const formSchema = yup.object({
-    name: yup.string().required('O nome é obrigatório!'),
-    phone: yup.string().required('O telefone é obrigatório!'),
-    cpf: yup.string().required('O cpf é obrigatório!'),
-    birthDate: yup.string().required('A data de nascimento é obrigatória!'),
-})
 
 const ProducerForm = () => {
 
@@ -75,10 +68,11 @@ const ProducerForm = () => {
                 openWarningModal()
             } else {
                 setShow(true)
-                setStreet(data.logradouro)
-                setDistrict(data.bairro)
-                setCity(data.localidade)
-                setUf(data.uf)
+                formik.setFieldValue('address.uf', data.uf)
+                formik.setFieldValue('address.city', data.localidade)
+                formik.setFieldValue('address.district', data.bairro)
+                formik.setFieldValue('address.street', data.logradouro)
+                formik.setFieldValue('address.reference', data.complemento)
             }
         } catch (erro) {
             setLoading(false)
@@ -118,6 +112,115 @@ const ProducerForm = () => {
 
     const resultList = productsList()
 
+    const validationSchema = yup.object().shape({
+        name: yup.string().required('Nome é obrigatório!'),
+        birthDate: yup.string().required('Data é obrigatória!'),
+        cpf: yup.string().required('CPF é obrigatório!'),
+        email: yup.string().email('E-mail inválido!'),
+        address: yup.object().shape({
+            zipCode: yup.string().required('CEP é obrigatório!'),
+            uf: yup.string().required('UF é obrigatório!'),
+            city: yup.string().required('Cidade é obrigatória!'),
+            district: yup.string().required('Bairro é obrigatório!'),
+            street: yup.string().required('Rua é obrigatória!'),
+        }),
+        farmingActivity: yup.object().shape({
+            averageCash: yup.string().required('Renda é obrigatória!')
+        }),
+    })
+
+    const initialFormState = {
+        name: '',
+        nickname: '',
+        birthDate: '',
+        cpf: '',
+        phone: '',
+        email: '',
+        address: {
+            zipCode: '',
+            uf: '',
+            city: '',
+            district: '',
+            street: '',
+            houseNumber: '',
+            reference: ''
+        },
+        farmingActivity: {
+            activityName: {
+                value: ''
+            },
+            period: '',
+            averageCash: ''
+        },
+        products: [],
+    }
+
+    const formik = useFormik({
+        initialValues: initialFormState,
+        validationSchema: validationSchema,
+        onSubmit: async (values, actions) => {
+
+            const cpfValid = cpfRef?.current.isValid()
+            const dateValid = dateRef?.current.isValid()
+            const averageCash = moneyRef?.current.getRawValue()
+            const birthDate = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy-MM-dd')
+
+            if (!dateValid) {
+                setLottie(error)
+                setTypeMessage('Data inválida!')
+                openWarningModal()
+            } else if (values.phone.length < 14) {
+                setLottie(error)
+                setTypeMessage('Telefone incompleto!')
+                openWarningModal()
+            } else if (!cpfValid) {
+                setLottie(error)
+                setTypeMessage('CPF inválido!')
+                openWarningModal()
+            } else if (!activity) {
+                setLottie(error)
+                setTypeMessage('Informe a atividade!')
+                openWarningModal()
+            } else if (!resultList || resultList.length == 0) {
+                setLottie(error)
+                setTypeMessage('Informe pelo menos um produto!')
+                openWarningModal()
+            } else if (!period) {
+                setLottie(error)
+                setTypeMessage('Informe o período!')
+                openWarningModal()
+            } else {
+
+                const response = await Api.createProducer(
+                    values.name, values.nickname, birthDate,
+                    values.phone, values.cpf, values.email,
+                    values.address.houseNumber, values.address.reference,
+                    averageCash, values.address.zipCode,
+                    values.address.city, values.address.district,
+                    values.address.uf, values.address.street,
+                    activity, resultList, period
+                )
+
+                if (response && response.status >= 200 && response.status <= 205) {
+                    setLottie(success)
+                    setTypeMessage('Produtor criado com sucesso!')
+                    openWarningModal()
+                    actions.resetForm()
+                    resetAllInputs()
+                    setTimeout(() => {
+                        closeWarningModal()
+                        loadProducers()
+                        navigation.navigate('ManagerHome')
+                    }, 2000);
+                } else {
+                    setLottie(error)
+                    setTypeMessage('Erro inesperado.\n' + response.status)
+                    openWarningModal()
+                }
+            }
+
+        }
+    })
 
     return (
         <Fragment>
@@ -127,372 +230,339 @@ const ProducerForm = () => {
                 </Header>
 
                 <PageBox>
-
                     <FormContainer>
-                        <Formik
-                            initialValues={{
-                                name: '',
-                                nickname: '',
-                                birthDate: '',
-                                phone: '',
-                                cpf: '',
-                                email: '',
-                                address: {
-                                    zipCode: '',
-                                    houseNumber: '',
-                                    reference: '',
-                                },
-                                farmingActivity: {
-                                    averageCash: ''
-                                }
-                            }}
-                            validationSchema={formSchema}
-                            onSubmit={async (values, actions) => {
-                                const cpfValid = cpfRef?.current.isValid()
-                                const dateValid = dateRef?.current.isValid()
-                                const averageCash = moneyRef?.current.getRawValue()
-                                const birthDate = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy-MM-dd')
+                        <FormBox>
+                            <FormTitle style={{ marginTop: 10 }}>Dados Pessoais</FormTitle>
+                            <Divider />
 
-                                if (!dateValid) {
-                                    setLottie(error)
-                                    setTypeMessage('Data inválida!')
-                                    openWarningModal()
-                                } else if (values.phone.length < 14) {
-                                    setLottie(error)
-                                    setTypeMessage('Número incompleto!')
-                                    openWarningModal()
-                                } else if (!cpfValid || !values.cpf) {
-                                    setLottie(error)
-                                    setTypeMessage('CPF inválido!')
-                                    openWarningModal()
-                                } else if (!activity) {
-                                    setLottie(error)
-                                    setTypeMessage('Informe a atividade!')
-                                    openWarningModal()
-                                } else if (!resultList || resultList.length == 0) {
-                                    setLottie(error)
-                                    setTypeMessage('Informe pelo menos um produto!')
-                                    openWarningModal()
-                                } else if (!values.farmingActivity.averageCash) {
-                                    setLottie(error)
-                                    setTypeMessage('Informe a renda!')
-                                    openWarningModal()
-                                } else if (!period) {
-                                    setLottie(error)
-                                    setTypeMessage('Informe o período!')
-                                    openWarningModal()
-                                } else if (!values.address.zipCode || values.address.zipCode.length != 9) {
-                                    setLottie(error)
-                                    setTypeMessage('Informe um cep válido!')
-                                    openWarningModal()
-                                } else {
-
-                                    const response = await Api.createProducer(
-                                        values.name, values.nickname, birthDate,
-                                        values.phone, values.cpf, values.email,
-                                        values.address.houseNumber, values.address.reference,
-                                        averageCash, values.address.zipCode, city, district,
-                                        uf, street, activity, resultList, period
-                                    )
-
-                                    if (response && response.status >= 200 && response.status <= 205) {
-                                        setLottie(success)
-                                        setTypeMessage('Produtor criado com sucesso!')
-                                        openWarningModal()
-                                        actions.resetForm()
-                                        resetAllInputs()
-                                        setTimeout(() => {
-                                            closeWarningModal()
-                                            loadProducers()
-                                            navigation.navigate('ManagerHome')
-                                        }, 2000);
-                                    } else {
-                                        setLottie(error)
-                                        setTypeMessage('Erro inesperado.z\nTente novamente!')
-                                        openWarningModal()
+                            <InputContainer>
+                                <InputBox>
+                                    {formik.values.name != '' && <Text>Nome*</Text>}
+                                    <Input
+                                        placeholder='Nome do produtor*'
+                                        onChangeText={formik.handleChange('name')}
+                                        value={formik.values.name}
+                                        onBlur={formik.handleBlur('name')}
+                                    />
+                                </InputBox>
+                                <ErrorBox>
+                                    {formik.touched.name && formik.errors.name &&
+                                        <ErrorText>{formik.errors.name}</ErrorText>
                                     }
-                                }
-                            }}
-                        >
-                            {(props) => (
-                                <FormBox>
-                                    <FormTitle style={{ marginTop: 10 }}>Dados Pessoais</FormTitle>
-                                    <Divider />
+                                </ErrorBox>
+                            </InputContainer>
 
-                                    <InputBox>
-                                        {props.values.name != '' && <Text>Nome:</Text>}
+                            <InputContainer>
+                                <InputsBox>
+                                    <HalfInputBox>
+                                        {formik.values.nickname != '' && <Text>Apelido:</Text>}
                                         <Input
-                                            placeholder='Nome do produtor'
-                                            onChangeText={props.handleChange('name')}
-                                            value={props.values.name}
-                                            onBlur={props.handleBlur('name')}
+                                            placeholder='Apelido'
+                                            onChangeText={formik.handleChange('nickname')}
+                                            value={formik.values.nickname}
+                                            onBlur={formik.handleBlur('nickname')}
+                                        />
+                                    </HalfInputBox>
+
+                                    <HalfInputBox>
+                                        {formik.values.birthDate != '' && <Text>Nascimento*</Text>}
+                                        <TextInputMask
+                                            type={'datetime'}
+                                            options={{
+                                                format: 'DD/MM/YYYY'
+                                            }}
+                                            ref={dateRef}
+                                            style={styles.input}
+                                            keyboardType='phone-pad'
+                                            placeholder='Nascimento*'
+                                            onChangeText={formik.handleChange('birthDate')}
+                                            value={formik.values.birthDate}
+                                            onBlur={formik.handleBlur('birthDate')}
+                                        />
+                                    </HalfInputBox>
+                                </InputsBox>
+
+                                <ErrorBox style={{ marginLeft: '52%' }}>
+                                    {formik.touched.birthDate && formik.errors.birthDate &&
+                                        <ErrorText>{formik.errors.birthDate}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
+
+                            <InputContainer>
+                                <InputsBox>
+                                    <HalfInputBox>
+                                        {formik.values.cpf != '' && <Text>CPF*</Text>}
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'cpf'}
+                                            ref={cpfRef}
+                                            placeholder='CPF*'
+                                            onChangeText={formik.handleChange('cpf')}
+                                            keyboardType='phone-pad'
+                                            value={formik.values.cpf}
+                                            onBlur={formik.handleBlur('cpf')}
+                                        />
+                                    </HalfInputBox>
+
+                                    <HalfInputBox>
+                                        {formik.values.phone != '' && <Text>Celular</Text>}
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'cel-phone'}
+                                            options={{
+                                                maskType: 'BRL',
+                                                withDDD: true,
+                                                dddMask: '(99) '
+                                            }}
+                                            placeholder='Telefone'
+                                            onChangeText={formik.handleChange('phone')}
+                                            keyboardType='phone-pad'
+                                            value={formik.values.phone}
+                                        />
+                                    </HalfInputBox>
+
+                                </InputsBox>
+                                <ErrorBox>
+                                    {formik.touched.cpf && formik.errors.cpf &&
+                                        <ErrorText>{formik.errors.cpf}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
+
+                            <InputContainer>
+                                <InputBox>
+                                    {formik.values.email != '' && <Text>E-mail</Text>}
+                                    <Input
+                                        placeholder='E-mail'
+                                        onChangeText={formik.handleChange('email')}
+                                        autoCorrect={false}
+                                        autoCapitalize='none'
+                                        keyboardType='email-address'
+                                        value={formik.values.email}
+                                        onBlur={formik.handleBlur('email')}
+                                    />
+                                </InputBox>
+                                <ErrorBox>
+                                    {formik.touched.email && formik.errors.email &&
+                                        <ErrorText>{formik.errors.email}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
+
+                            <FormTitle>Atividade do Produtor</FormTitle>
+                            <Divider />
+
+                            <InputContainer>
+                                <InputsBox>
+                                    <HalfInputBox>
+                                        <Picker
+                                            title={'Atividade?*'}
+                                            modalTitle={'Qual a atividade do produtor?'}
+                                            showPicker={showActivityPicker}
+                                            setShowPicker={setShowActivityPicker}
+                                            list={activities}
+                                            setSelectedPicker={setActivity}
+                                            labelName={activityLabel}
+                                            getLabelName={setActivityLabel}
+                                        />
+                                    </HalfInputBox>
+
+                                    <HalfInputBox>
+                                        <MultiButton
+                                            onPress={() => setShowMultiPicker(!showMultiPicker)}
+                                            onLongPress={() => setSelectectedItems([])}
+                                        >
+                                            <MultiText>Produtos?*</MultiText>
+                                            {selectectedItems.length > 0 ?
+                                                <NumberBox>
+                                                    <MultiText>
+                                                        {selectectedItems.length}
+                                                    </MultiText>
+                                                </NumberBox> :
+                                                <Icon name='chevron-down' color='#888' size={30} />
+                                            }
+                                        </MultiButton>
+                                    </HalfInputBox>
+                                </InputsBox>
+                            </InputContainer>
+
+                            <InputContainer>
+                                <InputsBox>
+                                    <HalfInputBox>
+                                        <Picker
+                                            title={'Período?*'}
+                                            modalTitle={'Qual o período base da renda?'}
+                                            showPicker={showPeriodPicker}
+                                            setShowPicker={setShowPeriodPicker}
+                                            list={periods}
+                                            setSelectedPicker={setPeriod}
+                                            labelName={periodLabel}
+                                            getLabelName={setPeriodLabel}
+                                        />
+                                    </HalfInputBox>
+
+                                    <HalfInputBox>
+                                        {formik.values.farmingActivity.averageCash != '' && <Text>Renda*</Text>}
+                                        <TextInputMask
+                                            style={styles.input}
+                                            type={'money'}
+                                            options={{
+                                                precision: 2,
+                                                separator: ',',
+                                                delimiter: '.',
+                                                unit: 'R$',
+                                                suffixUnit: ''
+                                            }}
+                                            ref={moneyRef}
+                                            placeholder='Renda*'
+                                            keyboardType='phone-pad'
+                                            onChangeText={formik.handleChange('farmingActivity.averageCash')}
+                                            value={formik.values.farmingActivity.averageCash}
+                                            onBlur={formik.handleBlur('farmingActivity.averageCash')}
+                                        />
+                                    </HalfInputBox>
+                                </InputsBox>
+                                <ErrorBox style={{ marginLeft: '52%' }}>
+                                    {formik.touched.farmingActivity?.averageCash && formik.errors.farmingActivity?.averageCash &&
+                                        <ErrorText>{formik.errors.farmingActivity?.averageCash}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
+
+                            <FormTitle>Endereço</FormTitle>
+                            <Divider />
+
+                            <InputContainer>
+                                <InputsBox>
+                                    <InputBox style={{
+                                        borderTopEndRadius: 0,
+                                        borderBottomEndRadius: 0,
+                                        width: '85%'
+                                    }}>
+                                        {formik.values.address?.zipCode != '' && <Text>CEP*</Text>}
+                                        <TextInputMask
+                                            type={'zip-code'}
+                                            style={styles.input}
+                                            placeholder='Informe o CEP*'
+                                            onChangeText={formik.handleChange('address.zipCode')}
+                                            keyboardType='phone-pad'
+                                            value={formik.values.address?.zipCode}
                                         />
                                     </InputBox>
-                                    <ErrorBox>
-                                        {props.touched.name && props.errors.name &&
-                                            <ErrorText>{props.errors.name}</ErrorText>
-                                        }
-                                    </ErrorBox>
+                                    <IconBox onPress={() => getZipCode(formik.values.address.zipCode)} activeOpacity={0.7}>
+                                        <Icon name='magnify' size={28} color='#FFF' />
+                                    </IconBox>
+                                </InputsBox>
+                                <ErrorBox>
+                                    {formik.touched.address?.zipCode && formik.errors.address?.zipCode &&
+                                        <ErrorText>{formik.errors.address?.zipCode}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
 
-                                    <InputsBox>
-                                        <HalfInputBox>
-                                            {props.values.nickname != '' && <Text>Apelido:</Text>}
+                            {show &&
+                                <Fragment>
+                                    <InputContainer style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                        <InputsBox>
+                                            <InputBox style={{ width: '64%' }}>
+                                                {formik.values.address?.city != '' && <Text>Cidade*</Text>}
+                                                <Input
+                                                    placeholder='Cidade'
+                                                    onChangeText={formik.handleChange('address.city')}
+                                                    value={formik.values.address?.city}
+                                                    onBlur={formik.handleBlur('address.city')}
+                                                />
+                                            </InputBox>
+                                            <InputBox style={{ width: '34%' }}>
+                                                {formik.values.address?.uf != '' && <Text>UF*</Text>}
+                                                <Input
+                                                    placeholder='UF'
+                                                    onChangeText={formik.handleChange('address.uf')}
+                                                    value={formik.values.address?.uf}
+                                                    onBlur={formik.handleBlur('address.uf')}
+                                                />
+
+                                            </InputBox>
+                                        </InputsBox>
+                                        <ErrorBox style={{ marginRight: '34%' }}>
+                                            {formik.touched.address?.city && formik.errors.address?.city &&
+                                                <ErrorText>{formik.errors.address?.city}</ErrorText>
+                                            }
+                                        </ErrorBox>
+                                        <ErrorBox>
+                                            {formik.touched.address?.uf && formik.errors.address?.uf &&
+                                                <ErrorText>{formik.errors.address?.uf}</ErrorText>
+                                            }
+                                        </ErrorBox>
+                                    </InputContainer>
+                                    <InputContainer>
+                                        <InputBox>
+                                            {formik.values.address?.district != '' && <Text>Bairro*</Text>}
                                             <Input
-                                                placeholder='Apelido'
-                                                onChangeText={props.handleChange('nickname')}
-                                                value={props.values.nickname}
-                                                onBlur={props.handleBlur('nickname')}
-                                            />
-                                        </HalfInputBox>
-
-                                        <HalfInputBox>
-                                            {props.values.birthDate != '' && <Text>Nascimento:</Text>}
-                                            <TextInputMask
-                                                type={'datetime'}
-                                                options={{
-                                                    format: 'DD/MM/YYYY'
-                                                }}
-                                                ref={dateRef}
-                                                style={styles.input}
-                                                keyboardType='phone-pad'
-                                                placeholder='Nascimento'
-                                                onChangeText={props.handleChange('birthDate')}
-                                                value={props.values.birthDate}
-                                                onBlur={props.handleBlur('birthDate')}
-                                            />
-                                        </HalfInputBox>
-
-                                    </InputsBox>
-                                    <ErrorBox>
-                                        {props.touched.birthDate && props.errors.birthDate &&
-                                            <ErrorText>{props.errors.birthDate}</ErrorText>
-                                        }
-                                    </ErrorBox>
-
-                                    <InputsBox>
-                                        <HalfInputBox>
-                                            {props.values.phone != '' && <Text>Celular:</Text>}
-                                            <TextInputMask
-                                                style={styles.input}
-                                                type={'cel-phone'}
-                                                options={{
-                                                    maskType: 'BRL',
-                                                    withDDD: true,
-                                                    dddMask: '(99) '
-                                                }}
-                                                placeholder='Telefone'
-                                                onChangeText={props.handleChange('phone')}
-                                                keyboardType='phone-pad'
-                                                value={props.values.phone}
-                                            />
-                                        </HalfInputBox>
-
-                                        <HalfInputBox>
-                                            {props.values.cpf != '' && <Text>CPF:</Text>}
-                                            <TextInputMask
-                                                style={styles.input}
-                                                type={'cpf'}
-                                                ref={cpfRef}
-                                                placeholder='CPF'
-                                                onChangeText={props.handleChange('cpf')}
-                                                keyboardType='phone-pad'
-                                                value={props.values.cpf}
-                                                onBlur={props.handleBlur('cpf')}
-                                            />
-                                        </HalfInputBox>
-                                    </InputsBox>
-                                    <ErrorBox>
-                                        {props.touched.phone && props.errors.phone &&
-                                            <ErrorText>{props.errors.phone}</ErrorText>
-                                        }
-                                        {props.touched.cpf && props.errors.cpf &&
-                                            <ErrorText>{props.errors.cpf}</ErrorText>
-                                        }
-                                    </ErrorBox>
-
-                                    <InputBox>
-                                        {props.values.email != '' && <Text>E-mail:</Text>}
-                                        <Input
-                                            placeholder='E-mail'
-                                            onChangeText={props.handleChange('email')}
-                                            autoCorrect={false}
-                                            autoCapitalize='none'
-                                            keyboardType='email-address'
-                                            value={props.values.email}
-                                            onBlur={props.handleBlur('email')}
-                                        />
-                                    </InputBox>
-
-                                    <FormTitle>Atividade</FormTitle>
-                                    <Divider />
-
-                                    <InputsBox>
-                                        <HalfInputBox>
-                                            <Picker
-                                                title={'Atividade?'}
-                                                modalTitle={'Qual a atividade do produtor?'}
-                                                showPicker={showActivityPicker}
-                                                setShowPicker={setShowActivityPicker}
-                                                list={activities}
-                                                setSelectedPicker={setActivity}
-                                                labelName={activityLabel}
-                                                getLabelName={setActivityLabel}
-                                            />
-                                        </HalfInputBox>
-
-                                        <HalfInputBox>
-                                            <MultiButton
-                                                onPress={() => setShowMultiPicker(!showMultiPicker)}
-                                                onLongPress={() => setSelectectedItems([])}
-                                            >
-                                                <MultiText>Produtos?</MultiText>
-                                                {selectectedItems.length > 0 ?
-                                                    <NumberBox>
-                                                        <MultiText>
-                                                            {selectectedItems.length}
-                                                        </MultiText>
-                                                    </NumberBox> :
-                                                    <Icon name='chevron-down' color='#888' size={30} />
-                                                }
-                                            </MultiButton>
-                                        </HalfInputBox>
-                                    </InputsBox>
-
-                                    <InputsBox>
-                                        <HalfInputBox>
-                                            {props.values.farmingActivity.averageCash != '' && <Text>Renda média:</Text>}
-                                            <TextInputMask
-                                                style={styles.input}
-                                                type={'money'}
-                                                options={{
-                                                    precision: 2,
-                                                    separator: ',',
-                                                    delimiter: '.',
-                                                    unit: 'R$',
-                                                    suffixUnit: ''
-                                                }}
-                                                ref={moneyRef}
-                                                placeholder='Renda média'
-                                                keyboardType='phone-pad'
-                                                onChangeText={props.handleChange('farmingActivity.averageCash')}
-                                                value={props.values.farmingActivity.averageCash}
-                                            />
-                                        </HalfInputBox>
-
-                                        <HalfInputBox>
-                                            <Picker
-                                                title={'Período?'}
-                                                modalTitle={'Qual o período base da renda?'}
-                                                showPicker={showPeriodPicker}
-                                                setShowPicker={setShowPeriodPicker}
-                                                list={periods}
-                                                setSelectedPicker={setPeriod}
-                                                labelName={periodLabel}
-                                                getLabelName={setPeriodLabel}
-                                            />
-                                        </HalfInputBox>
-                                    </InputsBox>
-
-                                    <FormTitle>Endereço</FormTitle>
-                                    <Divider />
-
-                                    <InputsBox>
-                                        <InputBox style={{
-                                            borderTopEndRadius: 0,
-                                            borderBottomEndRadius: 0,
-                                            width: '85%'
-                                        }}>
-                                            {props.values.address.zipCode != '' && <Text>CEP:</Text>}
-                                            <TextInputMask
-                                                type={'zip-code'}
-                                                style={styles.input}
-                                                placeholder='Somente números'
-                                                onChangeText={props.handleChange('address.zipCode')}
-                                                keyboardType='phone-pad'
-                                                value={props.values.address.zipCode}
+                                                placeholder='Bairro*'
+                                                onChangeText={formik.handleChange('address.district')}
+                                                value={formik.values.address?.district}
+                                                onBlur={formik.handleBlur('address.district')}
                                             />
                                         </InputBox>
-                                        <IconBox onPress={() => getZipCode(props.values.address.zipCode)} activeOpacity={0.7}>
-                                            <Icon name='magnify' size={28} color='#FFF' />
-                                        </IconBox>
-                                    </InputsBox>
+                                        <ErrorBox>
+                                            {formik.touched.address?.district && formik.errors.address?.district &&
+                                                <ErrorText>{formik.errors.address?.district}</ErrorText>
+                                            }
+                                        </ErrorBox>
+                                    </InputContainer>
 
-                                    {show &&
-                                        <Fragment>
-                                            <InputsBox>
-                                                <InputBox style={{ width: '78%' }}>
-                                                    {city != '' && <Text>Cidade:</Text>}
-                                                    <Input
-                                                        placeholder='Cidade'
-                                                        onChangeText={setCity}
-                                                        value={city}
-                                                    />
-                                                </InputBox>
-                                                <InputBox style={{ width: '18%' }}>
-                                                    {uf != '' && <Text>UF:</Text>}
-                                                    <Input
-                                                        placeholder='UF'
-                                                        onChangeText={setUf}
-                                                        value={uf}
-                                                    />
-
-                                                </InputBox>
-                                            </InputsBox>
-
-                                            <InputBox>
-                                                {district != '' && <Text>Bairro:</Text>}
+                                    <InputContainer style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                                        <InputsBox>
+                                            <InputBox style={{ width: '64%' }}>
+                                                {formik.values.address?.street != '' && <Text>Rua*</Text>}
                                                 <Input
-                                                    placeholder='Bairro'
-                                                    onChangeText={setDistrict}
-                                                    value={district}
+                                                    placeholder='Rua*'
+                                                    onChangeText={formik.handleChange('address.street')}
+                                                    value={formik.values.address?.street}
+                                                    onBlur={formik.handleBlur('address.street')}
                                                 />
                                             </InputBox>
-
-                                            <InputsBox>
-                                                <InputBox style={{
-                                                    width: '78%'
-                                                }}>
-                                                    {street != '' && <Text>Rua:</Text>}
-                                                    <Input
-                                                        placeholder='Rua'
-                                                        onChangeText={setStreet}
-                                                        value={street}
-                                                    />
-                                                </InputBox>
-                                                <InputBox style={{
-                                                    width: '18%'
-                                                }}>
-                                                    {props.values.address.houseNumber != '' && <Text>Nº:</Text>}
-                                                    <Input
-                                                        placeholder='Nº'
-                                                        onChangeText={props.handleChange('address.houseNumber')}
-                                                        keyboardType='phone-pad'
-                                                        value={props.values.address.houseNumber}
-                                                    />
-                                                </InputBox>
-                                            </InputsBox>
-
-                                            <InputBox>
-                                                {props.values.address.reference != '' && <Text>Referência:</Text>}
+                                            <InputBox style={{ width: '34%' }}>
+                                                {formik.values.address.houseNumber != '' && <Text>Nº</Text>}
                                                 <Input
-                                                    placeholder='Referência'
-                                                    onChangeText={props.handleChange('address.reference')}
-                                                    value={props.values.address.reference}
+                                                    placeholder='Nº'
+                                                    onChangeText={formik.handleChange('address.houseNumber')}
+                                                    keyboardType='phone-pad'
+                                                    value={formik.values.address.houseNumber}
+                                                    onBlur={formik.handleBlur('address.houseNumber')}
                                                 />
                                             </InputBox>
-                                        </Fragment>
-                                    }
+                                        </InputsBox>
+                                        <ErrorBox>
+                                            {formik.touched.address?.street && formik.errors.address?.street &&
+                                                <ErrorText>{formik.errors.address?.street}</ErrorText>
+                                            }
+                                        </ErrorBox>
+                                    </InputContainer>
+                                    <InputContainer>
+                                        <InputBox>
+                                            {formik.values.address.reference != '' && <Text>Referência:</Text>}
+                                            <Input
+                                                placeholder='Referência'
+                                                onChangeText={formik.handleChange('address.reference')}
+                                                value={formik.values.address.reference}
+                                                onBlur={formik.handleBlur('address.reference')}
+                                            />
+                                        </InputBox>
+                                    </InputContainer>
+                                </Fragment>
+                            }
 
-                                    <ButtonBox>
-                                        <SaveButton onPress={props.handleSubmit}>
-                                            <TextButton>Salvar</TextButton>
-                                        </SaveButton>
-                                    </ButtonBox>
+                            <ButtonBox>
+                                <SaveButton onPress={formik.handleSubmit}>
+                                    <TextButton>Salvar</TextButton>
+                                </SaveButton>
+                            </ButtonBox>
 
-                                </FormBox>
-                            )}
+                        </FormBox>
 
-                        </Formik>
                     </FormContainer>
                 </PageBox>
                 {loading && <Loader />}
