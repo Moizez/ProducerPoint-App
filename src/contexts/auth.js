@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Modal } from 'react-native'
 
 import WarningModal from '../components/Modals/WarningModal'
-import Api from '../services/api'
+import api from '../services/api'
 
 export const AuthContext = createContext({})
 
@@ -38,12 +38,11 @@ const AuthProvider = ({ children }) => {
             setLoadingAuth(false)
             return
         } else {
-            const response = await Api.onSignIn(email, password)
+            const response = await api.onSignIn(email, password)
             try {
-                if (response.status === 200) {
-                    const data = await response.json()
-                    setUser(data)
-                    storageUser(data)
+                if (response.data) {
+                    setUser(response.data)
+                    storageUser(response.data)
                     setLoadingAuth(false)
                     return
                 } else {

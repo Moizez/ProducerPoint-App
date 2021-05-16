@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react'
 import { Modal } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import Api from '../../../services/api'
+import api from '../../../services/api'
 import ProducersList from '../ProducersList'
 import WarningModal from '../../../components/Modals/WarningModal'
 import Loader from '../../../components/Loader'
@@ -26,8 +26,8 @@ const SearchProducers = () => {
             openWarningModal()
         } else {
             setLoading(true)
-            const response = await Api.findProducersByNameOrNickname(text)
-            setProducer(response)
+            const response = await api.findProducersByNameOrNickname(text)
+            setProducer(response.data)
             setText('')
             setLoading(false)
         }
@@ -62,13 +62,13 @@ const SearchProducers = () => {
                             <ListTitleBox>
                                 <ListTitle>resultado da busca</ListTitle>
                             </ListTitleBox>
-                            <Divider style={{ elevation: 1}} />
+                            <Divider style={{ elevation: 1 }} />
                         </Fragment>
                     }
                     ListEmptyComponent={
                         <EmptyListCard>
                             <Title>Sem resultados</Title>
-                            <Title style={{fontSize: 15}}>Dica: busque pelo nome ou apelido.</Title>
+                            <Title style={{ fontSize: 15 }}>Dica: busque pelo nome ou apelido.</Title>
                         </EmptyListCard>
                     }
                     stickyHeaderIndices={[0]}

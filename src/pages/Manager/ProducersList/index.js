@@ -3,7 +3,7 @@ import { Animated, Text, StyleSheet, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
 
-import Api from '../../../services/api'
+import api from '../../../services/api'
 import { RequestContext } from '../../../contexts/request'
 import ConfirmationModal from '../../../components/Modals/ConfirmationModal'
 import WarningModal from '../../../components/Modals/WarningModal'
@@ -24,12 +24,12 @@ const ProducersList = ({ data }) => {
     const swipeableRef = useRef(null);
 
     const handleDelete = async () => {
-        const response = await Api.deleteProducer(data.id)
+        const response = await api.deleteProducer(data.id)
 
-        if (response.status != 200) {
-            openWarningModal()
-        } else {
+        if (response.status === 200) {
             loadProducers()
+        } else {
+            openWarningModal()
         }
     }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext } from 'react';
 
-import Api from '../services/api'
+import api from '../services/api'
 
 export const RequestContext = createContext({})
 
@@ -16,43 +16,43 @@ const RequestProvider = ({ children }) => {
 
     const loadProducers = async () => {
         setLoading(true)
-        const response = await Api.getAllProducers()
-        setProducers(response)
+        const response = await api.getAllProducers()
+        setProducers(response.data)
         setLoading(false)
     }
 
     const loadProducts = async () => {
         setLoading(true)
-        const response = await Api.getAllProducts()
-        setProducts(response)
+        const response = await api.getAllProducts()
+        setProducts(response.data)
         setLoading(false)
     }
 
     const loadActivities = async () => {
         setLoading(true)
-        const response = await Api.getAllActivities()
-        setActivities(response)
+        const response = await api.getAllActivities()
+        setActivities(response.data)
         setLoading(false)
     }
 
     const loadTasks = async () => {
         setLoading(true)
-        const response = await Api.getAllTasks()
-        setTasks(response)
+        const response = await api.getAllTasks()
+        setTasks(response.data)
         setLoading(false)
     }
 
     const loadTodayTasks = async () => {
         setLoading(true)
-        const response = await Api.getAllTodayTasks()
-        setTodayTasks(response)
+        const response = await api.getAllTodayTasks()
+        setTodayTasks(response.data)
         setLoading(false)
     }
 
     const loadFutureTasks = async () => {
         setLoading(true)
-        const response = await Api.getAllFutureTasks()
-        setFutureTasks(response)
+        const response = await api.getAllFutureTasks()
+        setFutureTasks(response.data)
         setLoading(false)
     }
 

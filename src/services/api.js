@@ -1,53 +1,142 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import BASE from './base'
 import moment from 'moment'
+
+const CEP_API = 'https://viacep.com.br/ws'
+const API = 'https://apiproducers.serviceapp.net.br/api'
+//const API = 'http://192.168.1.128:8080/api'
+//const API = 'https://producersapi.herokuapp.com/api'
+
+
+const apiFetchPost = async (endpoint, body) => {
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json")
+    headers.append("Accept", 'application/json')
+
+    const response = await fetch(API + endpoint, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(body)
+    })
+
+    if (response.status >= 200 && response.status <= 299) {
+        const json = await response.json()
+        if (json) {
+            return {
+                data: json,
+                status: response.status
+            }
+        } else {
+            return {
+                data: null,
+                status: response.status
+            }
+        }
+    } else {
+        return {
+            data: null,
+            status: response.status,
+        }
+    }
+}
+
+const apiFetchGet = async (endpoint) => {
+
+    const response = await fetch(API + endpoint)
+    if (response.status >= 200 && response.status <= 299) {
+        const json = await response.json()
+        if (json) {
+            return {
+                data: json,
+                status: response.status
+            }
+        } else {
+            return {
+                data: null,
+                status: response.status
+            }
+        }
+    } else {
+        return {
+            data: null,
+            status: response.status,
+        }
+    }
+}
+
+const apiFetchPut = async (endpoint, body) => {
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json")
+    headers.append("Accept", 'application/json')
+
+    const response = await fetch(API + endpoint, {
+        method: 'PUT',
+        headers: headers,
+        body: JSON.stringify(body)
+    })
+
+    if (response.status >= 200 && response.status <= 299) {
+        const json = await response.json()
+        if (json) {
+            return {
+                data: json,
+                status: response.status
+            }
+        } else {
+            return {
+                data: null,
+                status: response.status
+            }
+        }
+    } else {
+        return {
+            data: null,
+            status: response.status,
+        }
+    }
+}
+
+const apiFetchDelete = async (endpoint) => {
+
+    const response = await fetch(`${API + endpoint}`, { method: 'DELETE' })
+    if (response.status >= 200 && response.status <= 299) {
+        return {
+            status: response.status
+        }
+    } else {
+        return {
+            status: response.status,
+        }
+    }
+}
 
 export default {
 
     onSignIn: async (email, password) => {
-        try {
-            const request = await fetch(`${BASE.API}/signin`, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            })
-            return request
-
-        } catch (e) {
-            console.log('Error: onSignIn ' + e)
-        }
+        const data = { email: email, password: password }
+        const request = await apiFetchPost('/signin', data)
+        return request
     },
 
     getAllProducers: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/producers`)
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllProducers ' + e)
-        }
+        const response = await apiFetchGet('/producers')
+        return response
     },
 
     findProducersByNameOrNickname: async (name) => {
-        try {
-            const request = await fetch(`${BASE.API}/producers/findByName0rNickname/${name}`)
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: findProducersByNameOrNickname ' + e)
-        }
+        const request = await apiFetchGet(`/producers/findByName0rNickname/${name}`)
+        return request
     },
 
     getCep: async (cep) => {
         try {
-            const request = await fetch(`${BASE.CEP_API}/${cep}/json`)
+            const request = await fetch(`${CEP_API}/${cep}/json`)
             return request
         } catch (e) {
             console.log('Erro: getCep ' + e)
         }
+        return []
     },
 
     createProducer: async (
@@ -91,7 +180,7 @@ export default {
                 },
             }
 
-            const request = await fetch(`${BASE.API}/producers`, {
+            const request = await fetch(`${API}/producers`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(data)
@@ -143,7 +232,7 @@ export default {
                 }
             }
 
-            const request = await fetch(`${BASE.API}/producers/${id}`, {
+            const request = await fetch(`${API}/producers/${id}`, {
                 method: 'PUT',
                 headers: headers,
                 body: JSON.stringify(data)
@@ -154,146 +243,99 @@ export default {
         }
     },
 
-    getAllProducts: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/products`) || []
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllProducts ' + e)
-        }
+    deleteProducer: async (id) => {
+        const request = await apiFetchDelete(`/producers/${id}`)
+        return request
     },
 
-    deleteProducer: async (id) => {
-        try {
-            const request = await fetch(`${BASE.API}/producers/${id}`, { method: 'DELETE' })
-            return request
-        } catch (e) {
-            console.log('Erro: deleteProducer ' + e)
-        }
+    createProduct: async (label) => {
+        const data = { label }
+        const request = await apiFetchPost('/products', data)
+        return request
+    },
+
+    updateProduct: async (id, label) => {
+        const data = { value: id, label: label }
+        const request = await apiFetchPut(`/products/${id}`, data)
+        return request
+    },
+
+    getAllProducts: async () => {
+        const response = await apiFetchGet('/products')
+        return response
+    },
+
+    deleteProduct: async (id) => {
+        const request = await apiFetchDelete(`/products/${id}`)
+        return request
+    },
+
+    createActivity: async (label) => {
+        const data = { label: label }
+        const request = await apiFetchPost('/activities', data)
+        return request
+    },
+
+    updateActivity: async (id, label) => {
+        const data = { value: id, label: label }
+        const request = await apiFetchPut(`/activities/${id}`, data)
+        return request
     },
 
     getAllActivities: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/activities`)
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllActivities ' + e)
-        }
+        const response = await apiFetchGet('/activities')
+        return response
+    },
+
+    deleteActivity: async (id) => {
+        const request = await apiFetchDelete(`/activities/${id}`)
+        return request
     },
 
     setStateRoles: async (id) => {
-        try {
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json")
-            headers.append("Accept", 'application/json')
-
-            const data = { id: id, status: false }
-
-            const request = await fetch(`${BASE.API}/producers/${id}`,
-                {
-                    method: 'PUT',
-                    headers: headers,
-                    body: JSON.stringify(data)
-                }
-            )
-            return request
-        } catch (e) {
-            console.log('Erro: setStateRoles ' + e)
-        }
+        const data = { id: id, status: false }
+        const request = await apiFetchPut(`/producers/${id}`, data)
+        return request
     },
 
-    createTask: async (description, date) => {
-        try {
-            const user = await JSON.parse(await AsyncStorage.getItem('@producerpoint:user')) || []
-
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json")
-            headers.append("Accept", 'application/json')
-
-            const formatDate = moment(date).format('yyyy/MM/DD')
-
-            const data = {
-                description: description,
-                status: false,
-                date: formatDate,
-                manager: {
-                    id: user.id,
-                },
-            }
-
-            const request = await fetch(`${BASE.API}/tasks`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(data)
-            })
-            return request
-        } catch (e) {
-            console.log('Erro: createTask ' + e)
+    createTask: async (description, date, id) => {
+        const formatDate = moment(date).format('yyyy-MM-DD')
+        const data = {
+            description: description,
+            status: false,
+            date: formatDate,
+            manager: {
+                id: id,
+            },
         }
+        const request = await apiFetchPost('/tasks', data)
+        return request
     },
 
     getAllTasks: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/tasks`) || []
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllTasks ' + e)
-        }
+        const response = await apiFetchGet('/tasks')
+        return response
     },
 
     getAllTodayTasks: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/tasks/todaytasks`) || []
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllTodayTasks ' + e)
-        }
+        const response = await apiFetchGet('/tasks/todaytasks')
+        return response
     },
 
     getAllFutureTasks: async () => {
-        try {
-            const request = await fetch(`${BASE.API}/tasks/futuretasks`) || []
-            const response = await request.json()
-            return response
-        } catch (e) {
-            console.log('Erro: getAllFutureTasks ' + e)
-        }
+        const response = await apiFetchGet('/tasks/futuretasks')
+        return response
     },
 
     setStateTasks: async (id, status) => {
-        try {
-
-            const headers = new Headers();
-            headers.append("Content-Type", "application/json")
-            headers.append("Accept", 'application/json')
-
-            const data = { status: status }
-
-            const request = await fetch(`${BASE.API}/tasks/${id}`,
-                {
-                    method: 'PUT',
-                    headers: headers,
-                    body: JSON.stringify(data)
-                }
-            )
-            return request
-        } catch (e) {
-            console.log('Erro: setStateTasks ' + e)
-        }
+        const data = { status: status }
+        const request = await apiFetchPut(`/tasks/${id}`, data)
+        return request
     },
 
     deleteTask: async (id) => {
-        try {
-            const request = await fetch(`${BASE.API}/tasks/${id}`, { method: 'DELETE' })
-            return request
-        } catch (e) {
-            console.log('Erro: deleteTask ' + e)
-        }
+        const request = await apiFetchDelete(`/tasks/${id}`)
+        return request
     },
-
 
 }
