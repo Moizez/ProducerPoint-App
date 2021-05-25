@@ -9,12 +9,20 @@ export const Header = styled.SafeAreaView`
     width: 100%;
     height: 100px;
     background-color: ${props => props.theme.main};
+    padding: 10px;
+`;
+
+export const Title = styled.Text`
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #000;
 `;
 
 export const PageBox = styled.View`
     flex: 1;
     background-color: #e3e3e3;
-    border-top-left-radius: 50px;
+    border-top-left-radius: 20px;
     margin-top: -50px;
 `;
 
@@ -31,6 +39,55 @@ export const Avatar = styled.Image`
     border-radius: 20px;
     border-width: 4px;
     border-color: #FFF;
+`;
+
+export const ProfileNameBox = styled.View`
+    width: 200px;
+    justify-content: center;
+    margin-top: 15px;
+`;
+
+export const ProfileName = styled.Text`
+    color: #000;
+    font-size: 16px;
+    font-weight: bold;
+`;
+
+export const ProfileRole = styled.Text`
+    color: #000;
+    font-size: 13px;
+    margin-top: 10px;
+`;
+
+export const ProfileInfo = styled.View`
+    justify-content: center;
+    margin-top: 15px;
+`;
+
+export const InfoBox = styled.View`
+    justify-content: center;
+    padding: 10px 20px 20px 20px;
+`;
+
+export const ProfileActivity = styled.Text`
+    color: #000;
+    font-size: 13px;
+`;
+
+export const Divider = styled.View`
+    height: 0.5px;
+    background-color: #CCC;
+    margin: 0 20px 10px 20px;
+`;
+
+export const BoldText = styled.Text`
+    font-size: 15px;
+    font-weight: bold;
+`;
+
+export const Text = styled.Text`
+    font-size: 15px;
+    font-weight: normal;
 `;
 
 export const ButtonBox = styled.View`
@@ -58,59 +115,4 @@ export const TextButton = styled.Text`
     color: #FFF;
     font-weight: bold;
     font-size: 18px;
-`;
-
-export const Modal = styled.Modal``;
-
-export const ProfileNameBox = styled.View`
-    flex: 1;
-    justify-content: center;
-    margin-top: 15px;
-`;
-
-export const ProfileName = styled.Text`
-    color: #000;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-`;
-
-export const ProfileRole = styled.Text`
-    color: #000;
-    font-size: 13px;
-    margin-top: 10px;
-`;
-
-export const ListTitle = styled.Text`
-    color: #000;
-    font-size: 14px;
-    margin-top: 25px;
-    text-align: center;
-    font-weight: bold;
-    font-variant:small-caps;
-`;
-
-export const FlatList = styled.FlatList`
-    flex: 1;
-`;
-
-export const Divider = styled.View`
-    height: 0.5px;
-    background-color: #CCC;
-    margin: 0 20px 10px 20px;
-`;
-
-export const ListTitleBox = styled.View`
-    background-color: #e3e3e3;
-`;
-
-export const EmptyListCard = styled.View`
-    margin-top: 50px;
-    align-items: center;
-    justify-content: center;
-`;
-
-export const Title = styled.Text`
-    color: #5c5c5c;
-    font-size: 20px;
 `;

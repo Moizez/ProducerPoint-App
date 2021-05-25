@@ -10,7 +10,6 @@ import Manager from '../roles/Manager'
 // Stacks import
 import ProfileDetails from '../pages/ProfileDetails'
 import ProducerUpdate from '../pages/Manager/ProducerUpdate'
-import ListSalesProducer from '../pages/SaleProducer/ListSalesProducer'
 
 const Stack = createStackNavigator()
 
@@ -24,7 +23,6 @@ const AppRoutes = () => {
                 <Stack.Screen name='Manager' component={Manager} />
                 <Stack.Screen name='ProfileDetails' component={ProfileDetails} />
                 <Stack.Screen name='ProducerUpdate' component={ProducerUpdate} />
-                <Stack.Screen name='ListSalesProducer' component={ListSalesProducer} />
             </Stack.Navigator>
         )
 

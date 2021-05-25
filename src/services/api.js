@@ -124,6 +124,11 @@ export default {
         return response
     },
 
+    getProduceById: async (id) => {
+        const response = await apiFetchGet(`/producers/${id}`)
+        return response
+    },
+
     findProducersByNameOrNickname: async (name) => {
         const request = await apiFetchGet(`/producers/findByName0rNickname/${name}`)
         return request
@@ -336,6 +341,16 @@ export default {
     deleteTask: async (id) => {
         const request = await apiFetchDelete(`/tasks/${id}`)
         return request
+    },
+
+    getAllSales: async () => {
+        const response = await apiFetchGet('/sales-producers')
+        return response
+    },
+
+    getSalesByProducer: async (id) => {
+        const response = await apiFetchGet(`/sales-producers/${id}`)
+        return response
     },
 
 }

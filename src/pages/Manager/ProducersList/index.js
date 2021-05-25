@@ -76,7 +76,7 @@ const ProducersList = ({ data }) => {
                 <Container
                     style={{ elevation: 5 }}
                     activeOpacity={7}
-                    onPress={() => navigation.navigate('ProfileDetails', { data: data })}
+                    onPress={() => navigation.navigate('ProfileDetails', { id: data.id })}
                 >
                     <BoldText>Nome: <Text style={styles.text}>{data.name}</Text></BoldText>
                     <BoldText>Apelido: <Text style={styles.text}>{data.nickname}</Text></BoldText>
