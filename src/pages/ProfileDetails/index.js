@@ -37,6 +37,15 @@ const ProfileDetails = ({ route }) => {
                 </ProfileBox>
 
                 <ProfileInfo>
+                    <Divider />
+                    <ButtonBox>
+                        <BackButton onPress={() => navigation.navigate('ListSalesProducer', {route: data})}>
+                            <TextButton>Vendas</TextButton>
+                        </BackButton>
+                    </ButtonBox>
+                </ProfileInfo>
+
+                <ProfileInfo>
                     <Title>Informações pessoais</Title>
                     <Divider />
                     <InfoBox>

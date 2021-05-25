@@ -31,3 +31,9 @@ export const products = [
     { value: 'Laranja', label: 'Laranja' },
     { value: 'Outro', label: 'Outro' }
 ]
+
+export const parameter = [
+    {value: 'kg', label: 'kg'},
+    {value: 'unidade', label: 'unidade'},
+    {valur: 'saco', label: 'saco'},
+]
