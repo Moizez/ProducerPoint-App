@@ -107,7 +107,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor }) => {
                                 />
                             </InputBox>
                             <InputBox style={{ width: '24%' }}>
-                                {formik.values.parameter != '' && <Text>Medida*</Text>}
+                                {formik.values.parameter == '' && <Text>Medida*</Text>}
                                 <Input
                                     placeholder='Ex: kg'
                                     onChangeText={formik.handleChange('parameter')}
@@ -148,7 +148,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor }) => {
 
                     <InputContainer>
                         <InputBox>
-                            {formik.values.date != '' && <Text>Data da venda*</Text>}
+                            {formik.values.date == '' && <Text>Data da venda*</Text>}
                             <DateButton onPress={() => setDatePicker(true)}>
                                 <TextButton style={{ fontSize: 15 }}>{formattedDate}</TextButton>
                                 <Icon name='calendar' color='#000' size={30} />
