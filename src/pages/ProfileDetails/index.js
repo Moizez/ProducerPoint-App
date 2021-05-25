@@ -16,6 +16,7 @@ const initialLayout = { width: Dimensions.get('window').width };
 
 const ProfileDetails = ({ route }) => {
 
+
     const { id } = route.params
     const navigation = useNavigation()
 
@@ -39,7 +40,6 @@ const ProfileDetails = ({ route }) => {
     }
 
     useEffect(() => {
-        loadSales()
         loadProducer()
     }, [])
 
@@ -63,10 +63,7 @@ const ProfileDetails = ({ route }) => {
             />
         ),
         second: () => (
-            <ProducerSales
-                data={salesByProducer}
-                loadPage={loadSales}
-            />
+            <ProducerSales />
         )
     });
 

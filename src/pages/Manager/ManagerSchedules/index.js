@@ -142,6 +142,7 @@ const ManagerSchedules = () => {
                 <DatePicker
                     chosenDate={selectedDate}
                     onSet={onChange}
+                    minimumDate={new Date()}
                 />
             }
 

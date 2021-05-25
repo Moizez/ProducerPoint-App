@@ -37,7 +37,6 @@ export const Title = styled.Text`
 
 export const ModalInfo = styled.View`
     background-color: #d9d9d9;
-    flex-direction: row;
     border-radius: 8px;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -72,7 +71,7 @@ export const ConfirmButton = styled.TouchableOpacity`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    background-color: #da1e37;
+    background-color: #2a9d8f;
     border-radius: 5px;
 `;
 
@@ -107,6 +106,71 @@ export const HalfInputBox = styled.View`
     margin-bottom: 10px;
     justify-content: space-around;
 `;
+
+
+export const InputContainer = styled.View`
+    width: 100%;
+`;
+
+export const InputBox = styled.View`
+    width: 100%;
+    height: 48px;
+    border-radius: 5px;
+    background-color: #CCC;
+    margin-bottom: 10px;
+    justify-content: space-around;
+`;
+
+export const InputsBox = styled.View`
+    width: 100%;
+    height: 48px;
+    flex-direction: row;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+`;
+
+export const Input = styled.TextInput`
+    width: 100%;
+    font-size: 18px;
+    color: #292b2c;
+    padding-left: 15px;
+`;
+
+export const ErrorBox = styled.View`
+    align-self: flex-start;
+`;
+
+export const ErrorText = styled.Text`
+    font-size: 11px;
+    color: #c1121f;
+    margin-top: -8px;
+    margin-bottom: 3px;
+`;
+
+export const Text = styled.Text`
+    margin: 5px 0 0 3px;
+    font-size: 11px;
+    color: #495057;
+`;
+
+export const DateButton = styled.TouchableOpacity`
+    flex-direction: row;
+    height: 45px;
+    width: 100%;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+`;
+
+export const TextButton = styled.Text`
+    color: #000;
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 12px;
+`;
+
 
 
 

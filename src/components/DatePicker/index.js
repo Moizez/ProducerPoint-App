@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker'
 
-const DatePicker = ({ chosenDate, onSet, display }) => {
+const DatePicker = ({ chosenDate, onSet, display, minimumDate, maximumDate }) => {
 
     const [date, setDate] = useState(new Date(chosenDate));
 
@@ -10,7 +10,8 @@ const DatePicker = ({ chosenDate, onSet, display }) => {
             locale='pt-BR'
             value={date}
             mode="date"
-            minimumDate={new Date()}
+            minimumDate={minimumDate}
+            maximumDate={maximumDate}
             display={display}
             onChange={(event, selectedDate) => {
                 const currentDate = selectedDate || date

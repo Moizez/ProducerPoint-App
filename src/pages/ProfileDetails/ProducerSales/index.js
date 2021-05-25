@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { RefreshControl, StyleSheet } from 'react-native'
+import { RefreshControl, StyleSheet, Modal } from 'react-native'
 import { FAB } from 'react-native-paper'
 
 import SalesCard from '../../../components/Cards/SalesCard'
@@ -8,10 +8,12 @@ import {
     Container, PageBox, FlatList, Title, EmptyListCard
 } from './styles'
 
+import SalesModal from '../../../components/Modals/SalesModal/'
+
 const ProducerSales = ({ data, loadPage }) => {
 
     const [isRefreshing, setIsRefreshing] = useState(false)
-    const [salesModal, SetSalesModal] = useState(false)
+    const [salesModal, setSalesModal] = useState(false)
 
     const onRefreshList = () => {
         setIsRefreshing(true)
@@ -53,6 +55,17 @@ const ProducerSales = ({ data, loadPage }) => {
                 icon="plus"
                 onPress={openSalesModal}
             />
+            <Modal
+                animationType='slide'
+                transparent={true}
+                visible={salesModal}
+            >
+                <SalesModal
+                    closeModal={closeSalesModal}
+                    confirmModal={null}
+                    bgColor={true}
+                />
+            </Modal>
         </Container>
     );
 }
