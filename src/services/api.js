@@ -379,7 +379,7 @@ export default {
             return request
 
         } catch (e) {
-            console.log('Erro: updateProducer ' + e)
+            console.log('Erro: createSaleProducer ' + e)
         }
 
     }

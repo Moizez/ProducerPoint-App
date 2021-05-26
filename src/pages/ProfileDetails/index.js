@@ -30,7 +30,7 @@ const ProfileDetails = ({ route }) => {
     ])
 
     const loadSales = async () => {
-        const response = await api.getAllSales(id)
+        const response = await api.getSalesByProducer(id)
         setSalesByProducer(response.data)
     }
 
