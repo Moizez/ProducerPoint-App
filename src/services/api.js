@@ -349,8 +349,39 @@ export default {
     },
 
     getSalesByProducer: async (id) => {
-        const response = await apiFetchGet(`/sales-producers/${id}`)
+        const response = await apiFetchGet(`/sales-producers/findSalesProducerById/${id}`)
         return response
     },
+
+    createSaleProducer: async (date, quantity, valor, parameter, city, producer) => {
+
+        try {
+            
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+            headers.append("Accept", 'application/json')
+
+            const data = {
+                date: date,
+                quantity: quantity,
+                valor: valor,
+                parameter: parameter,
+                city: city,
+                producer: producer
+            }
+
+            const request = await fetch(`${API}/sales-producers`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+            
+            return request
+
+        } catch (e) {
+            console.log('Erro: updateProducer ' + e)
+        }
+
+    }
 
 }

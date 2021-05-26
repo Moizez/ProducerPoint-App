@@ -41,6 +41,7 @@ const ProfileDetails = ({ route }) => {
 
     useEffect(() => {
         loadProducer()
+        loadSales()
     }, [])
 
 
@@ -63,7 +64,10 @@ const ProfileDetails = ({ route }) => {
             />
         ),
         second: () => (
-            <ProducerSales />
+            <ProducerSales 
+                producer={producer}
+                salesProducer={salesByProducer}
+            />
         )
     });
 

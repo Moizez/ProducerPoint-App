@@ -47,3 +47,12 @@ export const EmptyListCard = styled.View`
 
 export const EyeButton = styled.TouchableOpacity`
 `;
+
+export const HalfInputBox = styled.View`
+    width: 48%;
+    height: 48px;
+    border-radius: 5px;
+    background-color: #CCC;
+    margin-bottom: 10px;
+    justify-content: space-around;
+`;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { RefreshControl, StyleSheet, Modal } from 'react-native'
 import { FAB } from 'react-native-paper'
 
@@ -10,7 +10,7 @@ import {
 
 import SalesModal from '../../../components/Modals/SalesModal/'
 
-const ProducerSales = ({ data, loadPage }) => {
+const ProducerSales = ({ loadPage, producer, salesProducer }) => {
 
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [salesModal, setSalesModal] = useState(false)
@@ -29,7 +29,7 @@ const ProducerSales = ({ data, loadPage }) => {
             <PageBox>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={data}
+                    data={salesProducer}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) =>
                         <SalesCard
@@ -64,6 +64,7 @@ const ProducerSales = ({ data, loadPage }) => {
                     closeModal={closeSalesModal}
                     confirmModal={null}
                     bgColor={true}
+                    producer={producer}
                 />
             </Modal>
         </Container>
