@@ -4,6 +4,8 @@ import { FAB } from 'react-native-paper'
 
 import SalesCard from '../../../components/Cards/SalesCard'
 
+import Api from '../../../services/api'
+
 import {
     Container, PageBox, FlatList, Title, EmptyListCard
 } from './styles'
@@ -14,10 +16,20 @@ const ProducerSales = ({ loadPage, producer, salesProducer }) => {
 
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [salesModal, setSalesModal] = useState(false)
+    const [salesByProducer, setSalesByProducer] = useState([])
+
+    useEffect(() => {
+        loadSales()
+    }, [])
+
+    const loadSales = async () => {
+        const response = await Api.getSalesByProducer(producer.id)
+        setSalesByProducer(response.data)
+    }
 
     const onRefreshList = () => {
         setIsRefreshing(true)
-        loadPage()
+        loadSales()
         setIsRefreshing(false)
     }
 
@@ -29,11 +41,12 @@ const ProducerSales = ({ loadPage, producer, salesProducer }) => {
             <PageBox>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={salesProducer}
+                    data={salesByProducer}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) =>
                         <SalesCard
                             data={item}
+                            load={loadSales}
                         />
                     }
                     refreshControl={
@@ -65,6 +78,7 @@ const ProducerSales = ({ loadPage, producer, salesProducer }) => {
                     confirmModal={null}
                     bgColor={true}
                     producer={producer}
+                    load={loadSales}
                 />
             </Modal>
         </Container>

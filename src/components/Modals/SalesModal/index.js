@@ -1,10 +1,11 @@
-import React, { useRef, useState} from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { TextInputMask } from 'react-native-masked-text'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import moment from 'moment'
+import { format } from 'date-fns'
 import 'moment/locale/pt-br'
 
 import DatePicker from '../../DatePicker'
@@ -19,16 +20,21 @@ import {
     ErrorText, DateButton, TextButton, HalfInputBox
 } from './styles'
 
-const SalesModal = ({ closeModal, confirmModal, bgColor, producer }) => {
+const SalesModal = ({ closeModal, confirmModal, bgColor, producer, load }) => {
 
-    const moneyRef = useRef(null)
     const [datePicker, setDatePicker] = useState(false)
     const [selectedDate, setSelectedDate] = useState(moment().format())
-    const formattedDate = moment(selectedDate).locale('pt-br').format('ddd, D [de] MMMM')
+    const [typeMessage, setTypeMessage] = useState('')
 
     const [param, setParam] = useState('')
     const [paramLabel, setParamLabel] = useState('')
     const [showParamPicker, setShowParamPicker] = useState(false)
+    const [product, setProduct] = useState('')
+    const [productLabel, setProductLabel] = useState('')
+    const [showProductPicker, setShowProductPicker] = useState(false)
+
+    const dateRef = useRef(null)
+    const valorRef = useRef(null)
 
     const onChange = async (currentDate) => {
         setDatePicker(Platform.OS === 'ios')
@@ -48,24 +54,38 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer }) => {
         date: '',
         city: '',
         parameter: '',
-        producer: ''
+        producer: '',
+        product: '',
     }
 
 
     const formik = useFormik({
         initialValues: initialFormState,
-        validationSchema: null,
+        validationSchema: validationSchema,
         onSubmit: async (values, actions) => {
-            const response = await Api.createSaleProducer(
-                selectedDate,
-                values.quantity,
-                values.valor,
-                param,
-                values.city,
-                producer,
-            )
 
-            console.log(response);
+            const dateValid = dateRef?.current.isValid()
+
+            if(!dateValid){
+                setTypeMessage('Data inválida!')
+            
+            } else {
+                const date_correct = format(Date.parse(dateRef?.current.getRawValue()), 'yyyy-MM-dd')
+                const valor_correct = valorRef?.current.getRawValue()
+
+                const response = await Api.createSaleProducer(
+                    date_correct,
+                    values.quantity,
+                    valor_correct,
+                    param,
+                    values.city,
+                    producer.id,
+                    product,
+                )
+
+                closeModal()
+                load()
+            }
         }
     })
 
@@ -84,26 +104,40 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer }) => {
 
                 <ModalInfo>
                     <InputContainer>
-                        <InputBox>
-                            {formik.values.valor != '' && <Text>Valor*</Text>}
-                            <TextInputMask
-                                style={styles.input}
-                                type={'money'}
-                                options={{
-                                    precision: 2,
-                                    separator: ',',
-                                    delimiter: '.',
-                                    unit: 'R$',
-                                    suffixUnit: ''
-                                }}
-                                ref={moneyRef}
-                                placeholder='Valor da venda*'
-                                keyboardType='phone-pad'
-                                onChangeText={formik.handleChange('valor')}
-                                value={formik.values.valor}
-                                onBlur={formik.handleBlur('valor')}
-                            />
-                        </InputBox>
+                        <InputsBox>
+                            <HalfInputBox>
+                                <Picker
+                                    title={'Produto?*'}
+                                    modalTitle={'Qual o produto da venda?'}
+                                    showPicker={showProductPicker}
+                                    setShowPicker={setShowProductPicker}
+                                    list={producer.products}
+                                    setSelectedPicker={setProduct}
+                                    labelName={productLabel}
+                                    getLabelName={setProductLabel}
+                                />
+                            </HalfInputBox>
+                            <InputBox style={{ width: '50%' }}>
+                                {formik.values.valor != '' && <Text>Valor*</Text>}
+                                <TextInputMask
+                                    style={styles.input}
+                                    type={'money'}
+                                    options={{
+                                        precision: 2,
+                                        separator: ',',
+                                        delimiter: '.',
+                                        unit: 'R$',
+                                        suffixUnit: ''
+                                    }}
+                                    ref={valorRef}
+                                    placeholder='Valor da venda*'
+                                    keyboardType='phone-pad'
+                                    onChangeText={formik.handleChange('valor')}
+                                    value={formik.values.valor}
+                                    onBlur={formik.handleBlur('valor')}
+                                />
+                            </InputBox>
+                        </InputsBox>
                         <ErrorBox>
                             {formik.touched.valor && formik.errors.valor &&
                                 <ErrorText>{formik.errors.valor}</ErrorText>
@@ -141,11 +175,6 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer }) => {
                                 <ErrorText>{formik.errors.quantity}</ErrorText>
                             }
                         </ErrorBox>
-                        <ErrorBox>
-                            {formik.touched.parameter && formik.errors.parameter &&
-                                <ErrorText>{formik.errors.parameter}</ErrorText>
-                            }
-                        </ErrorBox>
                     </InputContainer>
 
                     <InputContainer>
@@ -166,17 +195,31 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer }) => {
                     </InputContainer>
 
                     <InputContainer>
-                        <InputBox>
-                            {formik.values.date == '' && <Text>Data da venda*</Text>}
-                            <DateButton onPress={() => setDatePicker(true)}>
-                                <TextButton style={{ fontSize: 15 }}>{formattedDate}</TextButton>
-                                <Icon name='calendar' color='#000' size={30} />
-                            </DateButton>
-                        </InputBox>
+                        <InputsBox>
+                            <HalfInputBox>
+                                {formik.values.date != '' && <Text>Data da venda*</Text>}
+                                <TextInputMask
+                                    type={'datetime'}
+                                    options={{
+                                        format: 'DD/MM/YYYY'
+                                    }}
+                                    ref={dateRef}
+                                    style={styles.input}
+                                    keyboardType='phone-pad'
+                                    placeholder='Data da venda*'
+                                    onChangeText={formik.handleChange('date')}
+                                    value={formik.values.date}
+                                    onBlur={formik.handleBlur('date')}
+                                />
+                            </HalfInputBox>
+                        </InputsBox>
                         <ErrorBox>
-                            {formik.touched.valor && formik.errors.valor &&
-                                <ErrorText>{formik.errors.valor}</ErrorText>
+                            {formik.touched.date && formik.errors.date &&
+                                <ErrorText>{formik.errors.date}</ErrorText>
                             }
+                        </ErrorBox>
+                        <ErrorBox>
+                            <ErrorText>{typeMessage}</ErrorText>
                         </ErrorBox>
                     </InputContainer>
 

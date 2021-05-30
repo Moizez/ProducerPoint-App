@@ -11,13 +11,17 @@ import {
     Container, CardBox, BoldText, ItemBox, IconBox, LeftBox, Divider
 } from './styles'
 
-const SalesCard = ({ data }) => {
+const SalesCard = ({ data, load }) => {
 
-    //const date = moment(data.date).locale('pt-br').format('ddd, D [de] MMMM [de] YYYY')
+    let date = moment(data?.date).locale('pt-br').format('L')
+    const valor = data?.valor
+        .toFixed(2)
+        .replace('.', ',')
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
     const handleDelete = async () => {
-        await Api.deleteTask(data.id)
-        loadTasks()
+        await Api.deleteSales(data.id)
+        load()
     }
 
     const LeftActions = (progress, dragX) => {
@@ -42,16 +46,14 @@ const SalesCard = ({ data }) => {
         >
             <Container>
                 <CardBox style={{ elevation: 5 }}>
-                    <IconBox onPress={() => { }}>
-                        <Icon
-                            name={check ? 'check-circle' : 'checkbox-blank-circle-outline'}
-                            color={check ? '#2a9d8f' : '#000'}
-                            size={30} />
-                    </IconBox>
                     <Divider />
                     <ItemBox>
-                        <BoldText style={{ textDecorationLine: check ? 'line-through' : 'none' }}>Tarefa: <Text style={styles.text}>{data?.description}</Text></BoldText>
-                        <BoldText style={{ textDecorationLine: check ? 'line-through' : 'none' }}>Data: <Text style={styles.text}>Data</Text></BoldText>
+                        <BoldText>Produto: <Text style={styles.text}>{data.product.label}</Text></BoldText>
+                        <BoldText>Parâmetro: <Text style={styles.text}>{data.parameter}</Text></BoldText>
+                        <BoldText>Quantidade: <Text style={styles.text}>{data.quantity}</Text></BoldText>
+                        <BoldText>Valor: <Text style={styles.text}>{valor}</Text></BoldText>
+                        <BoldText>Cidade: <Text style={styles.text}>{data.city}</Text></BoldText>
+                        <BoldText>Data: <Text style={styles.text}>{date}</Text></BoldText>
                     </ItemBox>
                 </CardBox>
             </Container>

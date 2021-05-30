@@ -21,18 +21,12 @@ const ProfileDetails = ({ route }) => {
     const navigation = useNavigation()
 
     const [producer, setProducer] = useState([])
-    const [salesByProducer, setSalesByProducer] = useState([])
 
     const [index, setIndex] = useState(0)
     const [routes] = useState([
         { key: 'first', title: 'Informação' },
         { key: 'second', title: 'Vendas' },
     ])
-
-    const loadSales = async () => {
-        const response = await api.getSalesByProducer(id)
-        setSalesByProducer(response.data)
-    }
 
     const loadProducer = async () => {
         const response = await api.getProduceById(id)
@@ -41,7 +35,6 @@ const ProfileDetails = ({ route }) => {
 
     useEffect(() => {
         loadProducer()
-        loadSales()
     }, [])
 
 
@@ -66,7 +59,6 @@ const ProfileDetails = ({ route }) => {
         second: () => (
             <ProducerSales 
                 producer={producer}
-                salesProducer={salesByProducer}
             />
         )
     });

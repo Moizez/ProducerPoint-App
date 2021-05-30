@@ -349,11 +349,11 @@ export default {
     },
 
     getSalesByProducer: async (id) => {
-        const response = await apiFetchGet(`/sales-producers/findSalesProducerById/${id}`)
+        const response = await apiFetchGet(`/producers/${id}/sales`)
         return response
     },
 
-    createSaleProducer: async (date, quantity, valor, parameter, city, producer) => {
+    createSaleProducer: async (date, quantity, valor, parameter, city, id, product) => {
 
         try {
             
@@ -367,7 +367,12 @@ export default {
                 valor: valor,
                 parameter: parameter,
                 city: city,
-                producer: producer
+                producer: {
+                    id: id,
+                },
+                product: {
+                    value: product,
+                },
             }
 
             const request = await fetch(`${API}/sales-producers`, {
@@ -382,6 +387,11 @@ export default {
             console.log('Erro: createSaleProducer ' + e)
         }
 
-    }
+    },
+
+    deleteSales: async (id) => {
+        const request = await apiFetchDelete(`/sales-producers/${id}`)
+        return request
+    },
 
 }
