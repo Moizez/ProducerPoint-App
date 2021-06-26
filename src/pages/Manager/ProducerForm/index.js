@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, Fragment, useEffect } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
@@ -14,6 +14,8 @@ import { periods } from '../../../enums'
 import Loader from '../../../components/Loader'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
+import ProductModal from '../../../components/Modals/ProductModal'
+import ActivitiModal from '../../../components/Modals/ActivitiModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
@@ -21,6 +23,7 @@ import {
     SaveButton, TextButton, Modal, Divider, MultiButton, MultiItemsBox, MultiText,
     NumberBox, MultiItem, MultiInfo, InputContainer
 } from './styles'
+import { open } from 'node:fs'
 
 const ProducerForm = () => {
 
@@ -32,6 +35,8 @@ const ProducerForm = () => {
 
     const [show, setShow] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
+    const [productModal, setProductModal] = useState(false)
+    const [activitiModal, setActivitiModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
@@ -96,6 +101,12 @@ const ProducerForm = () => {
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
 
+    const openProductModal = () => setProductModal(true)
+    const closeProductModal = () => setProductModal(false)
+
+    const openActivitiModal = () => setActivitiModal(true)
+    const closeActivitiModal = () => setActivitiModal(false)
+
     const productsList = () => {
         const newArray = []
         for (let i of selectectedItems) {
@@ -116,7 +127,7 @@ const ProducerForm = () => {
         name: yup.string().required('Nome é obrigatório!'),
         birthDate: yup.string().required('Data é obrigatória!'),
         cpf: yup.string().required('CPF é obrigatório!'),
-        email: yup.string().email('E-mail inválido!'),
+        rg: yup.string().required('RG é obrigatório!'),
         address: yup.object().shape({
             zipCode: yup.string().required('CEP é obrigatório!'),
             uf: yup.string().required('UF é obrigatório!'),
@@ -134,6 +145,7 @@ const ProducerForm = () => {
         nickname: '',
         birthDate: '',
         cpf: '',
+        rg: '',
         phone: '',
         email: '',
         address: {
@@ -193,7 +205,7 @@ const ProducerForm = () => {
 
                 const response = await Api.createProducer(
                     values.name, values.nickname, birthDate,
-                    values.phone, values.cpf, values.email,
+                    values.phone, values.cpf, values.rg, values.email,
                     values.address.houseNumber, values.address.reference,
                     averageCash, values.address.zipCode,
                     values.address.city, values.address.district,
@@ -304,7 +316,34 @@ const ProducerForm = () => {
                                             onBlur={formik.handleBlur('cpf')}
                                         />
                                     </HalfInputBox>
+                                    
+                                    <HalfInputBox>
+                                        {formik.values.rg != '' && <Text>RG*</Text>}
+                                        <Input
+                                            style={styles.input}
+                                            type={'rg'}
+                                            placeholder='RG*'
+                                            onChangeText={formik.handleChange('rg')}
+                                            keyboardType='phone-pad'
+                                            value={formik.values.rg}
+                                        />
+                                    </HalfInputBox>
 
+                                </InputsBox>
+                                <ErrorBox style={{ marginLeft: '52%' }}>
+                                    {formik.touched.rg && formik.errors.rg &&
+                                        <ErrorText>{formik.errors.rg}</ErrorText>
+                                    }
+                                </ErrorBox>
+                                <ErrorBox>
+                                    {formik.touched.cpf && formik.errors.cpf &&
+                                        <ErrorText>{formik.errors.cpf}</ErrorText>
+                                    }
+                                </ErrorBox>
+                            </InputContainer>
+
+                            <InputContainer>
+                                <InputsBox>
                                     <HalfInputBox>
                                         {formik.values.phone != '' && <Text>Celular</Text>}
                                         <TextInputMask
@@ -321,14 +360,9 @@ const ProducerForm = () => {
                                             value={formik.values.phone}
                                         />
                                     </HalfInputBox>
-
                                 </InputsBox>
-                                <ErrorBox>
-                                    {formik.touched.cpf && formik.errors.cpf &&
-                                        <ErrorText>{formik.errors.cpf}</ErrorText>
-                                    }
-                                </ErrorBox>
                             </InputContainer>
+
 
                             <InputContainer>
                                 <InputBox>
@@ -343,11 +377,6 @@ const ProducerForm = () => {
                                         onBlur={formik.handleBlur('email')}
                                     />
                                 </InputBox>
-                                <ErrorBox>
-                                    {formik.touched.email && formik.errors.email &&
-                                        <ErrorText>{formik.errors.email}</ErrorText>
-                                    }
-                                </ErrorBox>
                             </InputContainer>
 
                             <FormTitle>Atividade do Produtor</FormTitle>
@@ -356,16 +385,23 @@ const ProducerForm = () => {
                             <InputContainer>
                                 <InputsBox>
                                     <HalfInputBox>
-                                        <Picker
-                                            title={'Atividade?*'}
-                                            modalTitle={'Qual a atividade do produtor?'}
-                                            showPicker={showActivityPicker}
-                                            setShowPicker={setShowActivityPicker}
-                                            list={activities}
-                                            setSelectedPicker={setActivity}
-                                            labelName={activityLabel}
-                                            getLabelName={setActivityLabel}
-                                        />
+                                        <MultiButton>
+                                            <TouchableOpacity style={{backgroundColor: '#8888', marginLeft: '2.5%'}}
+                                                onPress={() => openActivitiModal()}>
+                                                <Icon name='plus' color='black' size={40} />
+                                            </TouchableOpacity>
+
+                                            <Picker
+                                                title={'Atividade?*'}
+                                                modalTitle={'Qual a atividade do produtor?'}
+                                                showPicker={showActivityPicker}
+                                                setShowPicker={setShowActivityPicker}
+                                                list={activities}
+                                                setSelectedPicker={setActivity}
+                                                labelName={activityLabel}
+                                                getLabelName={setActivityLabel}
+                                            />
+                                        </MultiButton>
                                     </HalfInputBox>
 
                                     <HalfInputBox>
@@ -373,6 +409,10 @@ const ProducerForm = () => {
                                             onPress={() => setShowMultiPicker(!showMultiPicker)}
                                             onLongPress={() => setSelectectedItems([])}
                                         >
+                                            <TouchableOpacity style={{backgroundColor: '#8888'}} onPress={() => openProductModal()}>
+                                                <Icon name='plus' color='black' size={40} />
+                                            </TouchableOpacity>
+
                                             <MultiText>Produtos?*</MultiText>
                                             {selectectedItems.length > 0 ?
                                                 <NumberBox>
@@ -577,6 +617,28 @@ const ProducerForm = () => {
                         closeModal={closeWarningModal}
                         message={typeMessage}
                         lottie={lottie}
+                        bgColor={true}
+                    />
+                </Modal>
+
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={productModal}
+                >
+                    <ProductModal 
+                        closeModal={closeProductModal}
+                        bgColor={true}
+                    />
+                </Modal>
+
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={activitiModal}
+                >
+                    <ActivitiModal 
+                        closeModal={closeActivitiModal}
                         bgColor={true}
                     />
                 </Modal>

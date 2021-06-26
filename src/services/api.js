@@ -145,7 +145,7 @@ export default {
     },
 
     createProducer: async (
-        name, nickname, birthDate, phone, cpf, email, houseNumber, reference, averageCash,
+        name, nickname, birthDate, phone, cpf, rg, email, houseNumber, reference, averageCash,
         zipCode, city, district, uf, street, activityId, resultList, period
     ) => {
         try {
@@ -162,6 +162,7 @@ export default {
                 birthDate: birthDate,
                 phone: phone,
                 cpf: cpf,
+                rg: rg,
                 email: email,
                 address: {
                     zipCode: zipCode,
@@ -391,6 +392,19 @@ export default {
 
     deleteSales: async (id) => {
         const request = await apiFetchDelete(`/sales-producers/${id}`)
+        return request
+    },
+
+    createProduct: async (label) => {
+        
+        const data = { label }
+        const request = await apiFetchPost('/products', data)
+        return request
+    },
+
+    createActiviti: async (label) => {
+        const data = { label: label }
+        const request = await apiFetchPost('/activities', data)
         return request
     },
 
