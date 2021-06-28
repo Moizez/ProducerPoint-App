@@ -146,7 +146,7 @@ export default {
 
     createProducer: async (
         name, nickname, birthDate, phone, cpf, rg, email, houseNumber, reference, averageCash,
-        zipCode, city, district, uf, street, activityId, resultList, period
+        zipCode, city, district, uf, street, activityId, activity2Id, resultList, period
     ) => {
         try {
 
@@ -178,7 +178,10 @@ export default {
                     activityName: {
                         value: activityId
                     },
-                    period: period
+                    period: period,
+                    activityName2: {
+                        value: activity2Id
+                    }
                 },
                 products: resultList,
                 manager: {

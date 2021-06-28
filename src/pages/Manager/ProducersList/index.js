@@ -80,7 +80,7 @@ const ProducersList = ({ data }) => {
                 >
                     <BoldText>Nome: <Text style={styles.text}>{data.name}</Text></BoldText>
                     <BoldText>Apelido: <Text style={styles.text}>{data.nickname}</Text></BoldText>
-                    <BoldText>Atividade: <Text style={styles.text}>{data.farmingActivity?.activityName?.label}(a)</Text></BoldText>
+                    <BoldText>Atividade: <Text style={styles.text}>{data.farmingActivity?.activityName?.label}(a), {data.farmingActivity?.activityName2?.label}(a)</Text></BoldText>
                 </Container>
             </Swipeable>
 

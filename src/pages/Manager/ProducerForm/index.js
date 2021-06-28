@@ -42,8 +42,11 @@ const ProducerForm = () => {
     const [lottie, setLottie] = useState(error)
 
     const [activity, setActivity] = useState('')
+    const [activity2, setActivity2] = useState('')
     const [activityLabel, setActivityLabel] = useState('')
+    const [activityLabel2, setActivityLabel2] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
+    const [showActivityPicker2, setShowActivityPicker2] = useState(false)
     const [period, setPeriod] = useState('')
     const [periodLabel, setPeriodLabel] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
@@ -162,7 +165,12 @@ const ProducerForm = () => {
                 value: ''
             },
             period: '',
-            averageCash: ''
+            averageCash: '',
+            activityName2: {
+                value: ''
+            },
+            period2: '',
+            averageCash2: ''
         },
         products: [],
     }
@@ -201,6 +209,10 @@ const ProducerForm = () => {
                 setLottie(error)
                 setTypeMessage('Informe o período!')
                 openWarningModal()
+            } else if(activity == activity2) {
+                setLottie(error)
+                setTypeMessage('Atividades iguais, mude ou retire a 2ª opção!')
+                openWarningModal()
             } else {
 
                 const response = await Api.createProducer(
@@ -210,7 +222,7 @@ const ProducerForm = () => {
                     averageCash, values.address.zipCode,
                     values.address.city, values.address.district,
                     values.address.uf, values.address.street,
-                    activity, resultList, period
+                    activity, activity2, resultList, period
                 )
 
                 if (response && response.status >= 200 && response.status <= 205) {
@@ -384,15 +396,16 @@ const ProducerForm = () => {
 
                             <InputContainer>
                                 <InputsBox>
-                                    <HalfInputBox>
-                                        <MultiButton>
-                                            <TouchableOpacity style={{backgroundColor: '#8888', marginLeft: '2.5%'}}
-                                                onPress={() => openActivitiModal()}>
-                                                <Icon name='plus' color='black' size={40} />
-                                            </TouchableOpacity>
 
+                                    <TouchableOpacity style={{backgroundColor: '#8888'}}
+                                        onPress={() => openActivitiModal()}>
+                                        <Icon name='plus' color='black' size={40} />
+                                    </TouchableOpacity>
+
+                                    <HalfInputBox style={{width: '43%'}}>
+                                        <MultiButton>
                                             <Picker
-                                                title={'Atividade?*'}
+                                                title={'1ª Atividade ?*'}
                                                 modalTitle={'Qual a atividade do produtor?'}
                                                 showPicker={showActivityPicker}
                                                 setShowPicker={setShowActivityPicker}
@@ -404,15 +417,34 @@ const ProducerForm = () => {
                                         </MultiButton>
                                     </HalfInputBox>
 
-                                    <HalfInputBox>
+                                    <HalfInputBox style={{width: '43%'}}>
+                                        <MultiButton>
+                                            <Picker
+                                                title={'2ª Atividade ?'}
+                                                modalTitle={'Qual a atividade do produtor?'}
+                                                showPicker={showActivityPicker2}
+                                                setShowPicker={setShowActivityPicker2}
+                                                list={activities}
+                                                setSelectedPicker={setActivity2}
+                                                labelName={activityLabel2}
+                                                getLabelName={setActivityLabel2}
+                                            />
+                                        </MultiButton>
+                                    </HalfInputBox>
+                                </InputsBox>
+                            </InputContainer>
+
+                            <InputContainer>
+                                <InputsBox>
+                                    <TouchableOpacity style={{backgroundColor: '#8888'}} onPress={() => openProductModal()}>
+                                        <Icon name='plus' color='black' size={40} />
+                                    </TouchableOpacity>
+                                    <HalfInputBox style={{ width: '87.5%'}}>
                                         <MultiButton
                                             onPress={() => setShowMultiPicker(!showMultiPicker)}
                                             onLongPress={() => setSelectectedItems([])}
                                         >
-                                            <TouchableOpacity style={{backgroundColor: '#8888'}} onPress={() => openProductModal()}>
-                                                <Icon name='plus' color='black' size={40} />
-                                            </TouchableOpacity>
-
+                                            
                                             <MultiText>Produtos?*</MultiText>
                                             {selectectedItems.length > 0 ?
                                                 <NumberBox>
@@ -424,6 +456,7 @@ const ProducerForm = () => {
                                             }
                                         </MultiButton>
                                     </HalfInputBox>
+
                                 </InputsBox>
                             </InputContainer>
 

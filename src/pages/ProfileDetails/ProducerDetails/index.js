@@ -28,7 +28,7 @@ const ProducerDetails = ({ data }) => {
                         <BoldText>Nascimento: <Text>{birth}</Text></BoldText>
                         <BoldText>Telefone: <Text>{data?.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data?.email}</Text></BoldText>
-                        <BoldText>Atividade: <Text>{data?.farmingActivity?.activityName?.label}</Text></BoldText>
+                        <BoldText>Atividade: <Text>{data?.farmingActivity?.activityName?.label}(a), {data?.farmingActivity?.activityName2?.label}(a)</Text></BoldText>
                         <BoldText>Produto{products?.length > 1 && 's'}: <Text>{products?.join(', ')}</Text></BoldText>
                         <BoldText>Renda média: <Text>{money}</Text></BoldText>
                         <BoldText>Período: <Text>{data?.farmingActivity?.period}</Text></BoldText>
