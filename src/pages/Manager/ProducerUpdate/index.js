@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef, Fragment, useEffect } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { TextInputMask } from 'react-native-masked-text'
 import { MultipleSelectPicker } from 'react-native-multi-select-picker'
@@ -13,6 +13,8 @@ import Api from '../../../services/api'
 import { periods } from '../../../enums'
 import Picker from '../../../components/Picker'
 import WarningModal from '../../../components/Modals/WarningModal'
+import ProductModal from '../../../components/Modals/ProductModal'
+import ActivitiModal from '../../../components/Modals/ActivitiModal'
 
 import {
     Container, Header, Title, PageBox, FormBox, FormContainer, FormTitle, InputBox,
@@ -39,17 +41,23 @@ const ProducerUpdate = ({ route }) => {
     const periodValue = periods.filter(i => i.value === data.farmingActivity.period)
     const [{ value: periodName }] = periodValue
     const activityName = data.farmingActivity?.activityName?.label
+    const activityName2 = data.farmingActivity?.activityName2?.label
 
     let error = require('../../../assets/lottie/error-icon.json')
     let success = require('../../../assets/lottie/success-icon.json')
 
     const [warningModal, setWarningModal] = useState(false)
+    const [productModal, setProductModal] = useState(false)
+    const [activitiModal, setActivitiModal] = useState(false)
     const [typeMessage, setTypeMessage] = useState('')
     const [lottie, setLottie] = useState(error)
 
     const [activity, setActivity] = useState(data.farmingActivity?.activityName?.value)
     const [activityLabel, setActivityLabel] = useState('')
+    const [activity2, setActivity2] = useState(data.farmingActivity?.activityName2?.value)
+    const [activityLabel2, setActivityLabel2] = useState('')
     const [showActivityPicker, setShowActivityPicker] = useState(false)
+    const [showActivityPicker2, setShowActivityPicker2] = useState(false)
     const [period, setPeriod] = useState(periodName)
     const [periodLabel, setPeriodLabel] = useState('')
     const [showPeriodPicker, setShowPeriodPicker] = useState(false)
@@ -69,6 +77,12 @@ const ProducerUpdate = ({ route }) => {
 
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
+    
+    const openProductModal = () => setProductModal(true)
+    const closeProductModal = () => setProductModal(false)
+
+    const openActivitiModal = () => setActivitiModal(true)
+    const closeActivitiModal = () => setActivitiModal(false)
 
     const productsList = () => {
         const newArray = []
@@ -160,7 +174,7 @@ const ProducerUpdate = ({ route }) => {
                                         values.farmingActivity.averageCash,
                                         values.address.zipCode, values.address.city,
                                         values.address.district, values.address.uf,
-                                        values.address.street, activity, resultList, period
+                                        values.address.street, activity, activity2, resultList, period
                                     )
 
                                     if (response && response.status >= 200 && response.status <= 205) {
@@ -296,9 +310,14 @@ const ProducerUpdate = ({ route }) => {
                                     <Divider />
 
                                     <InputsBox>
-                                        <HalfInputBox>
+                                        <TouchableOpacity style={{backgroundColor: '#8888'}}
+                                            onPress={() => openActivitiModal()}>
+                                            <Icon name='plus' color='black' size={40} />
+                                        </TouchableOpacity>
+
+                                        <HalfInputBox style={{width: '43%'}}>
                                             <Picker
-                                                title={activityName ? activityName : 'Atividade?'}
+                                                title={activityName ? activityName : '1ª Atividade ?'}
                                                 modalTitle={'Qual a atividade do produtor?'}
                                                 showPicker={showActivityPicker}
                                                 setShowPicker={setShowActivityPicker}
@@ -308,13 +327,33 @@ const ProducerUpdate = ({ route }) => {
                                                 getLabelName={setActivityLabel}
                                             />
                                         </HalfInputBox>
+                                    
+                                        <HalfInputBox style={{width: '43%'}}>
+                                            <Picker
+                                                title={activityName2 ? activityName2 : '2ª Atividade ?'}
+                                                modalTitle={'Qual a atividade do produtor?'}
+                                                showPicker={showActivityPicker2}
+                                                setShowPicker={setShowActivityPicker2}
+                                                list={activities}
+                                                setSelectedPicker={setActivity2}
+                                                labelName={activityLabel2}
+                                                getLabelName={setActivityLabel2}
+                                            />
+                                        </HalfInputBox>
+                                        
+                                    </InputsBox>
 
-                                        <HalfInputBox>
+                                    <InputsBox>
+                                        <TouchableOpacity style={{backgroundColor: '#8888'}} onPress={() => openProductModal()}>
+                                            <Icon name='plus' color='black' size={40} />
+                                        </TouchableOpacity>
+                                        <HalfInputBox style={{ width: '87.5%'}}>
                                             <MultiButton
                                                 onPress={() => setShowMultiPicker(!showMultiPicker)}
                                                 onLongPress={() => setSelectectedItems([])}
                                             >
-                                                <MultiText>Produtos?</MultiText>
+                                                
+                                                <MultiText>Produtos?*</MultiText>
                                                 {selectectedItems.length > 0 ?
                                                     <NumberBox>
                                                         <MultiText>
@@ -473,6 +512,29 @@ const ProducerUpdate = ({ route }) => {
                         bgColor={true}
                     />
                 </Modal>
+                
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={productModal}
+                >
+                    <ProductModal 
+                        closeModal={closeProductModal}
+                        bgColor={true}
+                    />
+                </Modal>
+
+                <Modal
+                    animationType='fade'
+                    transparent={true}
+                    visible={activitiModal}
+                >
+                    <ActivitiModal 
+                        closeModal={closeActivitiModal}
+                        bgColor={true}
+                    />
+                </Modal>
+
 
             </Container>
 
