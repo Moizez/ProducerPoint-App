@@ -1,10 +1,8 @@
-import React, { useState, Fragment } from 'react'
-import { Modal } from 'react-native'
+import React, { useState, useEffect, Fragment } from 'react'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import api from '../../../services/api'
 import ProducersList from '../ProducersList'
-import WarningModal from '../../../components/Modals/WarningModal'
 import Loader from '../../../components/Loader'
 
 import {
@@ -15,26 +13,43 @@ import {
 const SearchProducers = () => {
 
     const [text, setText] = useState('')
-    const [warningModal, setWarningModal] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [typeMessage, setTypeMessage] = useState('')
-    const [producer, setProducer] = useState([])
+    const [producers, setProducers] = useState([])
+    const [list, setList] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [hasOrder, setHasOrder] = useState(false)
 
-    const findProducer = async () => {
-        if (text == '') {
-            setTypeMessage('Preencha um nome!')
-            openWarningModal()
-        } else {
-            setLoading(true)
-            const response = await api.findProducersByNameOrNickname(text)
-            setProducer(response.data)
-            setText('')
-            setLoading(false)
-        }
+    const loadProducers = async () => {
+        const response = await api.getAllProducers()
+        setProducers(response.data)
+        setList(response.data)
+        setLoading(false)
     }
 
-    const openWarningModal = () => setWarningModal(true)
-    const closeWarningModal = () => setWarningModal(false)
+    useEffect(() => {
+        loadProducers()
+    }, [])
+
+    useEffect(() => {
+        setHasOrder(false)
+        if (text) {
+            setList(
+                producers?.filter(i =>
+                (i.name?.toLowerCase()
+                    .indexOf(text.toLowerCase()) > -1 || i.nickname?.toLowerCase()
+                        .indexOf(text.toLowerCase()) > -1)
+                )
+            )
+        } else {
+            setList(producers)
+        }
+    }, [text])
+
+    const handleOrderList = () => {
+        setHasOrder(true)
+        let newList = [...producers]
+        newList.sort((a, b) => (a.name > b.name) ? 1 : (b.name > a.name) ? -1 : 0)
+        setList(newList)
+    }
 
     return (
         <Container>
@@ -45,8 +60,8 @@ const SearchProducers = () => {
                         value={text}
                         onChangeText={(text) => setText(text)}
                     />
-                    <SearchButton onPress={findProducer}>
-                        <Icon name='magnify' size={28} color='#FFF' />
+                    <SearchButton color={hasOrder} onPress={handleOrderList}>
+                        <Icon name='order-alphabetical-ascending' size={28} color='#FFF' />
                     </SearchButton>
                 </SearchBox>
             </Header>
@@ -54,7 +69,7 @@ const SearchProducers = () => {
             <PageBox>
                 <FlatList
                     showsVerticalScrollIndicator={false}
-                    data={producer}
+                    data={list}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => <ProducersList data={item} />}
                     ListHeaderComponent={
@@ -75,18 +90,6 @@ const SearchProducers = () => {
                 />
             </PageBox>
             {loading && <Loader />}
-
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={warningModal}
-            >
-                <WarningModal
-                    closeModal={closeWarningModal}
-                    message={typeMessage}
-                    bgColor={true}
-                />
-            </Modal>
         </Container>
     );
 }

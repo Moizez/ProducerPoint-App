@@ -49,7 +49,7 @@ export const SearchButton = styled.TouchableOpacity`
     width: 60px;
     align-items: center;
     justify-content: center;
-    background-color: #5c5c5c;
+    background-color:${props => props.color ? '#2a9d8f' : '#5c5c5c'};
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
 `;

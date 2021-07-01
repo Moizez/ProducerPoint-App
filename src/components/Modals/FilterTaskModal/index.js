@@ -13,8 +13,9 @@ const FilterTaskModal = ({ closeModal, range, setRange }) => {
         <Container>
             <CloseButton activeOpacity={1} onPress={closeModal} />
             <Header>
-                <Text style={{textAlign: 'center'}}>
-                    Dica: Selecione uma data inicial e uma data final para realizar a filtragem.
+                <Text style={{textAlign: 'center', color: '#fff'}}>
+                    Para realizar a filtragem, selecione uma data inicial 
+                    e em seguida uma data final.
                 </Text>
             </Header>
 
@@ -49,11 +50,13 @@ export const Header = styled.View`
     padding: 5px 10px;
     align-items: center;
     justify-content: center;
+    background-color: #2a9d8f;
 `;
 
 export const Calendar = styled.View`
     flex: 1;
     background-color: #eee;
+    align-items: center;
 `;
 
 export const Button = styled.TouchableOpacity`

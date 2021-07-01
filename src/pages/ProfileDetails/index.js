@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { StyleSheet, Modal, Dimensions } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Dimensions } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { TabView, TabBar } from 'react-native-tab-view'
 import api from '../../services/api'
 
 import {
-    Container, Header, PageBox, Title, ProfileBox, Avatar, ProfileNameBox, ProfileName,
-    ProfileRole, ProfileInfo, InfoBox, BoldText, Text, ButtonBox, BackButton, TextButton, Divider
+    Container, Header, PageBox, ProfileBox, Avatar, ProfileNameBox, ProfileName,
+    ProfileRole, Text, ButtonBox, BackButton, TextButton
 } from './styles'
 
 import ProducerDetails from './ProducerDetails'
@@ -50,18 +50,16 @@ const ProfileDetails = ({ route }) => {
         />
     )
 
-    const renderScene = SceneMap({
-        first: () => (
-            <ProducerDetails
-                data={producer}
-            />
-        ),
-        second: () => (
-            <ProducerSales 
-                producer={producer}
-            />
-        )
-    });
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'first':
+                return <ProducerDetails data={producer} />
+            case 'second':
+                return <ProducerSales producer={producer} />
+            default:
+                return null;
+        }
+    }
 
     return (
         <Container>
@@ -70,8 +68,8 @@ const ProfileDetails = ({ route }) => {
                 <ProfileBox>
                     <Avatar source={require('../../assets/images/avatar.jpg')} />
                     <ProfileNameBox>
-                        <ProfileRole>{producer.role === 0 ? 'Administrador' : 'Produtor'}</ProfileRole>
-                        <ProfileName>{producer.name}</ProfileName>
+                        <ProfileRole>{producer?.role === 0 ? 'Administrador' : 'Produtor'}</ProfileRole>
+                        <ProfileName>{producer?.name}</ProfileName>
                     </ProfileNameBox>
                 </ProfileBox>
 
