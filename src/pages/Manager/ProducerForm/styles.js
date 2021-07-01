@@ -149,7 +149,7 @@ export const MultiButton = styled.TouchableOpacity`
     flex-direction: row;
     background-color: #CCC;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
 `;
 
 export const MultiBox = styled.ScrollView`

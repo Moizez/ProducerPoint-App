@@ -209,7 +209,7 @@ const ProducerForm = () => {
                 setLottie(error)
                 setTypeMessage('Informe o período!')
                 openWarningModal()
-            } else if(activity == activity2) {
+            } else if (activity == activity2) {
                 setLottie(error)
                 setTypeMessage('Atividades iguais, mude ou retire a 2ª opção!')
                 openWarningModal()
@@ -328,7 +328,7 @@ const ProducerForm = () => {
                                             onBlur={formik.handleBlur('cpf')}
                                         />
                                     </HalfInputBox>
-                                    
+
                                     <HalfInputBox>
                                         {formik.values.rg != '' && <Text>RG*</Text>}
                                         <Input
@@ -397,15 +397,23 @@ const ProducerForm = () => {
                             <InputContainer>
                                 <InputsBox>
 
-                                    <TouchableOpacity style={{backgroundColor: '#8888'}}
-                                        onPress={() => openActivitiModal()}>
-                                        <Icon name='plus' color='black' size={40} />
+                                    <TouchableOpacity
+                                        style={{
+                                            backgroundColor: '#bbb',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: 5,
+                                            width: 35
+                                        }}
+                                        onPress={() => openActivitiModal()}
+                                    >
+                                        <Icon name='plus' color='black' size={30} />
                                     </TouchableOpacity>
 
-                                    <HalfInputBox style={{width: '43%'}}>
+                                    <HalfInputBox style={{ width: '43%' }}>
                                         <MultiButton>
                                             <Picker
-                                                title={'1ª Atividade ?*'}
+                                                title={'Principal*'}
                                                 modalTitle={'Qual a atividade do produtor?'}
                                                 showPicker={showActivityPicker}
                                                 setShowPicker={setShowActivityPicker}
@@ -417,10 +425,10 @@ const ProducerForm = () => {
                                         </MultiButton>
                                     </HalfInputBox>
 
-                                    <HalfInputBox style={{width: '43%'}}>
+                                    <HalfInputBox style={{ width: '43%' }}>
                                         <MultiButton>
                                             <Picker
-                                                title={'2ª Atividade ?'}
+                                                title={'Secundária'}
                                                 modalTitle={'Qual a atividade do produtor?'}
                                                 showPicker={showActivityPicker2}
                                                 setShowPicker={setShowActivityPicker2}
@@ -436,16 +444,25 @@ const ProducerForm = () => {
 
                             <InputContainer>
                                 <InputsBox>
-                                    <TouchableOpacity style={{backgroundColor: '#8888'}} onPress={() => openProductModal()}>
-                                        <Icon name='plus' color='black' size={40} />
+                                    <TouchableOpacity
+                                        style={{
+                                            backgroundColor: '#bbb',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            borderRadius: 5,
+                                            width: 35
+                                        }}
+                                        onPress={() => openProductModal()}
+                                    >
+                                        <Icon name='plus' color='black' size={30} />
                                     </TouchableOpacity>
-                                    <HalfInputBox style={{ width: '87.5%'}}>
+                                    <HalfInputBox style={{ width: '87.5%' }}>
                                         <MultiButton
                                             onPress={() => setShowMultiPicker(!showMultiPicker)}
                                             onLongPress={() => setSelectectedItems([])}
                                         >
-                                            
-                                            <MultiText>Produtos?*</MultiText>
+
+                                            <MultiText style={{marginRight: 10}}>Produtos*</MultiText>
                                             {selectectedItems.length > 0 ?
                                                 <NumberBox>
                                                     <MultiText>
@@ -464,7 +481,7 @@ const ProducerForm = () => {
                                 <InputsBox>
                                     <HalfInputBox>
                                         <Picker
-                                            title={'Período?*'}
+                                            title={'Período*'}
                                             modalTitle={'Qual o período base da renda?'}
                                             showPicker={showPeriodPicker}
                                             setShowPicker={setShowPeriodPicker}
@@ -659,7 +676,7 @@ const ProducerForm = () => {
                     transparent={true}
                     visible={productModal}
                 >
-                    <ProductModal 
+                    <ProductModal
                         closeModal={closeProductModal}
                         bgColor={true}
                     />
@@ -670,7 +687,7 @@ const ProducerForm = () => {
                     transparent={true}
                     visible={activitiModal}
                 >
-                    <ActivitiModal 
+                    <ActivitiModal
                         closeModal={closeActivitiModal}
                         bgColor={true}
                     />

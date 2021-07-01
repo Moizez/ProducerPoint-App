@@ -2,6 +2,8 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { StatusBar, LogBox } from 'react-native'
 import { ThemeProvider } from 'styled-components'
+import * as eva from '@eva-design/eva'
+import { ApplicationProvider } from '@ui-kitten/components';
 
 import AuthProvider from './src/contexts/auth'
 import RequestProvider from './src/contexts/request'
@@ -18,14 +20,16 @@ const colors = {
 const App = () => {
 	return (
 		<ThemeProvider theme={colors}>
-			<NavigationContainer>
-				<AuthProvider>
-					<RequestProvider>
-						<StatusBar backgroundColor='#292b2c' barStyle='light-content' />
-						<Routes />
-					</RequestProvider>
-				</AuthProvider>
-			</NavigationContainer>
+			<ApplicationProvider {...eva} theme={eva.light}>
+				<NavigationContainer>
+					<AuthProvider>
+						<RequestProvider>
+							<StatusBar backgroundColor='#292b2c' barStyle='light-content' />
+							<Routes />
+						</RequestProvider>
+					</AuthProvider>
+				</NavigationContainer>
+			</ApplicationProvider>
 		</ThemeProvider>
 	);
 }

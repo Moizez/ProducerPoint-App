@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { StyleSheet, Modal, Text, Dimensions } from 'react-native'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { TabView, TabBar } from 'react-native-tab-view'
 import { FAB } from 'react-native-paper'
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -8,11 +8,13 @@ import { format } from 'date-fns'
 
 const locale_br = require('date-fns/locale/pt-BR')
 import { RequestContext } from '../../../contexts/request'
-import { AuthContext } from '../../../contexts/auth'
 import Api from '../../../services/api'
 import TaskModal from '../../../components/Modals/TaskModal'
 import DatePicker from '../../../components/DatePicker'
 import WarningModal from '../../../components/Modals/WarningModal'
+import FilterTaskModal from '../../../components/Modals/FilterTaskModal'
+
+import { filterByBetweenDates } from '../../../helpers/index'
 
 import TodayTasks from './TodayTasks'
 import FutureTasks from './FutureTasks'
@@ -23,14 +25,21 @@ import { Container, Header, Title } from './styles'
 
 const ManagerSchedules = () => {
 
+    const [state, setState] = useState({ open: false })
+    const onStateChange = ({ open }) => setState({ open })
+    const { open } = state
+
+    const [range, setRange] = useState({})
+
     const {
-        todayTasks, loadTodayTasks,
-        futureTasks, loadFutureTasks,
-        loading
+        todayTasks, loadTodayTasks, loading,
+        futureTasks, loadFutureTasks
     } = useContext(RequestContext)
-    const { user } = useContext(AuthContext)
 
     const [taskModal, setTaskModal] = useState(false)
+    const [filterModal, setFilterModal] = useState(false)
+
+    const [futureResults, setFutureResults] = useState([])
 
     const [datePicker, setDatePicker] = useState(false)
     const [warningModal, setWarningModal] = useState(false)
@@ -47,13 +56,20 @@ const ManagerSchedules = () => {
     const date = format(Date.parse(selectedDate), 'PPPP', { locale: locale_br })
 
     useEffect(() => {
-        const interval = loadTodayTasks()
-        return () => clearInterval(interval)
-    }, [])
+        setFutureResults(futureTasks)
+    }, [futureTasks])
 
     useEffect(() => {
-        const interval = loadFutureTasks()
-        return () => clearInterval(interval)
+        if (range?.endDate && range?.startDate) {
+            const result = filterByBetweenDates(futureTasks, range?.startDate, range?.endDate)
+            setFutureResults(result)
+        } else {
+            setFutureResults(futureTasks)
+        }
+    }, [range])
+
+    useEffect(() => {
+        loadTodayTasks()
     }, [])
 
     const renderTabBar = props => (
@@ -68,22 +84,24 @@ const ManagerSchedules = () => {
         />
     );
 
-    const renderScene = SceneMap({
-        first: () => (
-            <TodayTasks
-                data={todayTasks}
-                loadPage={loadTodayTasks}
-                loading={loading}
-            />
-        ),
-        second: () => (
-            <FutureTasks
-                data={futureTasks}
-                loadPage={loadFutureTasks}
-                loading={loading}
-            />
-        )
-    });
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'first':
+                return <TodayTasks
+                    data={todayTasks}
+                    loadPage={loadTodayTasks}
+                    loading={loading}
+                />
+            case 'second':
+                return <FutureTasks
+                    data={futureResults}
+                    loadPage={loadFutureTasks}
+                    loading={loading}
+                />
+            default:
+                return null;
+        }
+    }
 
     const handleCreateTask = async () => {
         if (text) {
@@ -91,12 +109,11 @@ const ManagerSchedules = () => {
             const responde = await Api.createTask(text, selectedDate)
 
             if (responde && responde.status >= 200 && responde.status <= 205) {
-
-                loadTodayTasks()
-                loadFutureTasks()
+                closeTaskModal()
+                await loadTodayTasks()
+                await loadFutureTasks()
                 setText('')
                 setSelectedDate(new Date())
-                closeTaskModal()
             } else {
                 setTypeMessage('Algo deu errado!' + responde.status)
                 openWarningModal()
@@ -115,13 +132,15 @@ const ManagerSchedules = () => {
 
     const openTaskModal = () => setTaskModal(true)
     const closeTaskModal = () => setTaskModal(false)
+    const openFilterModal = () => setFilterModal(true)
+    const closeFilterModal = () => setFilterModal(false)
     const openWarningModal = () => setWarningModal(true)
     const closeWarningModal = () => setWarningModal(false)
 
     return (
         <Container>
             <Header>
-                <Title style={{ color: '#FFF' }}>Tarefas de {user.name}</Title>
+                <Title style={{ color: '#FFF' }}>Lista de Tarefas</Title>
             </Header>
 
             <TabView
@@ -132,12 +151,35 @@ const ManagerSchedules = () => {
                 renderTabBar={renderTabBar}
             />
 
-            <FAB
-                label='Tarefa'
-                style={styles.fab}
-                icon="plus"
-                onPress={openTaskModal}
-            />
+            {index !== 0
+                ?
+                <FAB.Group
+                    open={open}
+                    icon={open ? 'close' : 'menu'}
+                    fabStyle={{ backgroundColor: '#2a9d8f' }}
+                    actions={[
+                        {
+                            icon: 'magnify',
+                            label: 'Filtrar',
+                            onPress: () => openFilterModal(),
+                        },
+                        {
+                            icon: 'plus',
+                            label: 'Tarefa',
+                            onPress: () => openTaskModal(),
+                        },
+                    ]}
+                    onStateChange={onStateChange}
+                    theme={{ colors: { accent: 'blue' } }}
+                />
+                :
+                <FAB
+                    style={styles.fab}
+                    icon="plus"
+                    onPress={openTaskModal}
+                />
+            }
+
             {datePicker &&
                 <DatePicker
                     chosenDate={selectedDate}
@@ -162,6 +204,19 @@ const ManagerSchedules = () => {
             </Modal>
 
             <Modal
+                animationType='slide'
+                transparent={true}
+                visible={filterModal}
+                onRequestClose={closeFilterModal}
+            >
+                <FilterTaskModal
+                    closeModal={closeFilterModal}
+                    range={range}
+                    setRange={setRange}
+                />
+            </Modal>
+
+            <Modal
                 animationType='fade'
                 transparent={true}
                 visible={warningModal}
@@ -182,7 +237,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         margin: 16,
         right: 0,
-        bottom: 10,
+        bottom: 0,
     },
 })
 
