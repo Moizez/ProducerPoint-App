@@ -65,6 +65,7 @@ export const ListTitle = styled.Text`
 
 export const FlatList = styled.FlatList`
     flex: 1;
+    padding: 0 10px;
 `;
 
 export const Divider = styled.View`

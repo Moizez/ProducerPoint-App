@@ -1,8 +1,6 @@
 import React from 'react'
 import moment from 'moment'
 
-import { formatMoney } from '../../../components/helpers'
-
 import {
     Container, PageBox, Title, ProfileInfo, InfoBox, BoldText, Text, Divider
 } from './styles'
@@ -28,7 +26,10 @@ const ProducerDetails = ({ data }) => {
                         <BoldText>Nascimento: <Text>{birth}</Text></BoldText>
                         <BoldText>Telefone: <Text>{data?.phone}</Text></BoldText>
                         <BoldText>E-mail: <Text>{data?.email}</Text></BoldText>
-                        <BoldText>Atividade: <Text>{data?.farmingActivity?.activityName?.label}(a), {data?.farmingActivity?.activityName2?.label}(a)</Text></BoldText>
+                        <BoldText>Atividade: {(data?.farmingActivity?.activityName?.label || data?.farmingActivity?.activityName2?.label) &&
+                            < Text > {data?.farmingActivity?.activityName?.label}, {data?.farmingActivity?.activityName2?.label}</Text>
+                        }
+                        </BoldText>
                         <BoldText>Produto{products?.length > 1 && 's'}: <Text>{products?.join(', ')}</Text></BoldText>
                         <BoldText>Renda média: <Text>{money}</Text></BoldText>
                         <BoldText>Período: <Text>{data?.farmingActivity?.period}</Text></BoldText>
@@ -48,7 +49,7 @@ const ProducerDetails = ({ data }) => {
 
                 </ProfileInfo>
             </PageBox>
-        </Container>
+        </Container >
     );
 }
 

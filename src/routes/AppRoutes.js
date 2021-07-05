@@ -17,7 +17,20 @@ const AppRoutes = () => {
 
     const { user } = useContext(AuthContext)
 
-    if (user.role === 0) {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name='Manager' component={Manager} />
+            <Stack.Screen name='ProfileDetails' component={ProfileDetails} />
+            <Stack.Screen name='ProducerUpdate' component={ProducerUpdate} />
+        </Stack.Navigator>
+    )
+}
+
+export default AppRoutes
+
+/*
+
+  if (user.role === 0) {
         return (
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name='Manager' component={Manager} />
@@ -34,6 +47,5 @@ const AppRoutes = () => {
             </Stack.Navigator>
         )
     }
-}
 
-export default AppRoutes
+*/

@@ -79,8 +79,13 @@ const ProducersList = ({ data }) => {
                     onPress={() => navigation.navigate('ProfileDetails', { id: data.id })}
                 >
                     <BoldText>Nome: <Text style={styles.text}>{data.name}</Text></BoldText>
-                    <BoldText>Apelido: <Text style={styles.text}>{data.nickname}</Text></BoldText>
-                    <BoldText>Atividade: <Text style={styles.text}>{data.farmingActivity?.activityName?.label}(a), {data.farmingActivity?.activityName2?.label}(a)</Text></BoldText>
+                    <BoldText>Apelido: <Text style={styles.text}>{data.nickname ? data.nickname : 'Não informou' }</Text></BoldText>
+                    <BoldText>Atividade:
+                        {(data.farmingActivity?.activityName?.label && data.farmingActivity?.activityName2?.label)
+                            ? <Text style={styles.text}> {data.farmingActivity?.activityName?.label}, {data.farmingActivity?.activityName2?.label}</Text>
+                            : <Text style={styles.text}> {data.farmingActivity?.activityName?.label}</Text>
+                        }
+                    </BoldText>
                 </Container>
             </Swipeable>
 
@@ -119,7 +124,8 @@ const ProducersList = ({ data }) => {
 const styles = StyleSheet.create({
     text: {
         fontSize: 15,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
+        textTransform: 'capitalize'
     },
     actionsText: {
         fontSize: 15,
