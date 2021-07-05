@@ -264,6 +264,7 @@ const ProducerForm = () => {
                                     {formik.values.name != '' && <Text>Nome*</Text>}
                                     <Input
                                         placeholder='Nome do produtor*'
+                                        placeholderTextColor='#292b2c'
                                         onChangeText={formik.handleChange('name')}
                                         value={formik.values.name}
                                         onBlur={formik.handleBlur('name')}
@@ -282,6 +283,7 @@ const ProducerForm = () => {
                                         {formik.values.nickname != '' && <Text>Apelido:</Text>}
                                         <Input
                                             placeholder='Apelido'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('nickname')}
                                             value={formik.values.nickname}
                                             onBlur={formik.handleBlur('nickname')}
@@ -299,6 +301,7 @@ const ProducerForm = () => {
                                             style={styles.input}
                                             keyboardType='phone-pad'
                                             placeholder='Nascimento*'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('birthDate')}
                                             value={formik.values.birthDate}
                                             onBlur={formik.handleBlur('birthDate')}
@@ -322,6 +325,7 @@ const ProducerForm = () => {
                                             type={'cpf'}
                                             ref={cpfRef}
                                             placeholder='CPF*'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('cpf')}
                                             keyboardType='phone-pad'
                                             value={formik.values.cpf}
@@ -335,6 +339,7 @@ const ProducerForm = () => {
                                             style={styles.input}
                                             type={'rg'}
                                             placeholder='RG*'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('rg')}
                                             keyboardType='phone-pad'
                                             value={formik.values.rg}
@@ -356,7 +361,7 @@ const ProducerForm = () => {
 
                             <InputContainer>
                                 <InputsBox>
-                                    <HalfInputBox>
+                                    <InputBox>
                                         {formik.values.phone != '' && <Text>Celular</Text>}
                                         <TextInputMask
                                             style={styles.input}
@@ -367,11 +372,12 @@ const ProducerForm = () => {
                                                 dddMask: '(99) '
                                             }}
                                             placeholder='Telefone'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('phone')}
                                             keyboardType='phone-pad'
                                             value={formik.values.phone}
                                         />
-                                    </HalfInputBox>
+                                    </InputBox>
                                 </InputsBox>
                             </InputContainer>
 
@@ -381,6 +387,7 @@ const ProducerForm = () => {
                                     {formik.values.email != '' && <Text>E-mail</Text>}
                                     <Input
                                         placeholder='E-mail'
+                                        placeholderTextColor='#292b2c'
                                         onChangeText={formik.handleChange('email')}
                                         autoCorrect={false}
                                         autoCapitalize='none'
@@ -506,6 +513,7 @@ const ProducerForm = () => {
                                             }}
                                             ref={moneyRef}
                                             placeholder='Renda*'
+                                            placeholderTextColor='#292b2c'
                                             keyboardType='phone-pad'
                                             onChangeText={formik.handleChange('farmingActivity.averageCash')}
                                             value={formik.values.farmingActivity.averageCash}
@@ -535,6 +543,7 @@ const ProducerForm = () => {
                                             type={'zip-code'}
                                             style={styles.input}
                                             placeholder='Informe o CEP*'
+                                            placeholderTextColor='#292b2c'
                                             onChangeText={formik.handleChange('address.zipCode')}
                                             keyboardType='phone-pad'
                                             value={formik.values.address?.zipCode}
@@ -559,6 +568,7 @@ const ProducerForm = () => {
                                                 {formik.values.address?.city != '' && <Text>Cidade*</Text>}
                                                 <Input
                                                     placeholder='Cidade'
+                                                    placeholderTextColor='#292b2c'
                                                     onChangeText={formik.handleChange('address.city')}
                                                     value={formik.values.address?.city}
                                                     onBlur={formik.handleBlur('address.city')}
@@ -568,6 +578,7 @@ const ProducerForm = () => {
                                                 {formik.values.address?.uf != '' && <Text>UF*</Text>}
                                                 <Input
                                                     placeholder='UF'
+                                                    placeholderTextColor='#292b2c'
                                                     onChangeText={formik.handleChange('address.uf')}
                                                     value={formik.values.address?.uf}
                                                     onBlur={formik.handleBlur('address.uf')}
@@ -591,6 +602,7 @@ const ProducerForm = () => {
                                             {formik.values.address?.district != '' && <Text>Bairro*</Text>}
                                             <Input
                                                 placeholder='Bairro*'
+                                                placeholderTextColor='#292b2c'
                                                 onChangeText={formik.handleChange('address.district')}
                                                 value={formik.values.address?.district}
                                                 onBlur={formik.handleBlur('address.district')}
@@ -609,6 +621,7 @@ const ProducerForm = () => {
                                                 {formik.values.address?.street != '' && <Text>Rua*</Text>}
                                                 <Input
                                                     placeholder='Rua*'
+                                                    placeholderTextColor='#292b2c'
                                                     onChangeText={formik.handleChange('address.street')}
                                                     value={formik.values.address?.street}
                                                     onBlur={formik.handleBlur('address.street')}
@@ -618,6 +631,7 @@ const ProducerForm = () => {
                                                 {formik.values.address.houseNumber != '' && <Text>Nº</Text>}
                                                 <Input
                                                     placeholder='Nº'
+                                                    placeholderTextColor='#292b2c'
                                                     onChangeText={formik.handleChange('address.houseNumber')}
                                                     keyboardType='phone-pad'
                                                     value={formik.values.address.houseNumber}
@@ -636,6 +650,7 @@ const ProducerForm = () => {
                                             {formik.values.address.reference != '' && <Text>Referência:</Text>}
                                             <Input
                                                 placeholder='Referência'
+                                                placeholderTextColor='#292b2c'
                                                 onChangeText={formik.handleChange('address.reference')}
                                                 value={formik.values.address.reference}
                                                 onBlur={formik.handleBlur('address.reference')}

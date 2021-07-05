@@ -25,6 +25,7 @@ const TaskModal = ({
                     <MessageInputBox>
                         <MessageInput
                             placeholder='Informe a descrição da tarefa'
+                            placeholderTextColor='#292b2c'
                             autoCorrect={true}
                             autoCapitalize='sentences'
                             multiline={true}

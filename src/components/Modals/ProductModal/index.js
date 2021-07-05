@@ -69,6 +69,7 @@ const ProductModal = ({ closeModal, bgColor }) => {
                             {formik.values.valor != '' && <Text>Produto*</Text>}
                             <Input
                                 placeholder='Produto*'
+                                placeholderTextColor='#292b2c'
                                 onChangeText={formik.handleChange('valor')}
                                 value={formik.values.valor}
                                 onBlur={formik.handleBlur('valor')}

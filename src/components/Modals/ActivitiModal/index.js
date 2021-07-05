@@ -69,6 +69,7 @@ const ActivitiModal = ({ closeModal, bgColor }) => {
                             {formik.values.valor != '' && <Text>Atividade Agrícola*</Text>}
                             <Input
                                 placeholder='Atividade Agrícola*'
+                                placeholderTextColor='#292b2c'
                                 onChangeText={formik.handleChange('valor')}
                                 value={formik.values.valor}
                                 onBlur={formik.handleBlur('valor')}

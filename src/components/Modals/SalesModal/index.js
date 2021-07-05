@@ -131,6 +131,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer, load }) => {
                                     }}
                                     ref={valorRef}
                                     placeholder='Valor da venda*'
+                                    placeholderTextColor='#292b2c'
                                     keyboardType='phone-pad'
                                     onChangeText={formik.handleChange('valor')}
                                     value={formik.values.valor}
@@ -151,6 +152,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer, load }) => {
                                 {formik.values.quantity != '' && <Text>Quantidade*</Text>}
                                 <Input
                                     placeholder='Quantidade*'
+                                    placeholderTextColor='#292b2c'
                                     onChangeText={formik.handleChange('quantity')}
                                     keyboardType='phone-pad'
                                     value={formik.values.quantity}
@@ -183,6 +185,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer, load }) => {
                             <Input
                                 placeholder='Cidade do comprador*'
                                 onChangeText={formik.handleChange('city')}
+                                placeholderTextColor='#292b2c'
                                 value={formik.values.city}
                                 onBlur={formik.handleBlur('city')}
                             />
@@ -207,6 +210,7 @@ const SalesModal = ({ closeModal, confirmModal, bgColor, producer, load }) => {
                                     style={styles.input}
                                     keyboardType='phone-pad'
                                     placeholder='Data da venda*'
+                                    placeholderTextColor='#292b2c'
                                     onChangeText={formik.handleChange('date')}
                                     value={formik.values.date}
                                     onBlur={formik.handleBlur('date')}
