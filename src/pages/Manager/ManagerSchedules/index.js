@@ -49,8 +49,8 @@ const ManagerSchedules = () => {
 
     const [index, setIndex] = useState(0)
     const [routes] = useState([
-        { key: 'first', title: 'Hoje' },
-        { key: 'second', title: 'Futuras' },
+        { key: 0, title: 'Hoje' },
+        { key: 1, title: 'Futuras' },
     ])
 
     const date = format(Date.parse(selectedDate), 'PPPP', { locale: locale_br })
@@ -75,24 +75,33 @@ const ManagerSchedules = () => {
     const renderTabBar = props => (
         <TabBar {...props}
             renderLabel={({ route, color }) => (
-                <Text style={{ color, fontSize: 15, height: 30 }}>
+                <Text style={{
+                    color,
+                    fontSize: 16,
+                    marginBottom: 10
+                }}>
                     {route.title}
                 </Text>
             )}
-            indicatorStyle={{ backgroundColor: '#FFF' }}
-            style={{ backgroundColor: '#292b2c', height: 35 }}
+            indicatorStyle={{
+                backgroundColor: props?.navigationState?.index === 0 ? '#da1e37' : '#2dc653',
+                borderTopLeftRadius: props?.navigationState?.index === 0 ? 0 : 5,
+                borderTopRightRadius: props?.navigationState?.index === 0 ? 5 : 0,
+                height: 3
+            }}
+            style={{ backgroundColor: '#292b2c', height: 40 }}
         />
     );
 
     const renderScene = ({ route }) => {
         switch (route.key) {
-            case 'first':
+            case 0:
                 return <TodayTasks
                     data={todayTasks}
                     loadPage={loadTodayTasks}
                     loading={loading}
                 />
-            case 'second':
+            case 1:
                 return <FutureTasks
                     data={futureResults}
                     loadPage={loadFutureTasks}
