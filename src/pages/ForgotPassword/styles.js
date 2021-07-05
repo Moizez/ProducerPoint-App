@@ -5,49 +5,22 @@ export const Container = styled.KeyboardAvoidingView`
 `;
 
 export const InputTitle = styled.Text`
-    font-size: 16px;
-    color: #292b2c;
-    text-align: center;
-    margin-top: 30px;
+    font-size: 18px;
     margin-bottom: 5px;
+    color: #072;
 `;
 
 export const InputContainer = styled.View`
     flex: 1;
     align-items: center;
     justify-content: center;
+    padding: 0 35px;
 `;
 
 export const InputBox = styled.View`
-    width: 80%;
-    height: 60px;
-    border-radius: 20px;
-    background-color: #DDD;
-    margin-bottom: 10px;
-    justify-content: space-around;
-`;
-
-export const Input = styled.TextInput.attrs({
-    placeholderTextColor: '#007200',
-})`
     width: 100%;
-    font-size: 18px;
-    color: #292b2c;
-    padding-left: 15px;
-`;
-
-export const RecoverButton = styled.TouchableOpacity`
     height: 60px;
-    width: 80%;
-    background-color: #007200;
-    border-radius: 20px;
-    justify-content: center;
-    align-items: center;
-`;
-
-export const RecoverText = styled.Text`
-    font-size: 20px;
-    color: #FFF;
+    margin-bottom: 20px;
 `;
 
 export const CloseButton = styled.TouchableOpacity`
@@ -61,6 +34,17 @@ export const Text = styled.Text`
     margin: 5px 0 0 15px;
     font-size: 11px;
     color: #007200;
+`;
+
+export const ErrorBox = styled.View`
+    align-self: flex-start;
+`;
+
+export const ErrorText = styled.Text`
+    font-size: 11px;
+    color: #c1121f;
+    margin-top: -8px;
+    margin-bottom: 3px;
 `;
 
 

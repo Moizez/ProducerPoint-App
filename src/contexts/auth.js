@@ -1,9 +1,9 @@
 import React, { useState, useEffect, createContext, Fragment } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Modal } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-import WarningModal from '../components/Modals/WarningModal'
 import api from '../services/api'
+import Snackbar from '../components/Snackbar'
 
 export const AuthContext = createContext({})
 
@@ -11,8 +11,8 @@ const AuthProvider = ({ children }) => {
 
     const [loading, setLoading] = useState(true)
     const [loadingAuth, setLoadingAuth] = useState(false)
-    const [warningModal, setWarningModal] = useState(false)
-    const [typeMessage, setTypeMessage] = useState('')
+    const [showSnack, setShowSnack] = useState(false)
+    const [message, setMessage] = useState('')
     const [user, setUser] = useState(null)
 
     useEffect(() => {
@@ -27,36 +27,28 @@ const AuthProvider = ({ children }) => {
         loadStorage()
     }, [])
 
-    const openWarningModal = () => setWarningModal(true)
-    const closeWarningModal = () => setWarningModal(false)
+    const handleShowSnack = () => setShowSnack(true)
+    const handleCloseSnack = () => setShowSnack(false)
 
-    const signIn = async (email, password) => {
+    const handleSignIn = async (email, password) => {
         setLoadingAuth(true)
-        if (email.length == 0 || password.length == 0) {
-            setTypeMessage('Preencha seu e-mail ou senha corretamente!')
-            openWarningModal()
+        const response = await api.onSignIn(email, password)
+
+        if (response.data) {
+            setUser(response.data)
+            storageUser(response.data)
             setLoadingAuth(false)
             return
+        } else if (response.status === 404) {
+            setLoadingAuth(false)
+            setMessage('E-mail ou senha inválidos!')
+            handleShowSnack()
+            return
         } else {
-            const response = await api.onSignIn(email, password)
-            try {
-                if (response.data) {
-                    setUser(response.data)
-                    storageUser(response.data)
-                    setLoadingAuth(false)
-                    return
-                } else {
-                    setTypeMessage('E-mail ou senha inválido!\nTente novamente.')
-                    openWarningModal()
-                    setLoadingAuth(false)
-                    return
-                }
-            }
-            catch (erro) {
-                setTypeMessage(`Erro ao tentar fazer login:\n${erro}`)
-                openWarningModal()
-                setLoadingAuth(false)
-            }
+            setLoadingAuth(false)
+            setMessage(`Falha inesperada! Erro: ${response.status}`)
+            handleShowSnack()
+            return
         }
     }
 
@@ -75,21 +67,21 @@ const AuthProvider = ({ children }) => {
 
         <Fragment>
             <Modal
+                visible={showSnack}
                 animationType='fade'
                 transparent={true}
-                visible={warningModal}
             >
-                <WarningModal
-                    closeModal={closeWarningModal}
-                    lottie={require('../assets/lottie/error-icon.json')}
-                    message={typeMessage}
+                <Snackbar
+                    message={message}
+                    onDismiss={handleCloseSnack}
+                    hasBgColor
                 />
             </Modal>
 
             <AuthContext.Provider value={{
                 signed: !!user, user,
                 loading, loadingAuth,
-                signIn, logOut
+                handleSignIn, logOut
             }}>
                 {children}
             </AuthContext.Provider>

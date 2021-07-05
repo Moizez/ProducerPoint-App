@@ -192,6 +192,7 @@ const ManagerSchedules = () => {
                 animationType='slide'
                 transparent={true}
                 visible={taskModal}
+                onRequestClose={closeWarningModal}
             >
                 <TaskModal
                     closeModal={closeTaskModal}
