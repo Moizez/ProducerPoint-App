@@ -1,6 +1,6 @@
 # Producer Point | App
 
-![Palpiteiros-Preview](https://github.com/moizez/Palpiteiros-App/blob/main/preview.jpg?raw=true)
+![ProducerPoint-Preview](https://github.com/moizez/ProducerPoint-App/blob/main/preview.jpg?raw=true)
 
 Caso queira conferir todas as telas e em tamanho maior, é só clicar [aqui](https://drive.google.com/drive/folders/1715_nkAI5nedEcOTgZXadY7wjD5tV-Js?usp=sharing). 
 
