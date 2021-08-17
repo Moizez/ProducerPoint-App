@@ -1,75 +1,45 @@
 # Producer Point | App
 
-![ProducerPoint-Preview](https://github.com/moizez/ProducerPoint-App/blob/main/preview.jpg?raw=true)
+![ProducerPoint-Preview](https://drive.google.com/drive/folders/1dgCGd2q_LMNUvGf42cFAqH06nrTbx2E5?usp=sharing)
 
 Caso queira conferir todas as telas e em tamanho maior, é só clicar [aqui](https://drive.google.com/drive/folders/1715_nkAI5nedEcOTgZXadY7wjD5tV-Js?usp=sharing). 
 
 ## Sobre o Palpiteiros
-Este projeto foi desenvolvido com o intuito de criar um sistema web e mobile para a realização de bolões e palpites de futebol, para que a galera que ama este esporte possa testar seus conhecimentos e claro, sua sorte.
+Este projeto foi desenvolvido com o intuito de criar um sistema web e mobile para a realização do gerenciamento de produtores rurais, quanto a suas atividades agrícolas. Inicialmente em em conjunto com a Prefeitura da cidade de Itaú/RN, onde encontra-se em fase de testes.
 
 Desde já, ficarei muito feliz se você puder me fornecer algum feedback sobre o projeto, código, estrutura ou qualquer coisa que você possa relatar e que possa me tornar um desenvolvedor melhor!
 
 ## Funcionalidades
-- Após criar seu cadastro você será automaticamente logado no app;
-- Bolões
-	- Participe de bolões oficiais criados pelo próprio app;
-	- Crie seus próprios bolões (em desenvolvimento...);
-	- Convide seu amigos para participar dos seus bolões (em desenvolvimento...).
+- Produtores
+	- Realização de cadastro de produtores e os dados pertinentes a suas atividades agrícolas;
+	- Cadastro de vendas com os produtos produzidos pelo mesmo e dados referente a ganhos (quinzenais, mensais e etc), assim como seus produtos (principal e secundário).
 
-- Campeonatos
-	- Acompanhe a classificação e estatísticas dos campeonatos.
-	
-- Palpites
-	- Realize palpites dos jogos do seu campeonato favorito;
-	- Acompanhe os palpites dos seus amigos;
-	- Pontue em cada rodada e alcance a primeira posição no ranking dos bolões que você participa.
+- Busca
+	- Busca por nome ou apelido do produtor;
+	- Possibilidade de listagem por ordem alfabétic.
 
-- Ranking
-  	- Concorra com seus amigos para ver quem alcança maior level;
-  	- Aumente seu level a cada acerto conforme os critérios abaixo:
-	 - Placar exato = PE;
-	 - Vitória ou empate = VE;
-	 - Acerto de gols = AG;
-	 - Diferença de gols = DG;
-	 - Palpites realizados = PR;
-	 - Participação em bolões = PB;
-	 - Campeão do bolão = CB;
-	 - Vice-campeão do bolão = VC;
-	 - Terceiro lugar = TL.
-
-- Conquistas
-	- A medida que você for subindo de level, desbloqueará novas conquistas;
-	- Acompanhe os palpites dos seus amigos;
-	- Pontue em cada rodada e alcance a primeira posição no ranking dos bolões que você participa.
-	- Lista de conquistas disponíveis até o momento:
-	  - Palpiteiro de várzea;
-	  - Palpiteiro raiz;
-	  - Mestre palpiteiro;
-	  - Palpiteiro animal;
-	  - Um fenômeno!;
-	  - O baixinho tá na área;
-	  - A canhotinha do Messi;
-	  - La mano de dios;
-	  - Rei Pelé dos palpites.
+- Tarefas
+  	- Ferramenta para criação de tarefas a fazer;
+  	- Listagem com as tarefas do dia e futuras;
+  	- Filtro das tarefas por intervalo de tempo.
 
 ## Instalação
-Nota: Se você deseja testar o Palpiteiros, ele já se encontra publicado no Google Play, para instalá-lo no seu smartphone basta clicar [aqui](https://play.google.com/store/apps/details?id=com.palpiteiros).
+Nota: O Producer Point já se encontra publicado no google play, porém no momento não é possível acessa-lo. Apenas pessoas cadastradas podem logar na aplicação.
 
 ### Pré-requisitos
 Para executar este projeto você precisará ter um ambiente básico para executar um aplicativo React-Native, que pode ser encontrado [aqui](https://facebook.github.io/react-native/docs/getting-started).
 
 **Clonando o repositório**
 ```
-$ git clone https://github.com/moizez/Palpiteiros-App
+$ git clone https://github.com/moizez/ProducerPoint-App
 
-$ cd Palpiteiros-App
+$ cd ProducerPoint-App
 ```
 **Instalando dependências**
 ```
 $ yarn install
 ```
 _ou_
-
 ```
 $ npm install
 ```
