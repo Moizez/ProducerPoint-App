@@ -4,7 +4,7 @@
 
 Caso queira conferir todas as telas e em tamanho maior, é só clicar [aqui](https://drive.google.com/drive/folders/1dgCGd2q_LMNUvGf42cFAqH06nrTbx2E5?usp=sharing). 
 
-## Sobre o Palpiteiros
+## Sobre o Producer Point
 Este projeto foi desenvolvido com o intuito de criar um sistema web e mobile para a realização do gerenciamento de produtores rurais, quanto a suas atividades agrícolas. Inicialmente em em conjunto com a Prefeitura da cidade de Itaú/RN, onde encontra-se em fase de testes.
 
 Desde já, ficarei muito feliz se você puder me fornecer algum feedback sobre o projeto, código, estrutura ou qualquer coisa que você possa relatar e que possa me tornar um desenvolvedor melhor!
