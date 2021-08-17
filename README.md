@@ -1,8 +1,8 @@
 # Producer Point | App
 
-![ProducerPoint-Preview](https://drive.google.com/drive/folders/1dgCGd2q_LMNUvGf42cFAqH06nrTbx2E5?usp=sharing)
+![ProducerPoint-Preview](https://github.com/moizez/ProducerPoint-App/blob/main/preview.jpg?raw=true)
 
-Caso queira conferir todas as telas e em tamanho maior, é só clicar [aqui](https://drive.google.com/drive/folders/1715_nkAI5nedEcOTgZXadY7wjD5tV-Js?usp=sharing). 
+Caso queira conferir todas as telas e em tamanho maior, é só clicar [aqui](https://drive.google.com/drive/folders/1dgCGd2q_LMNUvGf42cFAqH06nrTbx2E5?usp=sharing). 
 
 ## Sobre o Palpiteiros
 Este projeto foi desenvolvido com o intuito de criar um sistema web e mobile para a realização do gerenciamento de produtores rurais, quanto a suas atividades agrícolas. Inicialmente em em conjunto com a Prefeitura da cidade de Itaú/RN, onde encontra-se em fase de testes.
