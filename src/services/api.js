@@ -2,7 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import moment from 'moment'
 
 const CEP_API = 'https://viacep.com.br/ws'
-const API = 'https://apiproducers.serviceapp.net.br/api'
+const API = 'https://apiproducers.pointsoft.com.br/api'
+// const API = 'https://apiproducers.serviceapp.net.br/api'
+
 //const API = 'http://192.168.1.128:8080/api'
 //const API = 'https://producersapi.herokuapp.com/api'
 
